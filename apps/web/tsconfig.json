@@ -6,11 +6,7 @@
     "emitDeclarationOnly": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -21,18 +17,10 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@deskops/ui": [
-        "../../packages/ui/src"
-      ],
-      "@deskops/constants": [
-        "../../packages/constants/src"
-      ],
-      "@deskops/database": [
-        "../../packages/database/src"
-      ]
+      "@/*": ["./src/*"],
+      "@deskops/ui": ["../../packages/ui/src"],
+      "@deskops/constants": ["../../packages/constants/src"],
+      "@deskops/database": ["../../packages/database/src"]
     },
     "outDir": "dist",
     "rootDir": "src",
@@ -42,6 +30,7 @@
     "../../apps/web/.next/types/**/*.ts",
     "../../dist/apps/web/.next/types/**/*.ts",
     "next-env.d.ts",
+    "index.d.ts",
     "src/**/*.js",
     "src/**/*.jsx",
     "src/**/*.ts",
@@ -61,6 +50,9 @@
     "eslint.config.mjs"
   ],
   "references": [
+    {
+      "path": "../../packages/ui"
+    },
     {
       "path": "../../packages/database"
     },
