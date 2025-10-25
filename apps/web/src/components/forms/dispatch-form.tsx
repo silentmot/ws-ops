@@ -6,13 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@deskops/ui';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
 import {
   Form,
   FormControl,
@@ -29,11 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@deskops/ui';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@deskops/ui';
+import { Popover, PopoverContent, PopoverTrigger } from '@deskops/ui';
 import { Calendar, Textarea } from '@deskops/ui';
 import { toast } from 'sonner';
 import { cn } from '@deskops/ui';
@@ -62,7 +52,7 @@ interface DispatchFormProps {
 export function DispatchForm({
   siteId,
   onSuccess,
-}: DispatchFormProps): JSX.Element {
+}: DispatchFormProps): React.JSX.Element {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<DispatchFormData>({
     resolver: zodResolver(dispatchFormSchema),
@@ -85,7 +75,7 @@ export function DispatchForm({
       } else {
         toast.error(result.error ?? 'Failed to create dispatch record');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('An unexpected error occurred');
     } finally {
       setIsSubmitting(false);
@@ -102,7 +92,7 @@ export function DispatchForm({
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="date"
@@ -212,7 +202,9 @@ export function DispatchForm({
                         {...field}
                         onChange={(e) =>
                           field.onChange(
-                            e.target.value ? parseInt(e.target.value) : undefined
+                            e.target.value
+                              ? parseInt(e.target.value)
+                              : undefined
                           )
                         }
                         value={field.value ?? ''}

@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { Header } from '@/components/layout/header';
 import { Sidebar } from '@/components/layout/sidebar';
@@ -7,17 +7,17 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
-}: DashboardLayoutProps): JSX.Element {
-  const { userId } = auth();
+}: DashboardLayoutProps): Promise<React.JSX.Element> {
+  const { userId } = await auth();
 
   if (!userId) {
     redirect('/sign-in');
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="bg-background flex h-screen">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header />

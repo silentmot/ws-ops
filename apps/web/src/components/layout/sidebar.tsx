@@ -42,7 +42,7 @@ const navigation: NavigationItem[] = [
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 
-export function Sidebar(): JSX.Element {
+export function Sidebar(): React.JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
 
@@ -54,7 +54,7 @@ export function Sidebar(): JSX.Element {
     <TooltipProvider>
       <div
         className={cn(
-          'flex flex-col border-r bg-card transition-all duration-300',
+          'bg-card flex flex-col border-r transition-all duration-300',
           collapsed ? 'w-16' : 'w-60'
         )}
       >
@@ -97,7 +97,7 @@ export function Sidebar(): JSX.Element {
                   <span className="flex-1">
                     {item.name}
                     {item.badge && (
-                      <span className="ml-2 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                      <span className="bg-primary text-primary-foreground ml-2 rounded-full px-2 py-0.5 text-xs">
                         {item.badge}
                       </span>
                     )}

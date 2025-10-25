@@ -108,7 +108,7 @@ const columns: ColumnDef<ReceivedMaterial>[] = [
   },
 ];
 
-export default function ReceivedMaterialPage(): JSX.Element {
+export default function ReceivedMaterialPage(): React.JSX.Element {
   const [receivedMaterials, setReceivedMaterials] = useState<
     ReceivedMaterial[]
   >([]);
@@ -136,7 +136,7 @@ export default function ReceivedMaterialPage(): JSX.Element {
 
       const data = await response.json();
       setReceivedMaterials(data);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to load received material data');
     } finally {
       setLoading(false);

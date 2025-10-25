@@ -105,7 +105,7 @@ const columns: ColumnDef<Production>[] = [
   },
 ];
 
-export default function ProductionPage(): JSX.Element {
+export default function ProductionPage(): React.JSX.Element {
   const [productions, setProductions] = useState<Production[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -131,7 +131,7 @@ export default function ProductionPage(): JSX.Element {
 
       const data = await response.json();
       setProductions(data);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to load production data');
     } finally {
       setLoading(false);

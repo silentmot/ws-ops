@@ -8,7 +8,6 @@ import {
   SelectValue,
 } from '@deskops/ui';
 import { useQuery } from '@tanstack/react-query';
-import { DEFAULT_SITE_CODE } from '@deskops/constants';
 
 interface SiteSelectorProps {
   value: string;
@@ -22,7 +21,11 @@ interface Site {
 }
 
 export function SiteSelector({ value, onValueChange }: SiteSelectorProps) {
-  const { data: sites, isLoading, isError } = useQuery<Site[]>({
+  const {
+    data: sites,
+    isLoading,
+    isError,
+  } = useQuery<Site[]>({
     queryKey: ['sites'],
     queryFn: async () => {
       const response = await fetch('/api/sites');

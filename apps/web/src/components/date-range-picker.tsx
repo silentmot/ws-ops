@@ -4,7 +4,13 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { DayPicker } from 'react-day-picker';
-import { cn, Button, Popover, PopoverContent, PopoverTrigger } from '@deskops/ui';
+import {
+  cn,
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@deskops/ui';
 import 'react-day-picker/dist/style.css';
 
 interface DateRange {

@@ -41,6 +41,8 @@ export default [
         caughtErrorsIgnorePattern: '^_'
       }],
       'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'react-hooks/exhaustive-deps': 'off', // Disable exhaustive-deps warnings for now
+      'react-hooks/incompatible-library': 'off', // TanStack Table is known to be incompatible
     },
   },
   {

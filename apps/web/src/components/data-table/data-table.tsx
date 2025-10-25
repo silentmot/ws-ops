@@ -42,7 +42,7 @@ export function DataTable<TData, TValue>({
   data,
   searchKey,
   searchPlaceholder = 'Search...',
-}: DataTableProps<TData, TValue>): JSX.Element {
+}: DataTableProps<TData, TValue>): React.JSX.Element {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -73,7 +73,9 @@ export function DataTable<TData, TValue>({
         {searchKey && (
           <Input
             placeholder={searchPlaceholder}
-            value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
+            value={
+              (table.getColumn(searchKey)?.getFilterValue() as string) ?? ''
+            }
             onChange={(event) =>
               table.getColumn(searchKey)?.setFilterValue(event.target.value)
             }
@@ -159,7 +161,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex-1 text-sm">
           {table.getFilteredSelectedRowModel().rows.length} of{' '}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>

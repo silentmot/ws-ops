@@ -123,7 +123,7 @@ const columns: ColumnDef<Dispatch>[] = [
   },
 ];
 
-export default function DispatchPage(): JSX.Element {
+export default function DispatchPage(): React.JSX.Element {
   const [dispatches, setDispatches] = useState<Dispatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -149,7 +149,7 @@ export default function DispatchPage(): JSX.Element {
 
       const data = await response.json();
       setDispatches(data);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to load dispatch data');
     } finally {
       setLoading(false);

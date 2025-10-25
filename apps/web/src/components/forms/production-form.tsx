@@ -6,13 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@deskops/ui';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
 import {
   Form,
   FormControl,
@@ -29,11 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@deskops/ui';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@deskops/ui';
+import { Popover, PopoverContent, PopoverTrigger } from '@deskops/ui';
 import { Calendar, Textarea } from '@deskops/ui';
 import { toast } from 'sonner';
 import { cn } from '@deskops/ui';
@@ -60,7 +50,7 @@ interface ProductionFormProps {
 export function ProductionForm({
   siteId,
   onSuccess,
-}: ProductionFormProps): JSX.Element {
+}: ProductionFormProps): React.JSX.Element {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<ProductionFormData>({
     resolver: zodResolver(productionFormSchema),
@@ -83,7 +73,7 @@ export function ProductionForm({
       } else {
         toast.error(result.error ?? 'Failed to create production record');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('An unexpected error occurred');
     } finally {
       setIsSubmitting(false);
@@ -100,7 +90,7 @@ export function ProductionForm({
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="date"
