@@ -17,11 +17,11 @@ Here is a prompt template designed for an AI coding agent to perform a detailed 
 
 **1. Documentation:**
 
-`docs/documentation/UI/DeskOps-DashboardGuide.md`
+`docs`
 
 **2. Source Code:**
 
-`apps/web/src`
+`Project Source Code`
 
 -----
 
