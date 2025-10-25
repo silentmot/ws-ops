@@ -1,8 +1,27 @@
----
-applyTo: '**'
----
-
 # GZANSP × AOC — Universal Agent Constraint Protocol
+
+<!-- nx configuration start-->
+<!-- Leave the start & end comments to automatically receive updates. -->
+
+## General Guidelines for working with Nx
+
+- When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
+- You have access to the Nx MCP server and its tools, use them to help the user
+- When answering questions about the repository, use the `nx_workspace` tool first to gain an understanding of the workspace architecture where applicable.
+- When working in individual projects, use the `nx_project_details` mcp tool to analyze and understand the specific project structure and dependencies
+- For questions around nx configuration, best practices or if you're unsure, use the `nx_docs` tool to get relevant, up-to-date docs. Always use this instead of assuming things about nx configuration
+- If the user needs help with an Nx configuration or project graph error, use the `nx_workspace` tool to get any errors
+
+## CI Error Guidelines
+
+If the user wants help with fixing an error in their CI pipeline, use the following flow:
+
+- Retrieve the list of current CI Pipeline Executions (CIPEs) using the `nx_cloud_cipe_details` tool
+- If there are any errors, use the `nx_cloud_fix_cipe_failure` tool to retrieve the logs for a specific task
+- Use the task logs to see what's wrong and help the user fix their problem. Use the appropriate tools if necessary
+- Make sure that the problem is fixed by running the task that you passed into the `nx_cloud_fix_cipe_failure` tool
+
+<!-- nx configuration end-->
 
 ## Zero-Assumption, Method-First, Source-Backed Agent Operating Contract
 
@@ -20,14 +39,15 @@ applyTo: '**'
 
 **Definition:** This protocol requires that all generated information be carefully examined and addressed without leaving out any part within the request's boundaries. Every step in the analysis or process is crucial to ensure that no important detail is missed and no assumptions are made. This aims to maintain a thorough understanding and a strict outcome, avoiding random assumptions and following instructions precisely.
 
-
 ## **Core Principle:**
+
 **Every decision must cite an explicit source. Every operation must use exactly one method. Every constant must originate from a single source of truth. No exceptions.**
 
 ---
 
 ## **Agent Oath (Mandatory Preface)**
-```
+
+```plaintext
 I MUST follow GZANSP × AOC verbatim in EVERY response.
 I WILL NOT assume, invent, skip, or deviate from provided sources.
 Any violation INVALIDATES my output and requires complete restart.
@@ -39,30 +59,35 @@ CONFIRMATION: "GZANSP Adhered: Sources listed, no inventions."
 ## **Critical Constraints**
 
 ### **1. Zero-Assumption Policy**
+
 - **Source everything**: Every decision cites exact source fragment (request text, code line, spec section, dataset cell)
 - **Process**: Identify source location → Quote minimal relevant fragment → Apply without alteration
 - **Missing data**: HALT and request Information
 - **Validation line**: `Assumption Check: Zero assumptions made — Sources: [list exact paths/lines/sections]`
 
 ### **2. Absolute Type Strictness**
+
 - **FORBIDDEN**: `any` type in any form (annotations, assertions, generics, casts)
 - **REQUIRED**: Explicit, concrete, narrowest possible types
 - **Unknown data**: Use `unknown` with type guards, never `any`
 - **Rule**: Any code containing `any` is automatically rejected and must be refactored
 
 ### **3. Single Source of Truth (SSOT)**
+
 - **Constants**: Import from centralized location only, never duplicate
 - **Change logging**: Record exact file path and diff when constants/configs change
 - **No local copies**: Always reference the authoritative source
 - **Validation**: Automated checks prevent constant duplication
 
 ### **4. Method-First Architecture**
+
 - **Adapter selection**: Single flag selects one method per operation (`IO_METHOD = {socket|http|serial|mq}`)
 - **Zero legacy**: No legacy names, values, or patterns—methods only
 - **No defaults**: Never hardcode fallbacks—use placeholders, throw on persistence
 - **Resolver-driven**: All targets (host, port, URL, device) come from resolver, not hardcoded lists
 
 ### **5. Endpoint Standardization**
+
 - **REQUIRED**: `/api/[module]/[resource]` format only
 - **FORBIDDEN**: Versioned paths (`/api/v1/...`, `/api/v2/...`)
 - **Validation**: Automated blocking of version patterns in commits/PRs
@@ -70,8 +95,10 @@ CONFIRMATION: "GZANSP Adhered: Sources listed, no inventions."
 ---
 
 ## **Forbidden Terminology**
+
 **BANNED TERMS** (in names, comments, docs, UI, commits):
-```
+
+```plaintext
 Comprehensive, Enhanced, Advanced, Corrected, Fixed, Implemented,
 Future, Final, Improved, Upgraded, Perfected, Complete, Newer,
 Refined, Optimized, Best, Ideal, Flawless, Optimal, Executive,
@@ -83,7 +110,8 @@ New, Old, Updated, Modified, Migrated
 ## **Execution Protocol**
 
 ### **Mandatory Scope Declaration**
-```
+
+```plaintext
 Scope:
 - Files: [list every file]
 - Endpoints: [list every endpoint]
@@ -96,12 +124,14 @@ Coverage requirement: 100% of items must be accounted for
 ```
 
 ### **Content Modes (Select Exactly One)**
+
 - **Factual**: No fabrication; external facts require sources
 - **Procedural**: Steps/scripts from sources only
 - **Transformation**: Transform provided input with minimal additions
 - **Creative** (opt-in only): Must be explicitly requested and labeled
 
 ### **Deterministic Workflow**
+
 1. **Oath** and **Scope Declaration**
 2. **Source Inventory**: Enumerate all usable sources
 3. **Mode Selection** and labeling
@@ -118,6 +148,7 @@ Coverage requirement: 100% of items must be accounted for
 ## **Configuration Patterns**
 
 ### **Placeholder-Only Config**
+
 ```bash
 # Adapter Selection
 IO_METHOD={socket|http|serial|mq}
@@ -146,6 +177,7 @@ TOPIC_NAME={topic}
 ```
 
 ### **Validation Contract**
+
 ```typescript
 // Generic validation interface
 interface ConfigValidator {
@@ -161,6 +193,7 @@ interface ConfigValidator {
 ## **Resolver & Adapter Contracts**
 
 ### **Resolver Interface**
+
 ```typescript
 interface EndpointResolver {
   resolveEndpoint(subjectId: string): Promise<{
@@ -171,6 +204,7 @@ interface EndpointResolver {
 ```
 
 ### **Adapter Interface**
+
 ```typescript
 interface MethodAdapter {
   connect(target: string, params: Record<string, unknown>): Promise<Connection>;
@@ -185,6 +219,7 @@ interface MethodAdapter {
 ## **Guardrails & Enforcement**
 
 ### **Pre-commit Hook Template**
+
 ```bash
 
 set -euo pipefail
@@ -219,6 +254,7 @@ fi
 ```
 
 ### **CI Validation Jobs**
+
 ```yaml
 validation:
   runs-on: ubuntu-latest

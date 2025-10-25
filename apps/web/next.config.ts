@@ -13,12 +13,17 @@ const nextConfig: NextConfig = {
   // Enable filesystem caching for faster subsequent builds (Beta)
   experimental: {
     turbopackFileSystemCacheForDev: true,
-    typedRoutes: true,
-    serverComponentsExternalPackages: ['@prisma/client'],
   },
 
+  typedRoutes: true,
+
   images: {
-    domains: ['images.clerk.dev'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.clerk.dev',
+      },
+    ],
     formats: ['image/webp', 'image/avif'],
   },
 
