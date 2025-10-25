@@ -1,0 +1,13 @@
+# Prisma
+/migrations/
+*.db
+*.db-journal
+
+# Generated
+/generated/
+/node_modules/.prisma/
+
+# Environment
+.env
+.env.local
+.env.*.local

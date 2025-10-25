@@ -1,21 +1,49 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "composite": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "exactOptionalPropertyTypes": true,
     "importHelpers": true,
+    "incremental": true,
     "isolatedModules": true,
-    "lib": ["es2022"],
+    "jsx": "preserve",
+    "lib": [
+      "es2022"
+    ],
     "module": "esnext",
     "moduleResolution": "bundler",
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
     "target": "es2022",
-    "customConditions": ["@ws-ops/source"]
+    "customConditions": [
+      "@ws-ops/source"
+    ],
+    "paths": {
+      "@deskops/ui": [
+        "./packages/ui/src"
+      ],
+      "@deskops/constants": [
+        "./packages/constants/src"
+      ],
+      "@deskops/database": [
+        "./packages/database/src"
+      ]
+    }
   }
 }

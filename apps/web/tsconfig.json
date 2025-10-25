@@ -23,6 +23,15 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@deskops/ui": [
+        "../../packages/ui/src"
+      ],
+      "@deskops/constants": [
+        "../../packages/constants/src"
+      ],
+      "@deskops/database": [
+        "../../packages/database/src"
       ]
     },
     "outDir": "dist",
@@ -50,5 +59,13 @@
     "eslint.config.js",
     "eslint.config.cjs",
     "eslint.config.mjs"
+  ],
+  "references": [
+    {
+      "path": "../../packages/database"
+    },
+    {
+      "path": "../../packages/constants"
+    }
   ]
 }

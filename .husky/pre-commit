@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# .husky/pre-commit
+
+# Run lint-staged
+bunx lint-staged
+
+# Optional: Run type check on staged TypeScript files
+# Uncomment below to enable type checking (may slow down commits)
+# echo "Running type check..."
+# bun run type-check
