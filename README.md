@@ -183,11 +183,11 @@ ws-ops/
 ### Core Design Principles
 
 #### 1. GZANSP × AOC Compliance
-- ✅ **Zero Assumptions** — Every decision cites explicit source
-- ✅ **No `any` Types** — Strict TypeScript with concrete types only
-- ✅ **SSOT** — All constants imported from `@deskops/constants`
-- ✅ **No API Versioning** — Use `/api/[module]/[resource]` format only
-- ✅ **Method-First** — Single method per operation using adapter pattern
+- ✓ **Zero Assumptions** — Every decision cites explicit source
+- ✓ **No `any` Types** — Strict TypeScript with concrete types only
+- ✓ **SSOT** — All constants imported from `@deskops/constants`
+- ✓ **No API Versioning** — Use `/api/[module]/[resource]` format only
+- ✓ **Method-First** — Single method per operation using adapter pattern
 
 #### 2. Database Schema (PostgreSQL + Prisma)
 - **Transaction Tables**: Production, Dispatch, ReceivedMaterial, EquipmentLog, ManpowerLog
