@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🏗️ DeskOps
+# <img src="apps/web/public/svg/solid/building.svg" width="32" height="32" alt="Building"> DeskOps
 
 ### Construction & Demolition Recycling Facility Management System
 
@@ -13,13 +13,13 @@
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma)](https://www.prisma.io/)
 [![License](https://img.shields.io/badge/License-Proprietary-red)](./LICENSE)
 
-[📚 Documentation](./docs) • [🚀 Quick Start](#-quick-start) • [🏗️ Architecture](#-architecture) • [🧪 Testing](#-testing)
+[<img src="apps/web/public/svg/solid/book.svg" width="16" height="16" alt="Documentation"> Documentation](./docs) • [<img src="apps/web/public/svg/solid/rocket.svg" width="16" height="16" alt="Quick Start"> Quick Start](#-quick-start) • [<img src="apps/web/public/svg/solid/building.svg" width="16" height="16" alt="Architecture"> Architecture](#-architecture) • [<img src="apps/web/public/svg/solid/flask.svg" width="16" height="16" alt="Testing"> Testing](#-testing)
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## <img src="apps/web/public/svg/solid/list.svg" width="20" height="20" alt="Table of Contents"> Table of Contents
 
 - [Overview](#-overview)
 - [Key Features](#-key-features)
@@ -35,18 +35,18 @@
 
 ---
 
-## 🎯 Overview
+## <img src="apps/web/public/svg/solid/bullseye.svg" width="20" height="20" alt="Overview"> Overview
 
 **DeskOps** is a comprehensive facility management system designed specifically for Construction & Demolition (C&D) recycling operations. Built with modern web technologies and following enterprise-grade best practices, it provides real-time tracking, analytics, and reporting for:
 
-- 📦 **Materials Inventory** — Real-time stock tracking with automated calculations
-- 🏭 **Production Monitoring** — Daily crusher production metrics and efficiency tracking
-- 🚚 **Dispatch Management** — Transaction records for material shipments and customer orders
-- ♻️ **Recycling Tracking** — Received materials (CDW) intake and processing logs
-- ⚙️ **Equipment Utilization** — Operational hours, maintenance, and performance analytics
-- 👷 **Manpower Attendance** — Shift-based headcount and labor hours tracking
-- 📊 **Dashboard Analytics** — KPI metrics, trends, and interactive data visualizations
-- 📁 **Export Capabilities** — Excel, PDF, and CSV reports with Power BI integration
+- <img src="apps/web/public/svg/solid/box.svg" width="16" height="16" alt="Materials"> **Materials Inventory** — Real-time stock tracking with automated calculations
+- <img src="apps/web/public/svg/solid/industry.svg" width="16" height="16" alt="Production"> **Production Monitoring** — Daily crusher production metrics and efficiency tracking
+- <img src="apps/web/public/svg/solid/truck.svg" width="16" height="16" alt="Dispatch"> **Dispatch Management** — Transaction records for material shipments and customer orders
+- <img src="apps/web/public/svg/solid/recycle.svg" width="16" height="16" alt="Recycling"> **Recycling Tracking** — Received materials (CDW) intake and processing logs
+- <img src="apps/web/public/svg/solid/gear.svg" width="16" height="16" alt="Equipment"> **Equipment Utilization** — Operational hours, maintenance, and performance analytics
+- <img src="apps/web/public/svg/solid/user.svg" width="16" height="16" alt="Manpower"> **Manpower Attendance** — Shift-based headcount and labor hours tracking
+- <img src="apps/web/public/svg/solid/chart-line.svg" width="16" height="16" alt="Dashboard"> **Dashboard Analytics** — KPI metrics, trends, and interactive data visualizations
+- <img src="apps/web/public/svg/solid/folder.svg" width="16" height="16" alt="Export"> **Export Capabilities** — Excel, PDF, and CSV reports with Power BI integration
 
 ### Business Value
 
@@ -58,34 +58,34 @@
 
 ---
 
-## ✨ Key Features
+## <img src="apps/web/public/svg/solid/star.svg" width="20" height="20" alt="Key Features"> Key Features
 
-### 📊 Real-Time Dashboard
+### <img src="apps/web/public/svg/solid/chart-line.svg" width="18" height="18" alt="Dashboard"> Real-Time Dashboard
 - **4 KPI Metric Cards** with animated counters and trend indicators
 - **5 Interactive Charts** (Line, Area, Bar, Composed) with tooltips and zoom
 - **Live Data Updates** via Server-Sent Events (SSE) every 60 seconds
 - **Responsive Design** — Optimized for desktop, tablet, and mobile
 
-### 🔐 Authentication & Authorization
+### <img src="apps/web/public/svg/solid/lock.svg" width="18" height="18" alt="Security"> Authentication & Authorization
 - **Clerk Integration** — Secure authentication with social logins
 - **Role-Based Access Control** — Admin, Moderator, Operator roles
 - **Multi-Site Permissions** — Site-level data isolation and access control
 - **Session Management** — Automatic token refresh and secure logout
 
-### 📈 Advanced Analytics
+### <img src="apps/web/public/svg/solid/chart-bar.svg" width="18" height="18" alt="Analytics"> Advanced Analytics
 - **Production vs Target** — Compare actual output against daily goals
 - **Received vs Dispatched** — Track material flows with net calculations
 - **Inventory Trends** — Area charts with threshold bands and predictions
 - **Equipment Efficiency** — Utilization heatmaps and breakdown analysis
 - **Manpower Analytics** — Shift-based attendance and labor distribution
 
-### 🎨 Modern UI/UX
+### <img src="apps/web/public/svg/solid/palette.svg" width="18" height="18" alt="UI/UX"> Modern UI/UX
 - **Flat UI Design** — Clean, data-first interface with subtle elevation
 - **Dark/Light Themes** — Automatic theme switching with user preferences
 - **Smooth Animations** — Stagger cascade effects and micro-interactions
 - **Accessibility** — WCAG 2.1 AA compliant with keyboard navigation
 
-### 📦 Export System
+### <img src="apps/web/public/svg/solid/file-export.svg" width="18" height="18" alt="Export"> Export System
 - **Multiple Formats** — Excel (.xlsx), PDF (.pdf), CSV (.csv), Power BI CSV
 - **Background Processing** — Async job queue with progress tracking
 - **Smart Filtering** — Date ranges, modules, granularity (daily/weekly/monthly)
@@ -94,7 +94,7 @@
 
 ---
 
-## 🛠 Technology Stack
+## <img src="apps/web/public/svg/solid/tools.svg" width="20" height="20" alt="Technology Stack"> Technology Stack
 
 <table>
 <tr>
@@ -139,7 +139,7 @@
 
 ---
 
-## 🏗️ Architecture
+## <img src="apps/web/public/svg/solid/building.svg" width="20" height="20" alt="Architecture"> Architecture
 
 ### Nx Monorepo Structure
 
@@ -218,7 +218,7 @@ closingStock = openingStock + production + received - dispatched + adjustment
 
 ---
 
-## 🚀 Quick Start
+## <img src="apps/web/public/svg/solid/rocket.svg" width="20" height="20" alt="Quick Start"> Quick Start
 
 ### Prerequisites
 
@@ -295,7 +295,7 @@ Ensure you have the following installed:
 
 ---
 
-## 💻 Development
+## <img src="apps/web/public/svg/solid/laptop-code.svg" width="20" height="20" alt="Development"> Development
 
 ### Available Commands
 
@@ -399,7 +399,7 @@ export async function createProduction(data: ProductionInput) {
 
 ---
 
-## 🧪 Testing
+## <img src="apps/web/public/svg/solid/flask.svg" width="20" height="20" alt="Testing"> Testing
 
 ### Unit Tests (Vitest)
 
@@ -458,7 +458,7 @@ apps/web-e2e/src/
 
 ---
 
-## 🚢 Deployment
+## <img src="apps/web/public/svg/solid/ship.svg" width="20" height="20" alt="Deployment"> Deployment
 
 ### Environment Setup
 
@@ -514,7 +514,7 @@ apps/web-e2e/src/
 
 ---
 
-## 📚 Documentation
+## <img src="apps/web/public/svg/solid/book.svg" width="20" height="20" alt="Documentation"> Documentation
 
 ### Complete Documentation Set
 
@@ -551,7 +551,7 @@ apps/web-e2e/src/
 
 ---
 
-## 🤝 Contributing
+## <img src="apps/web/public/svg/solid/handshake.svg" width="20" height="20" alt="Contributing"> Contributing
 
 ### Development Workflow
 
@@ -594,15 +594,15 @@ apps/web-e2e/src/
 
 ---
 
-## 📄 License
+## <img src="apps/web/public/svg/solid/file-contract.svg" width="20" height="20" alt="License"> License
 
 **Proprietary** — All rights reserved. Unauthorized copying, modification, distribution, or use of this software is strictly prohibited.
 
 ---
 
-## 🙏 Acknowledgments
+## <img src="apps/web/public/svg/solid/heart.svg" width="20" height="20" alt="Acknowledgments"> Acknowledgments
 
-Built with ❤️ using:
+Built with <img src="apps/web/public/svg/solid/heart.svg" width="12" height="12" alt="love"> using:
 - [Next.js](https://nextjs.org/) by Vercel
 - [Nx](https://nx.dev/) by Nrwl
 - [Prisma](https://www.prisma.io/) by Prisma Data
@@ -614,7 +614,7 @@ Built with ❤️ using:
 
 <div align="center">
 
-**[⬆ Back to Top](#-deskops)**
+**[<img src="apps/web/public/svg/solid/arrow-up.svg" width="12" height="12" alt="Back to top"> Back to Top](#-deskops)**
 
 Made with precision and care for C&D recycling operations worldwide.
 
