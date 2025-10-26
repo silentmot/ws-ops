@@ -1,170 +1,621 @@
-# DeskOps - Construction & Demolition Recycling Facility Management System
+<div align="center">
 
-A comprehensive facility management system for construction and demolition (C&D) recycling operations, built with modern web technologies.
+# 🏗️ DeskOps
 
-## Workspace Structure
+### Construction & Demolition Recycling Facility Management System
 
-- `apps/web` - Next.js 16 application with App Router
-- `apps/web-e2e` - Playwright E2E tests
-- `packages/constants` - Centralized constants and type definitions
-- `packages/database` - Prisma schema and database utilities
-- `packages/ui` - Shared UI components (Radix UI + Tailwind CSS)
-- `packages/eslint-config` - Shared ESLint configuration
+*A production-ready, enterprise-grade facility management platform for C&D recycling operations*
 
-## Tech Stack
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Nx](https://img.shields.io/badge/Nx-Monorepo-143055?logo=nx)](https://nx.dev/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-316192?logo=postgresql)](https://www.postgresql.org/)
+[![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma)](https://www.prisma.io/)
+[![License](https://img.shields.io/badge/License-Proprietary-red)](./LICENSE)
 
-- **Framework:** Next.js 16 (App Router)
-- **Language:** TypeScript (strict mode, NO `any` types)
+[📚 Documentation](./docs) • [🚀 Quick Start](#-quick-start) • [🏗️ Architecture](#-architecture) • [🧪 Testing](#-testing)
+
+</div>
+
+---
+
+## 📋 Table of Contents
+
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [Technology Stack](#-technology-stack)
+- [Architecture](#-architecture)
+- [Quick Start](#-quick-start)
+- [Development](#-development)
+- [Testing](#-testing)
+- [Deployment](#-deployment)
+- [Documentation](#-documentation)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
+
+## 🎯 Overview
+
+**DeskOps** is a comprehensive facility management system designed specifically for Construction & Demolition (C&D) recycling operations. Built with modern web technologies and following enterprise-grade best practices, it provides real-time tracking, analytics, and reporting for:
+
+- 📦 **Materials Inventory** — Real-time stock tracking with automated calculations
+- 🏭 **Production Monitoring** — Daily crusher production metrics and efficiency tracking
+- 🚚 **Dispatch Management** — Transaction records for material shipments and customer orders
+- ♻️ **Recycling Tracking** — Received materials (CDW) intake and processing logs
+- ⚙️ **Equipment Utilization** — Operational hours, maintenance, and performance analytics
+- 👷 **Manpower Attendance** — Shift-based headcount and labor hours tracking
+- 📊 **Dashboard Analytics** — KPI metrics, trends, and interactive data visualizations
+- 📁 **Export Capabilities** — Excel, PDF, and CSV reports with Power BI integration
+
+### Business Value
+
+- **Real-time Visibility** — Instant access to inventory levels, production rates, and operational metrics
+- **Data-Driven Decisions** — Interactive charts and KPI cards for strategic planning
+- **Audit Compliance** — Complete audit trail for all transactions and exports
+- **Multi-Site Support** — Manage multiple facilities from a single platform
+- **Role-Based Access** — Granular permissions for operators, moderators, and administrators
+
+---
+
+## ✨ Key Features
+
+### 📊 Real-Time Dashboard
+- **4 KPI Metric Cards** with animated counters and trend indicators
+- **5 Interactive Charts** (Line, Area, Bar, Composed) with tooltips and zoom
+- **Live Data Updates** via Server-Sent Events (SSE) every 60 seconds
+- **Responsive Design** — Optimized for desktop, tablet, and mobile
+
+### 🔐 Authentication & Authorization
+- **Clerk Integration** — Secure authentication with social logins
+- **Role-Based Access Control** — Admin, Moderator, Operator roles
+- **Multi-Site Permissions** — Site-level data isolation and access control
+- **Session Management** — Automatic token refresh and secure logout
+
+### 📈 Advanced Analytics
+- **Production vs Target** — Compare actual output against daily goals
+- **Received vs Dispatched** — Track material flows with net calculations
+- **Inventory Trends** — Area charts with threshold bands and predictions
+- **Equipment Efficiency** — Utilization heatmaps and breakdown analysis
+- **Manpower Analytics** — Shift-based attendance and labor distribution
+
+### 🎨 Modern UI/UX
+- **Flat UI Design** — Clean, data-first interface with subtle elevation
+- **Dark/Light Themes** — Automatic theme switching with user preferences
+- **Smooth Animations** — Stagger cascade effects and micro-interactions
+- **Accessibility** — WCAG 2.1 AA compliant with keyboard navigation
+
+### 📦 Export System
+- **Multiple Formats** — Excel (.xlsx), PDF (.pdf), CSV (.csv), Power BI CSV
+- **Background Processing** — Async job queue with progress tracking
+- **Smart Filtering** — Date ranges, modules, granularity (daily/weekly/monthly)
+- **Rate Limiting** — Max 5 active jobs per user for fair resource allocation
+- **Secure Downloads** — Signed URLs with 24-hour expiry and SHA-256 hashing
+
+---
+
+## 🛠 Technology Stack
+
+<table>
+<tr>
+<td width="33%" valign="top">
+
+### Frontend
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **Language:** [TypeScript 5.9](https://www.typescriptlang.org/)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **UI Components:** [Radix UI](https://www.radix-ui.com/)
+- **State:** [Zustand](https://zustand-demo.pmnd.rs/) + [React Query](https://tanstack.com/query)
+- **Forms:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+- **Charts:** [Recharts](https://recharts.org/)
+
+</td>
+<td width="33%" valign="top">
+
+### Backend
+- **Runtime:** [Bun](https://bun.sh/)
+- **Database:** [PostgreSQL 17](https://www.postgresql.org/)
+- **ORM:** [Prisma](https://www.prisma.io/)
+- **Authentication:** [Clerk](https://clerk.com/)
+- **API:** Next.js API Routes + Server Actions
+- **Validation:** Zod schemas
+- **Job Queue:** BullMQ + Redis (planned)
+
+</td>
+<td width="33%" valign="top">
+
+### DevOps
+- **Monorepo:** [Nx](https://nx.dev/)
 - **Package Manager:** Bun
-- **Monorepo:** Nx
-- **Database:** PostgreSQL with Prisma
-- **Authentication:** Clerk
-- **Styling:** Tailwind CSS v4
-- **UI Components:** Radix UI
-- **State Management:** Zustand + React Query
-- **Testing:** Vitest + Playwright
+- **Testing:** [Vitest](https://vitest.dev/) + [Playwright](https://playwright.dev/)
+- **Linting:** ESLint + Prettier
+- **Git Hooks:** Husky + lint-staged
+- **CI/CD:** GitHub Actions (planned)
+- **Hosting:** Vercel (planned)
 
-## Getting Started
+</td>
+</tr>
+</table>
 
-1. Install dependencies:
+---
 
-   ```sh
+## 🏗️ Architecture
+
+### Nx Monorepo Structure
+
+```
+ws-ops/
+├── apps/
+│   ├── web/                          # Next.js 16 application
+│   │   ├── src/
+│   │   │   ├── app/                  # App Router pages
+│   │   │   │   ├── dashboard/        # Main dashboard
+│   │   │   │   ├── production/       # Production tracking
+│   │   │   │   ├── dispatch/         # Dispatch management
+│   │   │   │   ├── received/         # Received materials
+│   │   │   │   ├── equipment/        # Equipment logs
+│   │   │   │   ├── manpower/         # Manpower attendance
+│   │   │   │   ├── inventory/        # Inventory snapshots
+│   │   │   │   └── api/              # API routes
+│   │   │   ├── components/           # React components
+│   │   │   │   ├── forms/            # Form components
+│   │   │   │   ├── charts/           # Chart components
+│   │   │   │   ├── layout/           # Layout components
+│   │   │   │   └── ui/               # Base UI components
+│   │   │   ├── hooks/                # Custom React hooks
+│   │   │   ├── lib/                  # Utilities & configs
+│   │   │   ├── stores/               # Zustand stores
+│   │   │   └── types/                # TypeScript types
+│   │   ├── public/                   # Static assets
+│   │   └── prisma/                   # Database schema
+│   └── web-e2e/                      # Playwright E2E tests
+├── packages/
+│   ├── ui/                           # Shared UI components
+│   ├── constants/                    # Centralized constants (SSOT)
+│   ├── database/                     # Prisma client & schemas
+│   └── eslint-config/                # Shared ESLint config
+├── docs/                             # Documentation
+├── nx.json                           # Nx configuration
+├── package.json                      # Root package.json
+└── tsconfig.json                     # Root TypeScript config
+```
+
+### Core Design Principles
+
+#### 1. GZANSP × AOC Compliance
+- ✅ **Zero Assumptions** — Every decision cites explicit source
+- ✅ **No `any` Types** — Strict TypeScript with concrete types only
+- ✅ **SSOT** — All constants imported from `@deskops/constants`
+- ✅ **No API Versioning** — Use `/api/[module]/[resource]` format only
+- ✅ **Method-First** — Single method per operation using adapter pattern
+
+#### 2. Database Schema (PostgreSQL + Prisma)
+- **Transaction Tables**: Production, Dispatch, ReceivedMaterial, EquipmentLog, ManpowerLog
+- **Master Tables**: Site, Material, Equipment, ManpowerRole
+- **Calculated Tables**: InventorySnapshot, DashboardMetric
+- **Audit Tables**: ExportJob, ExportAudit
+
+#### 3. Inventory Calculation Formula
+```typescript
+inventory = production + received - dispatched
+// Or for daily snapshots:
+closingStock = openingStock + production + received - dispatched + adjustment
+```
+
+#### 4. API Route Pattern
+```
+/api/production           # List all production entries
+/api/production/[id]      # Get/Update/Delete specific entry
+/api/dispatch             # List all dispatch transactions
+/api/dispatch/[id]        # Get/Update/Delete specific transaction
+/api/received             # List received materials
+/api/equipment            # Equipment logs
+/api/manpower             # Manpower attendance
+/api/inventory            # Inventory snapshots
+/api/dashboard/metrics    # Dashboard KPIs
+/api/exports              # Export job management
+```
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+Ensure you have the following installed:
+
+- **Node.js** >= 18.0.0
+- **Bun** >= 1.2.0
+- **PostgreSQL** >= 17.0
+- **Git**
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/silentmot/ws-ops.git
+   cd ws-ops
+   ```
+
+2. **Install dependencies**
+
+   ```bash
    bun install
    ```
 
-2. Setup environment:
+3. **Setup environment variables**
 
-   ```sh
+   ```bash
    cp .env.example .env
    ```
 
-   Fill in the required environment variables in `.env`
+   Edit `.env` and fill in required variables:
 
-3. Initialize Husky:
+   ```env
+   # Database
+   DATABASE_URL="postgresql://user:password@localhost:5432/deskops_dev"
+   DIRECT_URL="postgresql://user:password@localhost:5432/deskops_dev"
 
-   ```sh
-   bun run prepare
+   # Clerk Authentication
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
+   CLERK_SECRET_KEY="sk_test_..."
+
+   # App Configuration
+   NEXT_PUBLIC_APP_URL="http://localhost:3000"
+   NODE_ENV="development"
    ```
 
-4. Generate Prisma client:
+4. **Initialize database**
 
-   ```sh
+   ```bash
+   # Generate Prisma client
    bun run db:generate
-   ```
 
-5. Run migrations:
-
-   ```sh
+   # Run migrations
    bun run db:migrate
-   ```
 
-6. Seed database:
-
-   ```sh
+   # Seed database with initial data
    bun run db:seed
    ```
 
-7. Start dev server:
+5. **Initialize Git hooks**
 
-   ```sh
+   ```bash
+   bun run prepare
+   ```
+
+6. **Start development server**
+
+   ```bash
    bun run dev
    ```
 
-## Available Scripts
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- `bun run build` - Build all projects
-- `bun run dev` - Start development servers
-- `bun run lint` - Lint all projects
-- `bun run type-check` - Type check all projects
-- `bun run test` - Run unit tests
-- `bun run test:e2e` - Run E2E tests
-- `bun run clean` - Clean build artifacts
-- `bun run format` - Format code with Prettier
-- `bun run db:generate` - Generate Prisma client
-- `bun run db:migrate` - Run database migrations
-- `bun run db:seed` - Seed database
-- `bun run db:studio` - Open Prisma Studio
+---
 
-## Development
+## 💻 Development
 
-This project uses Nx for monorepo management. Learn more:
+### Available Commands
 
-- [Nx Documentation](https://nx.dev)
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Prisma Documentation](https://www.prisma.io/docs)
+```bash
+# Development
+bun run dev              # Start Next.js dev server with Turbopack
+bun run build            # Build all projects for production
+bun run start            # Start production server
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/next?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+# Code Quality
+bun run lint             # Lint all projects
+bun run type-check       # TypeScript type checking
+bun run format           # Format code with Prettier
 
-## Finish your CI setup
+# Testing
+bun run test             # Run unit tests (Vitest)
+bun run test:ui          # Run tests with UI
+bun run test:e2e         # Run E2E tests (Playwright)
+bun run test:e2e:ui      # Run E2E tests with UI
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/5Gr39XI4XC)
+# Database
+bun run db:generate      # Generate Prisma client
+bun run db:migrate       # Run database migrations
+bun run db:seed          # Seed database with sample data
+bun run db:studio        # Open Prisma Studio (database GUI)
 
-## Run tasks
-
-To run the dev server for your app, use:
-
-```sh
-npx nx dev web
+# Utilities
+bun run clean            # Clean build artifacts (.next, .nx)
+bunx nx graph            # View project dependency graph
+bunx nx reset            # Reset Nx cache
 ```
 
-To create a production bundle:
+### Nx Workspace Commands
 
-```sh
-npx nx build web
+```bash
+# Run tasks for specific project
+bunx nx dev web          # Start web app dev server
+bunx nx build web        # Build web app
+bunx nx test web         # Test web app
+bunx nx lint web         # Lint web app
+
+# Run tasks for multiple projects
+bunx nx run-many -t build     # Build all projects
+bunx nx run-many -t test      # Test all projects
+
+# Run tasks for affected projects only
+bunx nx affected:test         # Test affected by changes
+bunx nx affected:build        # Build affected by changes
+
+# View project details
+bunx nx show project web      # Show web project details
+bunx nx show projects         # List all projects
 ```
 
-To see all available targets to run for a project, run:
+### Project Structure Guidelines
 
-```sh
-npx nx show project web
+#### Component Organization
+```typescript
+// components/forms/production-form.tsx
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ProductionSchema } from '@deskops/database';
+import { MATERIALS, getMaterialById } from '@deskops/constants';
+
+export function ProductionForm() {
+  const form = useForm({
+    resolver: zodResolver(ProductionSchema),
+  });
+  // ...
+}
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+#### Custom Hooks
+```typescript
+// hooks/use-production.ts
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { ProductionSchema } from '@deskops/database';
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/next:app demo
+export function useProduction(siteId: string) {
+  return useQuery({
+    queryKey: ['production', siteId],
+    queryFn: () => fetchProduction(siteId),
+  });
+}
 ```
 
-To generate a new library, use:
+#### Server Actions
+```typescript
+// app/actions/production.ts
+'use server';
+import { auth } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
+import { prisma } from '@/lib/db';
 
-```sh
-npx nx g @nx/react:lib mylib
+export async function createProduction(data: ProductionInput) {
+  const { userId } = await auth();
+  if (!userId) return { success: false, error: 'Unauthorized' };
+  // ...
+}
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+---
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## 🧪 Testing
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### Unit Tests (Vitest)
 
-## Install Nx Console
+```bash
+# Run all unit tests
+bun run test
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+# Run tests in watch mode
+bun run test:watch
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+# Run tests with coverage
+bun run test:coverage
 
-## Useful links
+# Run tests with UI
+bun run test:ui
+```
 
-Learn more:
+### E2E Tests (Playwright)
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/next?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```bash
+# Run all E2E tests
+bun run test:e2e
 
-And join the Nx community:
+# Run E2E tests with UI
+bun run test:e2e:ui
 
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+# Run specific test file
+bunx playwright test auth.spec.ts
+
+# Run tests in specific browser
+bunx playwright test --project=chromium
+```
+
+### Test Structure
+
+```
+apps/web/src/
+├── components/
+│   └── forms/
+│       └── __tests__/
+│           └── production-form.test.tsx
+├── hooks/
+│   └── __tests__/
+│       └── use-production.test.ts
+└── lib/
+    └── exporters/
+        └── __tests__/
+            └── excel.test.ts
+
+apps/web-e2e/src/
+├── auth.spec.ts
+├── production.spec.ts
+├── dashboard.spec.ts
+└── export.spec.ts
+```
+
+---
+
+## 🚢 Deployment
+
+### Environment Setup
+
+1. **Production Environment Variables**
+
+   ```env
+   # Production Database (Vercel Postgres, Supabase, etc.)
+   DATABASE_URL="postgresql://..."
+   DIRECT_URL="postgresql://..."
+
+   # Clerk Production Keys
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_live_..."
+   CLERK_SECRET_KEY="sk_live_..."
+
+   # Production URLs
+   NEXT_PUBLIC_APP_URL="https://deskops.app"
+   NODE_ENV="production"
+
+   # Optional: Redis for job queue
+   REDIS_URL="redis://..."
+   ```
+
+2. **Vercel Deployment**
+
+   ```bash
+   # Install Vercel CLI
+   bun add -g vercel
+
+   # Deploy to preview
+   vercel
+
+   # Deploy to production
+   vercel --prod
+   ```
+
+3. **Database Migration**
+
+   ```bash
+   # Run migrations on production
+   bunx prisma migrate deploy
+
+   # Seed production data (if needed)
+   bunx prisma db seed
+   ```
+
+### Build Optimization
+
+- **Next.js Build**: `bunx nx build web`
+- **Static Exports**: Configure in `next.config.ts`
+- **Edge Functions**: API routes automatically deployed to Edge
+- **Image Optimization**: Next.js Image component with CDN
+- **Bundle Analysis**: Set `ANALYZE=true` environment variable
+
+---
+
+## 📚 Documentation
+
+### Complete Documentation Set
+
+- **[Implementation Plan](./docs/DeskOps-ImplementationPlan.md)** — Remaining phases breakdown
+- **[Configuration Guide](./docs/DeskOps-Configuration.md)** — Nx, TypeScript, Tailwind setup
+- **[Constants Reference](./docs/DeskOps-constants.md)** — SSOT for materials, equipment, roles
+- **[Database Schema](./docs/DeskOps-DB-Prisma.md)** — Prisma models and relationships
+- **[Backend Guide](./docs/DeskOps-Backend.md)** — API routes and server actions
+- **[Frontend Guide](./docs/DeskOps-Frontend.md)** — Components and hooks
+- **[Hooks Guide](./docs/DeskOps-Hooks.md)** — Custom React hooks
+- **[Interface Overview](./docs/DeskOps-Interface-Overview.md)** — UI/UX specifications
+
+### Key Concepts
+
+#### Materials Catalog (17 Materials)
+- **Aggregates** (9) — 3/4, 1/2, 3/8, 2, 1.5, 1, 3/16, 1/16, 0-5mm
+- **Fine** (2) — Sand, Powder
+- **Specialty** (1) — Oversize
+- **Processed Base** (2) — Subbase, A1A
+- **Raw Feed** (3) — Feed, CDW, Pure (not sellable)
+
+#### Equipment Catalog (9 Items)
+- **Crushing/Screening** — Static Crusher, Mobile Screen
+- **Earth Moving** — Front Loader, Bulldozer, Excavator
+- **Hauling** — Dumper, Dyna
+- **Auxiliary** — Grader, Winch
+
+#### Manpower Roles (5 Roles)
+- Equipment Driver
+- Crusher Operator
+- Maintenance Worker
+- Laborer
+- Security
+
+---
+
+## 🤝 Contributing
+
+### Development Workflow
+
+1. **Create a feature branch**
+
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Make changes following conventions**
+   - Use conventional commits: `feat:`, `fix:`, `docs:`, `chore:`
+   - Run `bun run lint` before committing
+   - Ensure all tests pass: `bun run test`
+
+3. **Commit with pre-commit hooks**
+
+   ```bash
+   git add .
+   git commit -m "feat: add production chart component"
+   ```
+
+   Husky will automatically:
+   - Lint staged files
+   - Format code with Prettier
+   - Run type checking
+
+4. **Push and create Pull Request**
+
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+### Code Style Guidelines
+
+- **TypeScript**: NO `any` types — use explicit types always
+- **Imports**: Absolute paths with `@/` or `@deskops/` prefixes
+- **Components**: Functional components with TypeScript interfaces
+- **Naming**: PascalCase for components, camelCase for functions
+- **Formatting**: Prettier with 2-space indentation, single quotes
+
+---
+
+## 📄 License
+
+**Proprietary** — All rights reserved. Unauthorized copying, modification, distribution, or use of this software is strictly prohibited.
+
+---
+
+## 🙏 Acknowledgments
+
+Built with ❤️ using:
+- [Next.js](https://nextjs.org/) by Vercel
+- [Nx](https://nx.dev/) by Nrwl
+- [Prisma](https://www.prisma.io/) by Prisma Data
+- [Clerk](https://clerk.com/) for authentication
+- [Radix UI](https://www.radix-ui.com/) for primitives
+- [Tailwind CSS](https://tailwindcss.com/) for styling
+
+---
+
+<div align="center">
+
+**[⬆ Back to Top](#-deskops)**
+
+Made with precision and care for C&D recycling operations worldwide.
+
+</div>
