@@ -1,6 +1,6 @@
 <div align="center">
 
-# <img src="apps/web/public/svg/solid/building.svg" width="32" height="32" alt="Building" style="filter: invert(1);"> DeskOps
+# <img src="apps/web/public/svg/solid/building.svg" width="32" height="32" alt="Building" style="filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);"> DeskOps
 
 ### Construction & Demolition Recycling Facility Management System
 
@@ -13,13 +13,13 @@
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma)](https://www.prisma.io/)
 [![License](https://img.shields.io/badge/License-Proprietary-red)](./LICENSE)
 
-[<img src="apps/web/public/svg/solid/book.svg" width="16" height="16" alt="Documentation" style="filter: invert(1);"> Documentation](./docs) • [<img src="apps/web/public/svg/solid/rocket.svg" width="16" height="16" alt="Quick Start" style="filter: invert(1);"> Quick Start](#-quick-start) • [<img src="apps/web/public/svg/solid/building.svg" width="16" height="16" alt="Architecture" style="filter: invert(1);"> Architecture](#-architecture) • [<img src="apps/web/public/svg/solid/flask.svg" width="16" height="16" alt="Testing" style="filter: invert(1);"> Testing](#-testing)
+[<img src="apps/web/public/svg/solid/book.svg" width="16" height="16" alt="Documentation" style="filter: invert(58%) sepia(78%) saturate(2476%) hue-rotate(192deg) brightness(100%) contrast(101%);"> Documentation](./docs) • [<img src="apps/web/public/svg/solid/rocket.svg" width="16" height="16" alt="Quick Start" style="filter: invert(27%) sepia(98%) saturate(3705%) hue-rotate(348deg) brightness(99%) contrast(95%);"> Quick Start](#-quick-start) • [<img src="apps/web/public/svg/solid/building.svg" width="16" height="16" alt="Architecture" style="filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);"> Architecture](#-architecture) • [<img src="apps/web/public/svg/solid/flask.svg" width="16" height="16" alt="Testing" style="filter: invert(46%) sepia(95%) saturate(1794%) hue-rotate(241deg) brightness(99%) contrast(92%);"> Testing](#-testing)
 
 </div>
 
 ---
 
-## <img src="apps/web/public/svg/solid/list.svg" width="20" height="20" alt="Table of Contents" style="filter: invert(1);"> Table of Contents
+## <img src="apps/web/public/svg/solid/list.svg" width="20" height="20" alt="Table of Contents" style="filter: invert(62%) sepia(20%) saturate(1465%) hue-rotate(169deg) brightness(91%) contrast(91%);"> Table of Contents
 
 - [Overview](#-overview)
 - [Key Features](#-key-features)
@@ -35,18 +35,18 @@
 
 ---
 
-## <img src="apps/web/public/svg/solid/bullseye.svg" width="20" height="20" alt="Overview" style="filter: invert(1);"> Overview
+## <img src="apps/web/public/svg/solid/bullseye.svg" width="20" height="20" alt="Overview" style="filter: invert(27%) sepia(98%) saturate(3705%) hue-rotate(348deg) brightness(99%) contrast(95%);"> Overview
 
 **DeskOps** is a comprehensive facility management system designed specifically for Construction & Demolition (C&D) recycling operations. Built with modern web technologies and following enterprise-grade best practices, it provides real-time tracking, analytics, and reporting for:
 
-- <img src="apps/web/public/svg/solid/box.svg" width="16" height="16" alt="Materials" style="filter: invert(1);"> **Materials Inventory** — Real-time stock tracking with automated calculations
-- <img src="apps/web/public/svg/solid/industry.svg" width="16" height="16" alt="Production" style="filter: invert(1);"> **Production Monitoring** — Daily crusher production metrics and efficiency tracking
-- <img src="apps/web/public/svg/solid/truck.svg" width="16" height="16" alt="Dispatch" style="filter: invert(1);"> **Dispatch Management** — Transaction records for material shipments and customer orders
-- <img src="apps/web/public/svg/solid/recycle.svg" width="16" height="16" alt="Recycling" style="filter: invert(1);"> **Recycling Tracking** — Received materials (CDW) intake and processing logs
-- <img src="apps/web/public/svg/solid/gear.svg" width="16" height="16" alt="Equipment" style="filter: invert(1);"> **Equipment Utilization** — Operational hours, maintenance, and performance analytics
-- <img src="apps/web/public/svg/solid/user.svg" width="16" height="16" alt="Manpower" style="filter: invert(1);"> **Manpower Attendance** — Shift-based headcount and labor hours tracking
-- <img src="apps/web/public/svg/solid/chart-line.svg" width="16" height="16" alt="Dashboard" style="filter: invert(1);"> **Dashboard Analytics** — KPI metrics, trends, and interactive data visualizations
-- <img src="apps/web/public/svg/solid/folder.svg" width="16" height="16" alt="Export" style="filter: invert(1);"> **Export Capabilities** — Excel, PDF, and CSV reports with Power BI integration
+- <img src="apps/web/public/svg/solid/box.svg" width="16" height="16" alt="Materials" style="filter: invert(64%) sepia(65%) saturate(432%) hue-rotate(358deg) brightness(95%) contrast(92%);"> **Materials Inventory** — Real-time stock tracking with automated calculations
+- <img src="apps/web/public/svg/solid/industry.svg" width="16" height="16" alt="Production" style="filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);"> **Production Monitoring** — Daily crusher production metrics and efficiency tracking
+- <img src="apps/web/public/svg/solid/truck.svg" width="16" height="16" alt="Dispatch" style="filter: invert(58%) sepia(78%) saturate(2476%) hue-rotate(192deg) brightness(100%) contrast(101%);"> **Dispatch Management** — Transaction records for material shipments and customer orders
+- <img src="apps/web/public/svg/solid/recycle.svg" width="16" height="16" alt="Recycling" style="filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);"> **Recycling Tracking** — Received materials (CDW) intake and processing logs
+- <img src="apps/web/public/svg/solid/gear.svg" width="16" height="16" alt="Equipment" style="filter: invert(50%) sepia(11%) saturate(1576%) hue-rotate(169deg) brightness(92%) contrast(87%);"> **Equipment Utilization** — Operational hours, maintenance, and performance analytics
+- <img src="apps/web/public/svg/solid/user.svg" width="16" height="16" alt="Manpower" style="filter: invert(46%) sepia(95%) saturate(1794%) hue-rotate(241deg) brightness(99%) contrast(92%);"> **Manpower Attendance** — Shift-based headcount and labor hours tracking
+- <img src="apps/web/public/svg/solid/chart-line.svg" width="16" height="16" alt="Dashboard" style="filter: invert(43%) sepia(96%) saturate(1196%) hue-rotate(338deg) brightness(98%) contrast(95%);"> **Dashboard Analytics** — KPI metrics, trends, and interactive data visualizations
+- <img src="apps/web/public/svg/solid/folder.svg" width="16" height="16" alt="Export" style="filter: invert(70%) sepia(65%) saturate(601%) hue-rotate(358deg) brightness(92%) contrast(87%);"> **Export Capabilities** — Excel, PDF, and CSV reports with Power BI integration
 
 ### Business Value
 
@@ -58,34 +58,34 @@
 
 ---
 
-## <img src="apps/web/public/svg/solid/star.svg" width="20" height="20" alt="Key Features" style="filter: invert(1);"> Key Features
+## <img src="apps/web/public/svg/solid/star.svg" width="20" height="20" alt="Key Features" style="filter: invert(70%) sepia(79%) saturate(3207%) hue-rotate(356deg) brightness(104%) contrast(101%);"> Key Features
 
-### <img src="apps/web/public/svg/solid/chart-line.svg" width="18" height="18" alt="Dashboard" style="filter: invert(1);"> Real-Time Dashboard
+### <img src="apps/web/public/svg/solid/chart-line.svg" width="18" height="18" alt="Dashboard" style="filter: invert(43%) sepia(96%) saturate(1196%) hue-rotate(338deg) brightness(98%) contrast(95%);"> Real-Time Dashboard
 - **4 KPI Metric Cards** with animated counters and trend indicators
 - **5 Interactive Charts** (Line, Area, Bar, Composed) with tooltips and zoom
 - **Live Data Updates** via Server-Sent Events (SSE) every 60 seconds
 - **Responsive Design** — Optimized for desktop, tablet, and mobile
 
-### <img src="apps/web/public/svg/solid/lock.svg" width="18" height="18" alt="Security" style="filter: invert(1);"> Authentication & Authorization
+### <img src="apps/web/public/svg/solid/lock.svg" width="18" height="18" alt="Security" style="filter: invert(27%) sepia(98%) saturate(3705%) hue-rotate(348deg) brightness(99%) contrast(95%);"> Authentication & Authorization
 - **Clerk Integration** — Secure authentication with social logins
 - **Role-Based Access Control** — Admin, Moderator, Operator roles
 - **Multi-Site Permissions** — Site-level data isolation and access control
 - **Session Management** — Automatic token refresh and secure logout
 
-### <img src="apps/web/public/svg/solid/chart-bar.svg" width="18" height="18" alt="Analytics" style="filter: invert(1);"> Advanced Analytics
+### <img src="apps/web/public/svg/solid/chart-bar.svg" width="18" height="18" alt="Analytics" style="filter: invert(46%) sepia(95%) saturate(1794%) hue-rotate(241deg) brightness(99%) contrast(92%);"> Advanced Analytics
 - **Production vs Target** — Compare actual output against daily goals
 - **Received vs Dispatched** — Track material flows with net calculations
 - **Inventory Trends** — Area charts with threshold bands and predictions
 - **Equipment Efficiency** — Utilization heatmaps and breakdown analysis
 - **Manpower Analytics** — Shift-based attendance and labor distribution
 
-### <img src="apps/web/public/svg/solid/palette.svg" width="18" height="18" alt="UI/UX" style="filter: invert(1);"> Modern UI/UX
+### <img src="apps/web/public/svg/solid/palette.svg" width="18" height="18" alt="UI/UX" style="filter: invert(43%) sepia(95%) saturate(1794%) hue-rotate(282deg) brightness(99%) contrast(92%);"> Modern UI/UX
 - **Flat UI Design** — Clean, data-first interface with subtle elevation
 - **Dark/Light Themes** — Automatic theme switching with user preferences
 - **Smooth Animations** — Stagger cascade effects and micro-interactions
 - **Accessibility** — WCAG 2.1 AA compliant with keyboard navigation
 
-### <img src="apps/web/public/svg/solid/file-export.svg" width="18" height="18" alt="Export" style="filter: invert(1);"> Export System
+### <img src="apps/web/public/svg/solid/file-export.svg" width="18" height="18" alt="Export" style="filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);"> Export System
 - **Multiple Formats** — Excel (.xlsx), PDF (.pdf), CSV (.csv), Power BI CSV
 - **Background Processing** — Async job queue with progress tracking
 - **Smart Filtering** — Date ranges, modules, granularity (daily/weekly/monthly)
@@ -94,7 +94,7 @@
 
 ---
 
-## <img src="apps/web/public/svg/solid/tools.svg" width="20" height="20" alt="Technology Stack" style="filter: invert(1);"> Technology Stack
+## <img src="apps/web/public/svg/solid/tools.svg" width="20" height="20" alt="Technology Stack" style="filter: invert(50%) sepia(11%) saturate(1576%) hue-rotate(169deg) brightness(92%) contrast(87%);"> Technology Stack
 
 <table>
 <tr>
@@ -139,7 +139,7 @@
 
 ---
 
-## <img src="apps/web/public/svg/solid/building.svg" width="20" height="20" alt="Architecture" style="filter: invert(1);"> Architecture
+## <img src="apps/web/public/svg/solid/building.svg" width="20" height="20" alt="Architecture" style="filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);"> Architecture
 
 ### Nx Monorepo Structure
 
@@ -218,7 +218,7 @@ closingStock = openingStock + production + received - dispatched + adjustment
 
 ---
 
-## <img src="apps/web/public/svg/solid/rocket.svg" width="20" height="20" alt="Quick Start" style="filter: invert(1);"> Quick Start
+## <img src="apps/web/public/svg/solid/rocket.svg" width="20" height="20" alt="Quick Start" style="filter: invert(27%) sepia(98%) saturate(3705%) hue-rotate(348deg) brightness(99%) contrast(95%);"> Quick Start
 
 ### Prerequisites
 
@@ -295,7 +295,7 @@ Ensure you have the following installed:
 
 ---
 
-## <img src="apps/web/public/svg/solid/laptop-code.svg" width="20" height="20" alt="Development" style="filter: invert(1);"> Development
+## <img src="apps/web/public/svg/solid/laptop-code.svg" width="20" height="20" alt="Development" style="filter: invert(58%) sepia(78%) saturate(2476%) hue-rotate(192deg) brightness(100%) contrast(101%);"> Development
 
 ### Available Commands
 
@@ -399,7 +399,7 @@ export async function createProduction(data: ProductionInput) {
 
 ---
 
-## <img src="apps/web/public/svg/solid/flask.svg" width="20" height="20" alt="Testing" style="filter: invert(1);"> Testing
+## <img src="apps/web/public/svg/solid/flask.svg" width="20" height="20" alt="Testing" style="filter: invert(46%) sepia(95%) saturate(1794%) hue-rotate(241deg) brightness(99%) contrast(92%);"> Testing
 
 ### Unit Tests (Vitest)
 
@@ -458,7 +458,7 @@ apps/web-e2e/src/
 
 ---
 
-## <img src="apps/web/public/svg/solid/ship.svg" width="20" height="20" alt="Deployment" style="filter: invert(1);"> Deployment
+## <img src="apps/web/public/svg/solid/ship.svg" width="20" height="20" alt="Deployment" style="filter: invert(43%) sepia(95%) saturate(1794%) hue-rotate(282deg) brightness(99%) contrast(92%);"> Deployment
 
 ### Environment Setup
 
@@ -514,7 +514,7 @@ apps/web-e2e/src/
 
 ---
 
-## <img src="apps/web/public/svg/solid/book.svg" width="20" height="20" alt="Documentation" style="filter: invert(1);"> Documentation
+## <img src="apps/web/public/svg/solid/book.svg" width="20" height="20" alt="Documentation" style="filter: invert(58%) sepia(78%) saturate(2476%) hue-rotate(192deg) brightness(100%) contrast(101%);"> Documentation
 
 ### Complete Documentation Set
 
@@ -551,7 +551,7 @@ apps/web-e2e/src/
 
 ---
 
-## <img src="apps/web/public/svg/solid/handshake.svg" width="20" height="20" alt="Contributing" style="filter: invert(1);"> Contributing
+## <img src="apps/web/public/svg/solid/handshake.svg" width="20" height="20" alt="Contributing" style="filter: invert(70%) sepia(79%) saturate(3207%) hue-rotate(356deg) brightness(104%) contrast(101%);"> Contributing
 
 ### Development Workflow
 
@@ -594,15 +594,15 @@ apps/web-e2e/src/
 
 ---
 
-## <img src="apps/web/public/svg/solid/file-contract.svg" width="20" height="20" alt="License" style="filter: invert(1);"> License
+## <img src="apps/web/public/svg/solid/file-contract.svg" width="20" height="20" alt="License" style="filter: invert(50%) sepia(11%) saturate(1576%) hue-rotate(169deg) brightness(92%) contrast(87%);"> License
 
 **Proprietary** — All rights reserved. Unauthorized copying, modification, distribution, or use of this software is strictly prohibited.
 
 ---
 
-## <img src="apps/web/public/svg/solid/heart.svg" width="20" height="20" alt="Acknowledgments" style="filter: invert(1);"> Acknowledgments
+## <img src="apps/web/public/svg/solid/heart.svg" width="20" height="20" alt="Acknowledgments" style="filter: invert(43%) sepia(96%) saturate(1196%) hue-rotate(338deg) brightness(98%) contrast(95%);"> Acknowledgments
 
-Built with <img src="apps/web/public/svg/solid/heart.svg" width="12" height="12" alt="love" style="filter: invert(1);"> using:
+Built with <img src="apps/web/public/svg/solid/heart.svg" width="12" height="12" alt="love" style="filter: invert(43%) sepia(96%) saturate(1196%) hue-rotate(338deg) brightness(98%) contrast(95%);"> using:
 - [Next.js](https://nextjs.org/) by Vercel
 - [Nx](https://nx.dev/) by Nrwl
 - [Prisma](https://www.prisma.io/) by Prisma Data
@@ -614,7 +614,7 @@ Built with <img src="apps/web/public/svg/solid/heart.svg" width="12" height="12"
 
 <div align="center">
 
-**[<img src="apps/web/public/svg/solid/arrow-up.svg" width="12" height="12" alt="Back to top" style="filter: invert(1);"> Back to Top](#-deskops)**
+**[<img src="apps/web/public/svg/solid/arrow-up.svg" width="12" height="12" alt="Back to top" style="filter: invert(58%) sepia(78%) saturate(2476%) hue-rotate(192deg) brightness(100%) contrast(101%);"> Back to Top](#-deskops)**
 
 Made with precision and care for C&D recycling operations worldwide.
 
