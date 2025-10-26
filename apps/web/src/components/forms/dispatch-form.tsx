@@ -59,7 +59,7 @@ export function DispatchForm({
     defaultValues: {
       siteId,
       date: new Date(),
-      qtyTon: 0,
+      qtyTon: undefined,
       operation: 'CRU-PRO',
     },
   });
@@ -176,10 +176,16 @@ export function DispatchForm({
                         min="0"
                         max="999999.999"
                         className="tabular-nums"
+                        placeholder="0"
                         {...field}
                         onChange={(e) =>
-                          field.onChange(parseFloat(e.target.value) || 0)
+                          field.onChange(
+                            e.target.value === ''
+                              ? undefined
+                              : parseFloat(e.target.value)
+                          )
                         }
+                        value={field.value ?? ''}
                       />
                     </FormControl>
                     <FormMessage />
@@ -269,8 +275,8 @@ export function DispatchForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.entries(OPERATION_TYPES).map(([key, label]) => (
-                          <SelectItem key={key} value={key}>
+                        {Object.entries(OPERATION_TYPES).map(([code, { label }]) => (
+                          <SelectItem key={code} value={code}>
                             {label}
                           </SelectItem>
                         ))}

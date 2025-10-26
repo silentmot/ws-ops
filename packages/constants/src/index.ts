@@ -370,6 +370,7 @@ export const EXPORT_HEADERS = {
 // ============================================================================
 
 export const DEFAULT_SITE_CODE = 'ALASLA-29';
+export const DEFAULT_SITE_ID = 'cm123456789abcdef0123'; // CUID for default site
 
 export const DECIMAL_PRECISION: Record<UOM, number> = {
   TON: 2,

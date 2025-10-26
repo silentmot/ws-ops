@@ -14,12 +14,12 @@ import { Plus, ArrowUpDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { DataTable } from '@/components/data-table/data-table';
 import { DispatchForm } from '@/components/forms/dispatch-form';
-import { DEFAULT_SITE_CODE } from '@deskops/constants';
+import { DEFAULT_SITE_ID } from '@deskops/constants';
 import { toast } from 'sonner';
 
 interface Dispatch {
   id: string;
-  date: Date;
+  date: string;
   qtyTon: number;
   trips: number | null;
   owner: string | null;
@@ -35,7 +35,7 @@ interface Dispatch {
     code: string;
     name: string;
   };
-  createdAt: Date;
+  createdAt: string;
 }
 
 const columns: ColumnDef<Dispatch>[] = [
@@ -57,7 +57,8 @@ const columns: ColumnDef<Dispatch>[] = [
     },
   },
   {
-    accessorKey: 'material',
+    id: 'materialLabel',
+    accessorFn: (row) => `${row.material.code} - ${row.material.name}`,
     header: 'Material',
     cell: ({ row }) => {
       const material = row.original.material;
@@ -127,7 +128,7 @@ export default function DispatchPage(): React.JSX.Element {
   const [dispatches, setDispatches] = useState<Dispatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedSite] = useState(DEFAULT_SITE_CODE);
+  const [selectedSite] = useState(DEFAULT_SITE_ID);
 
   const fetchDispatches = async (): Promise<void> => {
     try {
@@ -191,7 +192,7 @@ export default function DispatchPage(): React.JSX.Element {
         <DataTable
           columns={columns}
           data={dispatches}
-          searchKey="material"
+          searchKey="materialLabel"
           searchPlaceholder="Search materials..."
         />
       )}

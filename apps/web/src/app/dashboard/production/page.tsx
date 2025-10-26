@@ -15,12 +15,12 @@ import { Plus, ArrowUpDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { DataTable } from '@/components/data-table/data-table';
 import { ProductionForm } from '@/components/forms/production-form';
-import { DEFAULT_SITE_CODE } from '@deskops/constants';
+import { DEFAULT_SITE_ID } from '@deskops/constants';
 import { toast } from 'sonner';
 
 interface Production {
   id: string;
-  date: Date;
+  date: string;
   shift: string | null;
   qtyTon: number;
   operation: string;
@@ -34,7 +34,7 @@ interface Production {
     code: string;
     name: string;
   };
-  createdAt: Date;
+  createdAt: string;
 }
 
 const columns: ColumnDef<Production>[] = [
@@ -56,7 +56,8 @@ const columns: ColumnDef<Production>[] = [
     },
   },
   {
-    accessorKey: 'material',
+    id: 'materialLabel',
+    accessorFn: (row) => `${row.material.code} - ${row.material.name}`,
     header: 'Material',
     cell: ({ row }) => {
       const material = row.original.material;
@@ -109,7 +110,7 @@ export default function ProductionPage(): React.JSX.Element {
   const [productions, setProductions] = useState<Production[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedSite] = useState(DEFAULT_SITE_CODE);
+  const [selectedSite] = useState(DEFAULT_SITE_ID);
 
   const fetchProductions = async (): Promise<void> => {
     try {
@@ -176,7 +177,7 @@ export default function ProductionPage(): React.JSX.Element {
         <DataTable
           columns={columns}
           data={productions}
-          searchKey="material"
+          searchKey="materialLabel"
           searchPlaceholder="Search materials..."
         />
       )}

@@ -14,12 +14,12 @@ import { Plus, ArrowUpDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { DataTable } from '@/components/data-table/data-table';
 import { ReceivedMaterialForm } from '@/components/forms/received-form';
-import { DEFAULT_SITE_CODE } from '@deskops/constants';
+import { DEFAULT_SITE_ID } from '@deskops/constants';
 import { toast } from 'sonner';
 
 interface ReceivedMaterial {
   id: string;
-  date: Date;
+  date: string;
   qtyTon: number;
   source: string | null;
   vehicleRef: string | null;
@@ -33,7 +33,7 @@ interface ReceivedMaterial {
     code: string;
     name: string;
   };
-  createdAt: Date;
+  createdAt: string;
 }
 
 const columns: ColumnDef<ReceivedMaterial>[] = [
@@ -55,7 +55,8 @@ const columns: ColumnDef<ReceivedMaterial>[] = [
     },
   },
   {
-    accessorKey: 'material',
+    id: 'materialLabel',
+    accessorFn: (row) => `${row.material.code} - ${row.material.name}`,
     header: 'Material',
     cell: ({ row }) => {
       const material = row.original.material;
@@ -114,7 +115,7 @@ export default function ReceivedMaterialPage(): React.JSX.Element {
   >([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedSite] = useState(DEFAULT_SITE_CODE);
+  const [selectedSite] = useState(DEFAULT_SITE_ID);
 
   const fetchReceivedMaterials = async (): Promise<void> => {
     try {
@@ -183,7 +184,7 @@ export default function ReceivedMaterialPage(): React.JSX.Element {
         <DataTable
           columns={columns}
           data={receivedMaterials}
-          searchKey="material"
+          searchKey="materialLabel"
           searchPlaceholder="Search materials..."
         />
       )}

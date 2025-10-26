@@ -57,7 +57,7 @@ export function ReceivedMaterialForm({
     defaultValues: {
       siteId,
       date: new Date(),
-      qtyTon: 0,
+      qtyTon: undefined,
     },
   });
 
@@ -175,9 +175,15 @@ export function ReceivedMaterialForm({
                         min="0"
                         max="999999.999"
                         className="tabular-nums"
+                        placeholder="0"
                         {...field}
+                        value={field.value ?? ''}
                         onChange={(e) =>
-                          field.onChange(parseFloat(e.target.value) || 0)
+                          field.onChange(
+                            e.target.value === ''
+                              ? undefined
+                              : parseFloat(e.target.value)
+                          )
                         }
                       />
                     </FormControl>
