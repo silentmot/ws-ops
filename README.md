@@ -1,3 +1,5 @@
+<!--markdownlint-disable-file-->
+
 <div align="center">
 
 # <img src="apps/web/public/svg/solid/building.svg" width="32" height="32" alt="Building" style="filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);"> DeskOps
@@ -61,18 +63,21 @@
 ## <img src="apps/web/public/svg/solid/star.svg" width="20" height="20" alt="Key Features" style="filter: invert(70%) sepia(79%) saturate(3207%) hue-rotate(356deg) brightness(104%) contrast(101%);"> Key Features
 
 ### <img src="apps/web/public/svg/solid/chart-line.svg" width="18" height="18" alt="Dashboard" style="filter: invert(43%) sepia(96%) saturate(1196%) hue-rotate(338deg) brightness(98%) contrast(95%);"> Real-Time Dashboard
+
 - **4 KPI Metric Cards** with animated counters and trend indicators
 - **5 Interactive Charts** (Line, Area, Bar, Composed) with tooltips and zoom
 - **Live Data Updates** via Server-Sent Events (SSE) every 60 seconds
 - **Responsive Design** — Optimized for desktop, tablet, and mobile
 
 ### <img src="apps/web/public/svg/solid/lock.svg" width="18" height="18" alt="Security" style="filter: invert(27%) sepia(98%) saturate(3705%) hue-rotate(348deg) brightness(99%) contrast(95%);"> Authentication & Authorization
+
 - **Clerk Integration** — Secure authentication with social logins
 - **Role-Based Access Control** — Admin, Moderator, Operator roles
 - **Multi-Site Permissions** — Site-level data isolation and access control
 - **Session Management** — Automatic token refresh and secure logout
 
 ### <img src="apps/web/public/svg/solid/chart-bar.svg" width="18" height="18" alt="Analytics" style="filter: invert(46%) sepia(95%) saturate(1794%) hue-rotate(241deg) brightness(99%) contrast(92%);"> Advanced Analytics
+
 - **Production vs Target** — Compare actual output against daily goals
 - **Received vs Dispatched** — Track material flows with net calculations
 - **Inventory Trends** — Area charts with threshold bands and predictions
@@ -80,12 +85,14 @@
 - **Manpower Analytics** — Shift-based attendance and labor distribution
 
 ### <img src="apps/web/public/svg/solid/palette.svg" width="18" height="18" alt="UI/UX" style="filter: invert(43%) sepia(95%) saturate(1794%) hue-rotate(282deg) brightness(99%) contrast(92%);"> Modern UI/UX
+
 - **Flat UI Design** — Clean, data-first interface with subtle elevation
 - **Dark/Light Themes** — Automatic theme switching with user preferences
 - **Smooth Animations** — Stagger cascade effects and micro-interactions
 - **Accessibility** — WCAG 2.1 AA compliant with keyboard navigation
 
 ### <img src="apps/web/public/svg/solid/file-export.svg" width="18" height="18" alt="Export" style="filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);"> Export System
+
 - **Multiple Formats** — Excel (.xlsx), PDF (.pdf), CSV (.csv), Power BI CSV
 - **Background Processing** — Async job queue with progress tracking
 - **Smart Filtering** — Date ranges, modules, granularity (daily/weekly/monthly)
@@ -101,6 +108,7 @@
 <td width="33%" valign="top">
 
 ### Frontend
+
 - **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
 - **Language:** [TypeScript 5.9](https://www.typescriptlang.org/)
 - **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
@@ -113,6 +121,7 @@
 <td width="33%" valign="top">
 
 ### Backend
+
 - **Runtime:** [Bun](https://bun.sh/)
 - **Database:** [PostgreSQL 17](https://www.postgresql.org/)
 - **ORM:** [Prisma](https://www.prisma.io/)
@@ -125,6 +134,7 @@
 <td width="33%" valign="top">
 
 ### DevOps
+
 - **Monorepo:** [Nx](https://nx.dev/)
 - **Package Manager:** Bun
 - **Testing:** [Vitest](https://vitest.dev/) + [Playwright](https://playwright.dev/)
@@ -183,6 +193,7 @@ ws-ops/
 ### Core Design Principles
 
 #### 1. GZANSP × AOC Compliance
+
 - ✓ **Zero Assumptions** — Every decision cites explicit source
 - ✓ **No `any` Types** — Strict TypeScript with concrete types only
 - ✓ **SSOT** — All constants imported from `@deskops/constants`
@@ -190,12 +201,14 @@ ws-ops/
 - ✓ **Method-First** — Single method per operation using adapter pattern
 
 #### 2. Database Schema (PostgreSQL + Prisma)
+
 - **Transaction Tables**: Production, Dispatch, ReceivedMaterial, EquipmentLog, ManpowerLog
 - **Master Tables**: Site, Material, Equipment, ManpowerRole
 - **Calculated Tables**: InventorySnapshot, DashboardMetric
 - **Audit Tables**: ExportJob, ExportAudit
 
 #### 3. Inventory Calculation Formula
+
 ```typescript
 inventory = production + received - dispatched
 // Or for daily snapshots:
@@ -203,6 +216,7 @@ closingStock = openingStock + production + received - dispatched + adjustment
 ```
 
 #### 4. API Route Pattern
+
 ```
 /api/production           # List all production entries
 /api/production/[id]      # Get/Update/Delete specific entry
@@ -353,6 +367,7 @@ bunx nx show projects         # List all projects
 ### Project Structure Guidelines
 
 #### Component Organization
+
 ```typescript
 // components/forms/production-form.tsx
 import { useForm } from 'react-hook-form';
@@ -369,6 +384,7 @@ export function ProductionForm() {
 ```
 
 #### Custom Hooks
+
 ```typescript
 // hooks/use-production.ts
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -383,6 +399,7 @@ export function useProduction(siteId: string) {
 ```
 
 #### Server Actions
+
 ```typescript
 // app/actions/production.ts
 'use server';
@@ -530,6 +547,7 @@ apps/web-e2e/src/
 ### Key Concepts
 
 #### Materials Catalog (17 Materials)
+
 - **Aggregates** (9) — 3/4, 1/2, 3/8, 2, 1.5, 1, 3/16, 1/16, 0-5mm
 - **Fine** (2) — Sand, Powder
 - **Specialty** (1) — Oversize
@@ -537,12 +555,14 @@ apps/web-e2e/src/
 - **Raw Feed** (3) — Feed, CDW, Pure (not sellable)
 
 #### Equipment Catalog (9 Items)
+
 - **Crushing/Screening** — Static Crusher, Mobile Screen
 - **Earth Moving** — Front Loader, Bulldozer, Excavator
 - **Hauling** — Dumper, Dyna
 - **Auxiliary** — Grader, Winch
 
 #### Manpower Roles (5 Roles)
+
 - Equipment Driver
 - Crusher Operator
 - Maintenance Worker
@@ -603,6 +623,7 @@ apps/web-e2e/src/
 ## <img src="apps/web/public/svg/solid/heart.svg" width="20" height="20" alt="Acknowledgments" style="filter: invert(43%) sepia(96%) saturate(1196%) hue-rotate(338deg) brightness(98%) contrast(95%);"> Acknowledgments
 
 Built with <img src="apps/web/public/svg/solid/heart.svg" width="12" height="12" alt="love" style="filter: invert(43%) sepia(96%) saturate(1196%) hue-rotate(338deg) brightness(98%) contrast(95%);"> using:
+
 - [Next.js](https://nextjs.org/) by Vercel
 - [Nx](https://nx.dev/) by Nrwl
 - [Prisma](https://www.prisma.io/) by Prisma Data
