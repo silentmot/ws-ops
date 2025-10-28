@@ -57,6 +57,9 @@ export class ExportProcessor implements ExportJobProcessor {
         case 'csv':
           result = await generateCSVExport(options);
           break;
+        case 'powerbi-csv':
+          result = await generateCSVExport({ ...options, powerBI: true });
+          break;
         case 'pdf':
           result = await generatePDFExport(options);
           break;

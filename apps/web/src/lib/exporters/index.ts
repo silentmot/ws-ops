@@ -6,8 +6,7 @@
 export { generateExcelExport } from './excel';
 export { generatePDFExport } from './pdf';
 export { generateCSVExport } from './csv';
-export { generatePowerBICSVExport } from './powerbi-csv';
-export { ExportJobProcessor, exportJobProcessor } from './export-processor';
+export { ExportProcessor } from '../jobs/export-processor';
 export {
   cleanupExpiredExports,
   cleanupFailedExports,
@@ -19,5 +18,5 @@ export type {
   ExportResult,
   ProgressCallback,
   ExporterOptions,
-  ExportProcessor,
+  ExportProcessor as IExportProcessor,
 } from './types';

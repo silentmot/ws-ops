@@ -17,21 +17,37 @@ interface CSVGeneratorOptions {
   dateFrom: Date;
   dateTo: Date;
   granularity: string;
+  powerBI?: boolean;
 }
 
 const EXPORT_STORAGE_PATH = '{EXPORT_STORAGE_PATH}';
 
+/**
+ * Convert string to kebab-case for Power BI compatibility
+ */
+function toKebabCase(str: string): string {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .replace(/[()]/g, '')
+    .toLowerCase();
+}
+
 export async function generateCSVExport(
   options: CSVGeneratorOptions
 ): Promise<ExportResult> {
-  const { jobId, module, siteId, dateFrom, dateTo } = options;
+  const { jobId, module, siteId, dateFrom, dateTo, powerBI = false } = options;
 
   // Fetch data based on module
-  const data = await fetchModuleData(module, siteId, dateFrom, dateTo);
+  const data = await fetchModuleData(module, siteId, dateFrom, dateTo, powerBI);
 
   if (data.length === 0) {
-    const csvContent = 'No data available for the selected period\n';
-    const filePath = `${EXPORT_STORAGE_PATH}/${jobId}.csv`;
+    const csvContent = powerBI
+      ? 'no-data-available\n'
+      : 'No data available for the selected period\n';
+    const filePath = powerBI
+      ? `${EXPORT_STORAGE_PATH}/${jobId}_powerbi.csv`
+      : `${EXPORT_STORAGE_PATH}/${jobId}.csv`;
     await writeFile(filePath, csvContent, 'utf8');
 
     const fileHash = createHash('sha256').update(csvContent).digest('hex');
@@ -49,10 +65,13 @@ export async function generateCSVExport(
   if (!firstRow) {
     throw new Error('Data array contains undefined elements');
   }
-  const headers = Object.keys(firstRow);
+  const originalHeaders = Object.keys(firstRow);
+  const headers = powerBI ? originalHeaders.map(toKebabCase) : originalHeaders;
 
   // Build CSV content
-  const filePath = `${EXPORT_STORAGE_PATH}/${jobId}.csv`;
+  const filePath = powerBI
+    ? `${EXPORT_STORAGE_PATH}/${jobId}_powerbi.csv`
+    : `${EXPORT_STORAGE_PATH}/${jobId}.csv`;
   const writeStream = createWriteStream(filePath, { encoding: 'utf8' });
 
   // Create hash
@@ -67,7 +86,7 @@ export async function generateCSVExport(
 
   // Write data rows
   for (const record of data) {
-    const values = headers.map((header) => {
+    const values = originalHeaders.map((header) => {
       const value = record[header];
       return escapeCSVField(value?.toString() || '');
     });
@@ -115,7 +134,8 @@ async function fetchModuleData(
   module: string,
   siteId: string,
   dateFrom: Date,
-  dateTo: Date
+  dateTo: Date,
+  powerBI = false
 ): Promise<Record<string, unknown>[]> {
   const whereClause = {
     siteId,
@@ -130,13 +150,29 @@ async function fetchModuleData(
       const records = await prisma.production.findMany({
         where: whereClause,
         include: {
-          material: { select: { name: true, uom: true } },
-          site: { select: { name: true } },
+          material: {
+            select: { name: true, uom: true, code: true, category: true },
+          },
+          site: { select: { name: true, code: true } },
         },
         orderBy: { date: 'asc' },
       });
 
       type ProductionRecord = (typeof records)[0];
+      if (powerBI) {
+        return records.map((record: ProductionRecord) => ({
+          Date: record.date.toISOString().split('T')[0],
+          SiteCode: record.site.code,
+          SiteName: record.site.name,
+          MaterialCode: record.material.code,
+          MaterialName: record.material.name,
+          MaterialCategory: record.material.category,
+          QuantityTon: record.qtyTon.toNumber(),
+          Operation: record.operation,
+          Shift: record.shift || '',
+          Notes: record.notes || '',
+        }));
+      }
       return records.map((record: ProductionRecord) => ({
         Date: record.date.toISOString().split('T')[0],
         Site: record.site.name,
@@ -152,13 +188,31 @@ async function fetchModuleData(
       const records = await prisma.dispatch.findMany({
         where: whereClause,
         include: {
-          material: { select: { name: true, uom: true } },
-          site: { select: { name: true } },
+          material: {
+            select: { name: true, uom: true, code: true, category: true },
+          },
+          site: { select: { name: true, code: true } },
         },
         orderBy: { date: 'asc' },
       });
 
       type DispatchRecord = (typeof records)[0];
+      if (powerBI) {
+        return records.map((record: DispatchRecord) => ({
+          Date: record.date.toISOString().split('T')[0],
+          SiteCode: record.site.code,
+          SiteName: record.site.name,
+          MaterialCode: record.material.code,
+          MaterialName: record.material.name,
+          MaterialCategory: record.material.category,
+          QuantityTon: record.qtyTon.toNumber(),
+          Trips: record.trips || 0,
+          Owner: record.owner || '',
+          Reference: record.reference || '',
+          Operation: record.operation,
+          Notes: record.notes || '',
+        }));
+      }
       return records.map((record: DispatchRecord) => ({
         Date: record.date.toISOString().split('T')[0],
         Site: record.site.name,
@@ -176,13 +230,29 @@ async function fetchModuleData(
       const records = await prisma.receivedMaterial.findMany({
         where: whereClause,
         include: {
-          material: { select: { name: true, uom: true } },
-          site: { select: { name: true } },
+          material: {
+            select: { name: true, uom: true, code: true, category: true },
+          },
+          site: { select: { name: true, code: true } },
         },
         orderBy: { date: 'asc' },
       });
 
       type ReceivedRecord = (typeof records)[0];
+      if (powerBI) {
+        return records.map((record: ReceivedRecord) => ({
+          Date: record.date.toISOString().split('T')[0],
+          SiteCode: record.site.code,
+          SiteName: record.site.name,
+          MaterialCode: record.material.code,
+          MaterialName: record.material.name,
+          MaterialCategory: record.material.category,
+          QuantityTon: record.qtyTon.toNumber(),
+          Source: record.source || '',
+          VehicleReference: record.vehicleRef || '',
+          Notes: record.notes || '',
+        }));
+      }
       return records.map((record: ReceivedRecord) => ({
         Date: record.date.toISOString().split('T')[0],
         Site: record.site.name,
@@ -198,13 +268,28 @@ async function fetchModuleData(
       const records = await prisma.equipmentLog.findMany({
         where: whereClause,
         include: {
-          equipment: { select: { name: true, type: true } },
-          site: { select: { name: true } },
+          equipment: { select: { name: true, type: true, code: true } },
+          site: { select: { name: true, code: true } },
         },
         orderBy: { date: 'asc' },
       });
 
       type EquipmentRecord = (typeof records)[0];
+      if (powerBI) {
+        return records.map((record: EquipmentRecord) => ({
+          Date: record.date.toISOString().split('T')[0],
+          SiteCode: record.site.code,
+          SiteName: record.site.name,
+          EquipmentCode: record.equipment.code,
+          EquipmentName: record.equipment.name,
+          EquipmentType: record.equipment.type,
+          Hours: record.hours.toNumber(),
+          Count: record.count,
+          Shift: record.shift || '',
+          Status: record.status || '',
+          Notes: record.notes || '',
+        }));
+      }
       return records.map((record: EquipmentRecord) => ({
         Date: record.date.toISOString().split('T')[0],
         Site: record.site.name,
@@ -222,13 +307,26 @@ async function fetchModuleData(
       const records = await prisma.manpowerLog.findMany({
         where: whereClause,
         include: {
-          role: { select: { name: true } },
-          site: { select: { name: true } },
+          role: { select: { name: true, code: true } },
+          site: { select: { name: true, code: true } },
         },
         orderBy: { date: 'asc' },
       });
 
       type ManpowerRecord = (typeof records)[0];
+      if (powerBI) {
+        return records.map((record: ManpowerRecord) => ({
+          Date: record.date.toISOString().split('T')[0],
+          SiteCode: record.site.code,
+          SiteName: record.site.name,
+          RoleCode: record.role.code,
+          RoleName: record.role.name,
+          Headcount: record.headcount,
+          Hours: record.hours.toNumber(),
+          Shift: record.shift || '',
+          Notes: record.notes || '',
+        }));
+      }
       return records.map((record: ManpowerRecord) => ({
         Date: record.date.toISOString().split('T')[0],
         Site: record.site.name,
@@ -244,13 +342,31 @@ async function fetchModuleData(
       const records = await prisma.inventorySnapshot.findMany({
         where: whereClause,
         include: {
-          material: { select: { name: true, uom: true } },
-          site: { select: { name: true } },
+          material: {
+            select: { name: true, uom: true, code: true, category: true },
+          },
+          site: { select: { name: true, code: true } },
         },
         orderBy: { date: 'asc' },
       });
 
       type InventoryRecord = (typeof records)[0];
+      if (powerBI) {
+        return records.map((record: InventoryRecord) => ({
+          Date: record.date.toISOString().split('T')[0],
+          SiteCode: record.site.code,
+          SiteName: record.site.name,
+          MaterialCode: record.material.code,
+          MaterialName: record.material.name,
+          MaterialCategory: record.material.category,
+          OpeningTon: record.openingTon.toNumber(),
+          ProducedTon: record.producedTon.toNumber(),
+          ReceivedTon: record.receivedTon.toNumber(),
+          DispatchedTon: record.dispatchedTon.toNumber(),
+          AdjustmentTon: record.adjustmentTon.toNumber(),
+          ClosingTon: record.closingTon.toNumber(),
+        }));
+      }
       return records.map((record: InventoryRecord) => ({
         Date: record.date.toISOString().split('T')[0],
         Site: record.site.name,
