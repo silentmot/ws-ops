@@ -34,43 +34,30 @@ import {
 import { toast } from 'sonner';
 import { ROLES, SHIFT_TYPES } from '@deskops/constants';
 import { createManpowerLog } from '@/app/actions/manpower';
+import { ManpowerLogSchema } from '@deskops/database';
 
-const manpowerFormSchema = z.object({
-  siteId: z.string().cuid(),
-  date: z.date(),
-  roleId: z.string().min(1, 'Role is required'),
-  headcount: z
-    .number()
-    .int()
-    .min(0)
-    .max(500, 'Headcount must be between 0 and 500'),
-  hours: z.number().min(0).max(24, 'Hours must be between 0 and 24'),
-  shift: z.enum(SHIFT_TYPES).nullable().optional(),
-  notes: z.string().max(500).optional(),
-});
-
-type ManpowerFormData = z.infer<typeof manpowerFormSchema>;
+type ManpowerLogFormData = z.infer<typeof ManpowerLogSchema>;
 
 interface ManpowerFormProps {
   siteId: string;
   onSuccess?: () => void;
 }
 
-export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function ManpowerLogForm({
+  siteId,
+  onSuccess,
+}: ManpowerFormProps): React.JSX.Element {
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const form = useForm<ManpowerFormData>({
-    resolver: zodResolver(manpowerFormSchema),
+  const form = useForm<ManpowerLogFormData>({
+    resolver: zodResolver(ManpowerLogSchema),
     defaultValues: {
       siteId,
       date: new Date(),
-      roleId: '',
-      shift: null,
-      notes: '',
     },
   });
 
-  const onSubmit = async (data: ManpowerFormData) => {
+  const onSubmit = async (data: ManpowerLogFormData): Promise<void> => {
     try {
       setIsSubmitting(true);
       const result = await createManpowerLog(data);
@@ -78,12 +65,15 @@ export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
       if (result.success) {
         toast.success('Manpower log created successfully');
         form.reset();
-        onSuccess?.();
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
         toast.error(result.error || 'Failed to create manpower log');
       }
-    } catch (_error) {
+    } catch (error) {
       toast.error('An unexpected error occurred');
+      console.error('Error creating manpower log:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -97,12 +87,13 @@ export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {/* Date Field */}
               <FormField
                 control={form.control}
                 name="date"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem>
                     <FormLabel>Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -110,7 +101,7 @@ export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
                           <Button
                             variant="outline"
                             className={cn(
-                              'w-full pl-3 text-left font-normal',
+                              'w-full justify-start text-left font-normal',
                               !field.value && 'text-muted-foreground'
                             )}
                           >
@@ -119,11 +110,11 @@ export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
                             ) : (
                               <span>Pick a date</span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="ml-auto h-4 w-4" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
+                      <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
                           selected={field.value}
@@ -140,6 +131,7 @@ export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
                 )}
               />
 
+              {/* Role Field */}
               <FormField
                 control={form.control}
                 name="roleId"
@@ -171,6 +163,7 @@ export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
                 )}
               />
 
+              {/* Headcount Field */}
               <FormField
                 control={form.control}
                 name="headcount"
@@ -180,18 +173,18 @@ export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
                     <FormControl>
                       <Input
                         type="number"
-                        step="1"
                         min="0"
                         max="500"
+                        className="tabular-nums"
                         placeholder="0"
                         {...field}
-                        value={field.value ?? ''}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
                             value === '' ? undefined : parseInt(value, 10)
                           );
                         }}
+                        value={field.value ?? ''}
                       />
                     </FormControl>
                     <FormMessage />
@@ -199,6 +192,7 @@ export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
                 )}
               />
 
+              {/* Hours Field */}
               <FormField
                 control={form.control}
                 name="hours"
@@ -211,15 +205,16 @@ export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
                         step="0.01"
                         min="0"
                         max="24"
-                        placeholder="0.00"
+                        className="tabular-nums"
+                        placeholder="0"
                         {...field}
-                        value={field.value ?? ''}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
                             value === '' ? undefined : parseFloat(value)
                           );
                         }}
+                        value={field.value ?? ''}
                       />
                     </FormControl>
                     <FormMessage />
@@ -227,6 +222,7 @@ export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
                 )}
               />
 
+              {/* Shift Field */}
               <FormField
                 control={form.control}
                 name="shift"
@@ -254,25 +250,27 @@ export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
                   </FormItem>
                 )}
               />
-            </div>
 
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Notes (Optional)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Additional notes..."
-                      maxLength={500}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              {/* Notes Field */}
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>Notes (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Additional notes..."
+                        className="resize-none"
+                        maxLength={500}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (

@@ -43,7 +43,6 @@ export async function createEquipmentLog(data: unknown) {
       },
     });
 
-    revalidatePath('/dashboard');
     revalidatePath('/dashboard/equipment');
 
     return { success: true, data: equipmentLog };
@@ -105,7 +104,6 @@ export async function updateEquipmentLog(id: string, data: unknown) {
       },
     });
 
-    revalidatePath('/dashboard');
     revalidatePath('/dashboard/equipment');
 
     return { success: true, data: equipmentLog };
@@ -129,7 +127,6 @@ export async function deleteEquipmentLog(id: string) {
       where: { id },
     });
 
-    revalidatePath('/dashboard');
     revalidatePath('/dashboard/equipment');
 
     return { success: true };

@@ -3,7 +3,7 @@ import { SHIFT_TYPES, EQUIPMENT_STATUSES } from '@deskops/constants';
 
 export const EquipmentLogSchema = z.object({
   siteId: z.string().cuid(),
-  date: z.date(),
+  date: z.coerce.date(),
   equipmentId: z.string(),
   hours: z.number().min(0).max(24),
   count: z.number().int().min(0).max(100),

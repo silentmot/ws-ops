@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -9,124 +10,138 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  TooltipProps,
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
-import { ROLES } from '@deskops/constants';
+import { formatWithPrecision } from '@deskops/constants';
+import { ChartSkeleton } from './chart-skeleton';
+import { AccessibleLegend } from './accessible-legend';
 
-interface ManpowerData {
-  date: string;
-  [key: string]: string | number;
+export interface ManpowerAttendanceData {
+  roleName: string;
+  morning: number;
+  afternoon: number;
+  night: number;
+  noShift: number;
 }
 
 interface ManpowerAttendanceChartProps {
-  data: ManpowerData[];
+  data: ManpowerAttendanceData[];
   isLoading?: boolean;
 }
 
-interface TooltipProps {
-  active?: boolean;
-  payload?: Array<{
-    name: string;
-    value: number;
-    color: string;
-  }>;
-  label?: string;
-}
+function CustomTooltip(props: TooltipProps<number, string>): React.JSX.Element | null {
+  const { active, payload, label } = props as Record<string, unknown>;
 
-function CustomTooltip({
-  active,
-  payload,
-  label,
-}: TooltipProps): React.ReactElement | null {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-background rounded-lg border p-2 shadow-sm">
-        <p className="text-sm font-medium">{label}</p>
-        {payload.map(
-          (
-            entry: { name: string; value: number; color: string },
-            index: number
-          ) => (
-            <p key={index} className="text-sm" style={{ color: entry.color }}>
-              {entry.name}: {entry.value} workers
-            </p>
-          )
-        )}
-      </div>
-    );
+  if (!active || !Array.isArray(payload)) {
+    return null;
   }
 
-  return null;
+  return (
+    <div className="rounded-lg border bg-background p-3 shadow-md">
+      <p className="font-medium">Role: {label as string}</p>
+      {payload.map((entry: Record<string, unknown>, index: number) => {
+        return (
+          <p key={index} style={{ color: entry['color'] as string }}>
+            {entry['name'] as string}: {formatWithPrecision(entry['value'] as number, 'COUNT')} COUNT
+          </p>
+        );
+      })}
+    </div>
+  );
 }
-
-const ROLE_COLORS: Record<string, string> = {
-  EQUIPMENT_DRIVER: '#3b82f6',
-  CRUSHER_OPERATOR: '#10b981',
-  MAINTENANCE_WORKER: '#f59e0b',
-  LABORER: '#8b5cf6',
-  SECURITY: '#ef4444',
-};
 
 export function ManpowerAttendanceChart({
   data,
   isLoading = false,
-}: ManpowerAttendanceChartProps) {
+}: ManpowerAttendanceChartProps): React.JSX.Element {
+  const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
+
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Manpower Attendance</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-muted h-[300px] animate-pulse rounded" />
-        </CardContent>
-      </Card>
-    );
+    return <ChartSkeleton title="Manpower Attendance" className="col-span-1" />;
   }
 
-  /**
-   * Data transformation:
-   * Aggregate manpower logs by date and role, sum headcount for each role,
-   * optionally include shift dimension.
-   *
-   * Example transformation:
-   * manpowerLogs.reduce((acc, log) => {
-   *   const dateKey = format(new Date(log.date), 'MMM dd');
-   *   if (!acc[dateKey]) {
-   *     acc[dateKey] = { date: dateKey };
-   *     ROLES.forEach(role => acc[dateKey][role.code] = 0);
-   *   }
-   *   acc[dateKey][log.role.code] += log.headcount;
-   *   return acc;
-   * }, {});
-   */
-
   return (
-    <Card>
+    <Card className="col-span-1">
       <CardHeader>
         <CardTitle>Manpower Attendance</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
+        <div role="img" aria-label="Manpower Attendance chart showing headcount distribution by shift and role">
+          <AccessibleLegend
+            payload={[
+              { dataKey: 'morning', value: 'Morning', color: 'hsl(var(--chart-1))' },
+              { dataKey: 'afternoon', value: 'Afternoon', color: 'hsl(var(--chart-2))' },
+              { dataKey: 'night', value: 'Night', color: 'hsl(var(--chart-3))' },
+              { dataKey: 'noShift', value: 'No Shift', color: 'hsl(var(--chart-4))' },
+            ]}
+            onToggle={(dataKey) => {
+              setHiddenSeries((prev) => {
+                const next = new Set(prev);
+                if (next.has(dataKey)) {
+                  next.delete(dataKey);
+                } else {
+                  next.add(dataKey);
+                }
+                return next;
+              });
+            }}
+            hiddenSeries={hiddenSeries}
+          />
+          <ResponsiveContainer width="100%" height={320}>
+          <BarChart
+            data={data}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <XAxis
+              dataKey="roleName"
+              className="text-xs"
+              angle={-45}
+              textAnchor="end"
+            />
             <YAxis
-              label={{ value: 'Workers', angle: -90, position: 'insideLeft' }}
+              className="text-xs"
+              label={{
+                value: 'Headcount',
+                angle: -90,
+                position: 'insideLeft',
+              }}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Legend />
-            {ROLES.map((role) => (
-              <Bar
-                key={role.code}
-                dataKey={role.code}
-                stackId="a"
-                fill={ROLE_COLORS[role.code] || '#64748b'}
-                name={role.name}
-              />
-            ))}
+            <Legend content={() => null} />
+            <Bar
+              dataKey="morning"
+              stackId="attendance"
+              fill="hsl(var(--chart-1))"
+              name="Morning"
+              radius={[4, 4, 0, 0]}
+              hide={hiddenSeries.has('morning')}
+            />
+            <Bar
+              dataKey="afternoon"
+              stackId="attendance"
+              fill="hsl(var(--chart-2))"
+              name="Afternoon"
+              hide={hiddenSeries.has('afternoon')}
+            />
+            <Bar
+              dataKey="night"
+              stackId="attendance"
+              fill="hsl(var(--chart-3))"
+              name="Night"
+              hide={hiddenSeries.has('night')}
+            />
+            <Bar
+              dataKey="noShift"
+              stackId="attendance"
+              fill="hsl(var(--chart-4))"
+              name="No Shift"
+              hide={hiddenSeries.has('noShift')}
+            />
           </BarChart>
         </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );

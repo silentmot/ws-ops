@@ -3,15 +3,15 @@ import { defineConfig } from "prisma/config";
 import "dotenv/config";
 
 export default defineConfig({
-  schema: path.join("packages", "/database/prisma/schema.prisma"),
+  schema: path.join("packages", "database", "prisma", "schema.prisma"),
   migrations: {
-    path: path.join("prisma", "migrations"),
-    seed: "tsx prisma/seed.ts", // or your preferred command
+    path: path.join("packages", "database", "prisma", "migrations"),
+    seed: "bun run packages/database/prisma/seed.ts",
   },
   views: {
-    path: path.join("prisma", "views"),
+    path: path.join("packages", "database", "prisma", "views"),
   },
   typedSql: {
-    path: path.join("prisma", "queries"),
+    path: path.join("packages", "database", "prisma", "queries"),
   },
 });

@@ -34,53 +34,38 @@ import {
 import { toast } from 'sonner';
 import { EQUIPMENT, SHIFT_TYPES, EQUIPMENT_STATUSES } from '@deskops/constants';
 import { createEquipmentLog } from '@/app/actions/equipment';
+import { EquipmentLogSchema } from '@deskops/database';
 
-const equipmentFormSchema = z.object({
-  siteId: z.string().cuid(),
-  date: z.date(),
-  equipmentId: z.string().min(1, 'Equipment is required'),
-  hours: z.number().min(0).max(24, 'Hours must be between 0 and 24'),
-  count: z.number().int().min(0).max(100, 'Count must be between 0 and 100'),
-  shift: z.enum(SHIFT_TYPES).optional(),
-  status: z.enum(EQUIPMENT_STATUSES).optional(),
-  notes: z.string().max(500).optional(),
-});
-
-type EquipmentFormData = z.infer<typeof equipmentFormSchema>;
+type EquipmentLogFormData = z.infer<typeof EquipmentLogSchema>;
 
 interface EquipmentFormProps {
   siteId: string;
   onSuccess?: () => void;
 }
 
-export function EquipmentForm({ siteId, onSuccess }: EquipmentFormProps) {
+export function EquipmentLogForm({
+  siteId,
+  onSuccess,
+}: EquipmentFormProps): React.JSX.Element {
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const form = useForm<EquipmentFormData>({
-    resolver: zodResolver(equipmentFormSchema),
+  const form = useForm<EquipmentLogFormData>({
+    resolver: zodResolver(EquipmentLogSchema) as any,
     defaultValues: {
       siteId,
       date: new Date(),
-      equipmentId: '',
-      hours: undefined,
-      count: undefined,
-      shift: undefined,
-      status: undefined,
-      notes: '',
     },
   });
 
-  const onSubmit = async (data: EquipmentFormData) => {
+  const onSubmit = async (data: EquipmentLogFormData): Promise<void> => {
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
       const result = await createEquipmentLog(data);
-
       if (result.success) {
         toast.success('Equipment log created successfully');
         form.reset();
         onSuccess?.();
       } else {
-        toast.error(result.error || 'Failed to create equipment log');
+        toast.error(result.error ?? 'Failed to create equipment log');
       }
     } catch (_error) {
       toast.error('An unexpected error occurred');
@@ -97,12 +82,12 @@ export function EquipmentForm({ siteId, onSuccess }: EquipmentFormProps) {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="date"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem>
                     <FormLabel>Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -148,7 +133,7 @@ export function EquipmentForm({ siteId, onSuccess }: EquipmentFormProps) {
                     <FormLabel>Equipment</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -180,15 +165,17 @@ export function EquipmentForm({ siteId, onSuccess }: EquipmentFormProps) {
                         step="0.01"
                         min="0"
                         max="24"
-                        placeholder="0.00"
+                        className="tabular-nums"
+                        placeholder="0"
                         {...field}
-                        value={field.value ?? ''}
-                        onChange={(e) => {
-                          const value = e.target.value;
+                        onChange={(e) =>
                           field.onChange(
-                            value === '' ? undefined : parseFloat(value)
-                          );
-                        }}
+                            e.target.value === ''
+                              ? undefined
+                              : parseFloat(e.target.value)
+                          )
+                        }
+                        value={field.value ?? ''}
                       />
                     </FormControl>
                     <FormMessage />
@@ -205,18 +192,19 @@ export function EquipmentForm({ siteId, onSuccess }: EquipmentFormProps) {
                     <FormControl>
                       <Input
                         type="number"
-                        step="1"
                         min="0"
                         max="100"
+                        className="tabular-nums"
                         placeholder="0"
                         {...field}
-                        value={field.value ?? ''}
-                        onChange={(e) => {
-                          const value = e.target.value;
+                        onChange={(e) =>
                           field.onChange(
-                            value === '' ? undefined : parseInt(value, 10)
-                          );
-                        }}
+                            e.target.value === ''
+                              ? undefined
+                              : parseInt(e.target.value, 10)
+                          )
+                        }
+                        value={field.value ?? ''}
                       />
                     </FormControl>
                     <FormMessage />
@@ -232,7 +220,7 @@ export function EquipmentForm({ siteId, onSuccess }: EquipmentFormProps) {
                     <FormLabel>Shift (Optional)</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value ?? ''}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -260,7 +248,7 @@ export function EquipmentForm({ siteId, onSuccess }: EquipmentFormProps) {
                     <FormLabel>Status (Optional)</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value ?? ''}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -290,6 +278,7 @@ export function EquipmentForm({ siteId, onSuccess }: EquipmentFormProps) {
                   <FormControl>
                     <Textarea
                       placeholder="Additional notes..."
+                      className="resize-none"
                       maxLength={500}
                       {...field}
                     />
@@ -300,14 +289,10 @@ export function EquipmentForm({ siteId, onSuccess }: EquipmentFormProps) {
             />
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                'Create Equipment Log'
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
+              {isSubmitting ? 'Creating...' : 'Create Equipment Log'}
             </Button>
           </form>
         </Form>

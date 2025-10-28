@@ -18,14 +18,45 @@ bun install
 
 ## Database Setup
 
+**Important**: Always run Prisma commands from the project root to use `prisma.config.ts`.
+
+### From Project Root (Recommended)
+
 ```bash
+# Generate Prisma client (outputs to packages/database/src/generated/client)
+bunx prisma generate
+
+# Push schema to database (development)
+bunx prisma db push
+
+# Run migrations
+bunx prisma migrate dev
+
+# Seed database with default data
+bunx prisma db seed
+
+# Open Prisma Studio
+bunx prisma studio
+```
+
+The root `prisma.config.ts` configures:
+- Schema: `packages/database/prisma/schema.prisma`
+- Migrations: `packages/database/prisma/migrations`
+- Seed: `packages/database/prisma/seed.ts`
+- Client output: `packages/database/src/generated/client`
+
+### From Package Directory (Alternative)
+
+```bash
+cd packages/database
+
 # Generate Prisma client
 bun run db:generate
 
-# Push schema to database (development)
+# Push schema to database
 bun run db:push
 
-# Seed database with default data
+# Seed database
 bun run db:seed
 
 # Open Prisma Studio

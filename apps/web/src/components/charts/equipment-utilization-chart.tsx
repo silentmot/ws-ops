@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -10,15 +11,17 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import type { TooltipProps } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
 import { formatWithPrecision } from '@deskops/constants';
+import { ChartSkeleton } from './chart-skeleton';
+import { AccessibleLegend } from './accessible-legend';
 
-interface EquipmentUtilizationData {
+export interface EquipmentUtilizationData {
   date: string;
-  operational: number;
-  maintenance: number;
-  breakdown: number;
-  idle: number;
+  equipmentName: string;
+  operationalHours: number;
+  idleHours: number;
 }
 
 interface EquipmentUtilizationChartProps {
@@ -26,114 +29,109 @@ interface EquipmentUtilizationChartProps {
   isLoading?: boolean;
 }
 
-interface TooltipProps {
-  active?: boolean;
-  payload?: Array<{ name: string; value: number; color: string }>;
-  label?: string;
-}
+function CustomTooltip(
+  props: TooltipProps<number, string>
+): React.JSX.Element | null {
+  // Runtime type guards for safety despite typed props
+  const propsAny = props as Record<string, unknown>;
+  const active = propsAny['active'];
+  const payload = propsAny['payload'] as Array<Record<string, unknown>> | undefined;
+  const label = propsAny['label'] as string | undefined;
 
-function CustomTooltip({
-  active,
-  payload,
-  label,
-}: TooltipProps): React.ReactElement | null {
-  if (active && payload && payload.length) {
+  if (active && payload && payload.length > 0) {
+    // Calculate total hours and percentages
+    const totalHours = payload.reduce((sum, entry) => sum + (entry['value'] as number), 0);
+
     return (
-      <div className="bg-background rounded-lg border p-3 shadow-md">
-        <p className="mb-2 font-medium">{label}</p>
-        {payload.map((entry, index: number) => (
-          <p key={index} className="text-sm" style={{ color: entry.color }}>
-            {entry.name}: {formatWithPrecision(Number(entry.value), 'HOUR')}{' '}
-            HOURS
-          </p>
-        ))}
+      <div className="rounded-lg border bg-background p-3 shadow-md">
+        <p className="font-medium">Equipment: {label}</p>
+        {payload.map((entry: Record<string, unknown>, index: number) => {
+          const value = entry['value'] as number;
+          const percentage = totalHours > 0 ? (value / totalHours) * 100 : 0;
+          return (
+            <p key={index} style={{ color: entry['color'] as string }}>
+              {entry['name'] as string}: {percentage.toFixed(1)}% ({formatWithPrecision(value, 'HOUR')} HOUR)
+            </p>
+          );
+        })}
       </div>
     );
   }
-
   return null;
 }
 
 export function EquipmentUtilizationChart({
   data,
-  isLoading = false,
-}: EquipmentUtilizationChartProps) {
+  isLoading,
+}: EquipmentUtilizationChartProps): React.JSX.Element {
+  const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
+
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Equipment Utilization</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-muted h-80 animate-pulse rounded" />
-        </CardContent>
-      </Card>
-    );
+    return <ChartSkeleton title="Equipment Utilization" className="col-span-1" />;
   }
 
-  /**
-   * Data transformation:
-   * Aggregate equipment logs by date and status, sum hours for each status category,
-   * transform to array of EquipmentUtilizationData objects.
-   *
-   * Example transformation:
-   * equipmentLogs.reduce((acc, log) => {
-   *   const dateKey = format(new Date(log.date), 'MMM dd');
-   *   if (!acc[dateKey]) {
-   *     acc[dateKey] = { date: dateKey, operational: 0, maintenance: 0, breakdown: 0, idle: 0 };
-   *   }
-   *   const status = log.status?.toLowerCase() || 'idle';
-   *   acc[dateKey][status] += Number(log.hours);
-   *   return acc;
-   * }, {});
-   */
-
   return (
-    <Card>
+    <Card className="col-span-1">
       <CardHeader>
         <CardTitle>Equipment Utilization</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={320}>
+        <div role="img" aria-label="Equipment Utilization chart showing percentage of operational versus idle hours">
+          <AccessibleLegend
+            payload={[
+              { dataKey: 'operationalHours', value: 'Operational', color: 'hsl(var(--chart-1))' },
+              { dataKey: 'idleHours', value: 'Idle', color: 'hsl(var(--chart-2))' },
+            ]}
+            onToggle={(dataKey) => {
+              setHiddenSeries((prev) => {
+                const next = new Set(prev);
+                if (next.has(dataKey)) {
+                  next.delete(dataKey);
+                } else {
+                  next.add(dataKey);
+                }
+                return next;
+              });
+            }}
+            hiddenSeries={hiddenSeries}
+          />
+          <ResponsiveContainer width="100%" height={320}>
           <BarChart
             data={data}
+            stackOffset="expand"
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
             <XAxis
-              dataKey="date"
+              dataKey="equipmentName"
               className="text-xs"
-              tickFormatter={(value) => new Date(value).toLocaleDateString()}
             />
-            <YAxis className="text-xs" />
+            <YAxis
+              className="text-xs"
+              domain={[0, 1]}
+              tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
+              label={{ value: 'Utilization %', angle: -90, position: 'insideLeft' }}
+            />
             <Tooltip content={<CustomTooltip />} />
-            <Legend />
+            <Legend content={() => null} />
             <Bar
-              dataKey="operational"
+              dataKey="operationalHours"
+              stackId="hours"
               fill="hsl(var(--chart-1))"
               name="Operational"
-              stackId="a"
+              radius={[4, 4, 0, 0]}
+              hide={hiddenSeries.has('operationalHours')}
             />
             <Bar
-              dataKey="maintenance"
+              dataKey="idleHours"
+              stackId="hours"
               fill="hsl(var(--chart-2))"
-              name="Maintenance"
-              stackId="a"
-            />
-            <Bar
-              dataKey="breakdown"
-              fill="hsl(var(--chart-5))"
-              name="Breakdown"
-              stackId="a"
-            />
-            <Bar
-              dataKey="idle"
-              fill="hsl(var(--muted))"
               name="Idle"
-              stackId="a"
+              hide={hiddenSeries.has('idleHours')}
             />
           </BarChart>
         </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );

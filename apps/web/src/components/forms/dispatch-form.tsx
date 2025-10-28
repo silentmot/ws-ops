@@ -6,27 +6,32 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
 import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@deskops/ui';
-import {
   Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Calendar,
+  Textarea,
+  cn,
 } from '@deskops/ui';
-import { Popover, PopoverContent, PopoverTrigger } from '@deskops/ui';
-import { Calendar, Textarea } from '@deskops/ui';
 import { toast } from 'sonner';
-import { cn } from '@deskops/ui';
 import { OPERATION_TYPES, getMaterialsInOrder } from '@deskops/constants';
 import { createDispatch } from '@/app/actions/dispatch';
 
@@ -59,7 +64,6 @@ export function DispatchForm({
     defaultValues: {
       siteId,
       date: new Date(),
-      qtyTon: undefined,
       operation: 'CRU-PRO',
     },
   });

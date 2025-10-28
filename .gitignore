@@ -60,7 +60,7 @@ test-output
 # Prisma
 *.db
 *.db-journal
-packages/database/src/generated/client/**
+packages/database/src/generated
 
 # Testing
 coverage

@@ -1,29 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
+import { Button, Badge } from '@deskops/ui';
 import {
-  Button,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Badge,
 } from '@deskops/ui';
 import { Plus, ArrowUpDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { DataTable } from '@/components/data-table/data-table';
-import { ManpowerForm } from '@/components/forms/manpower-form';
-import { DEFAULT_SITE_ID } from '@deskops/constants';
+import { ManpowerLogForm } from '@/components/forms/manpower-form';
+import { DEFAULT_SITE_ID, ShiftType } from '@deskops/constants';
 import { toast } from 'sonner';
+import {
+  ManpowerAttendanceChart,
+  ManpowerAttendanceData,
+} from '@/components/charts/manpower-attendance-chart';
 
 interface ManpowerLog {
   id: string;
   date: string;
+  shift: ShiftType | null;
   headcount: number;
   hours: number;
-  shift: string | null;
   notes: string | null;
   role: {
     code: string;
@@ -51,11 +54,12 @@ const columns: ColumnDef<ManpowerLog>[] = [
       );
     },
     cell: ({ row }) => {
-      return format(new Date(row.getValue('date')), 'MMM dd, yyyy');
+      const date = new Date(row.getValue('date'));
+      return format(date, 'MMM dd, yyyy');
     },
   },
   {
-    id: 'roleLabel',
+    id: 'role',
     accessorFn: (row) => `${row.role.code} - ${row.role.name}`,
     header: 'Role',
     cell: ({ row }) => {
@@ -76,7 +80,9 @@ const columns: ColumnDef<ManpowerLog>[] = [
       );
     },
     cell: ({ row }) => {
-      return row.getValue<number>('headcount');
+      return (
+        <div className="tabular-nums">{row.getValue('headcount')}</div>
+      );
     },
   },
   {
@@ -93,41 +99,67 @@ const columns: ColumnDef<ManpowerLog>[] = [
       );
     },
     cell: ({ row }) => {
-      return (
-        <span className="tabular-nums">
-          {row.getValue<number>('hours').toFixed(2)}
-        </span>
-      );
+      const hours = row.getValue('hours') as number;
+      return <div className="tabular-nums">{hours.toFixed(2)}</div>;
     },
   },
   {
     accessorKey: 'shift',
     header: 'Shift',
     cell: ({ row }) => {
-      const shift = row.getValue<string | null>('shift');
-      return shift ? <Badge variant="outline">{shift}</Badge> : '-';
-    },
-  },
-  {
-    accessorKey: 'notes',
-    header: 'Notes',
-    cell: ({ row }) => {
-      const notes = row.getValue<string | null>('notes');
-      if (!notes) return '-';
-      return notes.length > 50 ? notes.substring(0, 50) + '...' : notes;
+      const shift = row.getValue('shift') as string | null;
+      return shift ? <Badge>{shift}</Badge> : <span>-</span>;
     },
   },
 ];
 
-export default function ManpowerPage() {
+export default function ManpowerPage(): React.JSX.Element {
   const [manpowerLogs, setManpowerLogs] = useState<ManpowerLog[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedSite] = useState(DEFAULT_SITE_ID);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [selectedSite] = useState<string>(DEFAULT_SITE_ID);
+  const [chartData, setChartData] = useState<ManpowerAttendanceData[]>([]);
 
-  const fetchManpowerLogs = async () => {
+  const transformDataForChart = (logs: ManpowerLog[]): ManpowerAttendanceData[] => {
+    const roleMap = new Map<string, ManpowerAttendanceData>();
+
+    logs.forEach((log) => {
+      const roleName = `${log.role.code} - ${log.role.name}`;
+
+      if (!roleMap.has(roleName)) {
+        roleMap.set(roleName, {
+          roleName,
+          morning: 0,
+          afternoon: 0,
+          night: 0,
+          noShift: 0,
+        });
+      }
+
+      const roleData = roleMap.get(roleName);
+      if (roleData) {
+        switch (log.shift) {
+          case 'MORNING':
+            roleData.morning += log.headcount;
+            break;
+          case 'AFTERNOON':
+            roleData.afternoon += log.headcount;
+            break;
+          case 'NIGHT':
+            roleData.night += log.headcount;
+            break;
+          default:
+            roleData.noShift += log.headcount;
+            break;
+        }
+      }
+    });
+
+    return Array.from(roleMap.values());
+  };
+
+  const fetchManpowerLogs = async (): Promise<void> => {
     try {
-      setLoading(true);
       const dateFrom = new Date();
       dateFrom.setDate(dateFrom.getDate() - 30);
       const dateTo = new Date();
@@ -138,36 +170,41 @@ export default function ManpowerPage() {
         dateTo: dateTo.toISOString(),
       });
 
-      const response = await fetch(`/api/manpower?${params}`);
-      const data = await response.json();
+      const response = await fetch(`/api/manpower?${params.toString()}`);
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch manpower logs');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to fetch manpower logs');
       }
 
-      setManpowerLogs(data.manpowerLogs);
+      const data = await response.json();
+
+      const logs = data.manpowerLogs || [];
+      setManpowerLogs(logs);
+
+      const transformedData = transformDataForChart(logs);
+      setChartData(transformedData);
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : 'Failed to fetch manpower logs'
-      );
+      toast.error('Failed to load manpower data');
+      console.error('Error fetching manpower logs:', error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchManpowerLogs();
+    void fetchManpowerLogs();
   }, [selectedSite]);
 
-  const handleFormSuccess = () => {
+  const handleFormSuccess = (): void => {
     setDialogOpen(false);
-    fetchManpowerLogs();
+    void fetchManpowerLogs();
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Manpower Attendance</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Manpower Attendance</h1>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -175,22 +212,27 @@ export default function ManpowerPage() {
               Add Manpower Log
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+          <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add Manpower Log</DialogTitle>
+              <DialogTitle>Create Manpower Log</DialogTitle>
             </DialogHeader>
-            <ManpowerForm siteId={selectedSite} onSuccess={handleFormSuccess} />
+            <ManpowerLogForm
+              siteId={selectedSite}
+              onSuccess={handleFormSuccess}
+            />
           </DialogContent>
         </Dialog>
       </div>
 
+      <ManpowerAttendanceChart data={chartData} isLoading={loading} />
+
       {loading ? (
-        <div className="py-8 text-center">Loading...</div>
+        <div>Loading...</div>
       ) : (
         <DataTable
           columns={columns}
           data={manpowerLogs}
-          searchKey="roleLabel"
+          searchKey="role"
           searchPlaceholder="Search roles..."
         />
       )}

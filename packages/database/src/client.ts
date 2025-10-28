@@ -30,17 +30,11 @@ if (enableQueryLog && isDev) {
       callback: (e: { query: string; params: string; duration: number }) => void
     ) => void;
   };
-  queryableClient.$on(
-    'query',
-    (e: { query: string; params: string; duration: number }) => {
-      // eslint-disable-next-line no-console
-      console.log('Query: ' + e.query);
-      // eslint-disable-next-line no-console
-      console.log('Params: ' + e.params);
-      // eslint-disable-next-line no-console
-      console.log('Duration: ' + e.duration + 'ms');
-    }
-  );
+  queryableClient.$on('query', (e: { query: string; params: string; duration: number }) => {
+    console.warn('Query: ' + e.query);
+    console.warn('Params: ' + e.params);
+    console.warn('Duration: ' + e.duration + 'ms');
+  });
 }
 
 if (process.env['NODE_ENV'] !== 'production') {
