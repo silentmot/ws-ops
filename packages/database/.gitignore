@@ -11,3 +11,6 @@
 .env
 .env.local
 .env.*.local
+/generated/**
+generated/**
+generated/client/**
