@@ -28,4 +28,4 @@ export type {
   ExportJob,
   ExportAudit,
   Prisma,
-} from '@prisma/client';
+} from './generated/client';

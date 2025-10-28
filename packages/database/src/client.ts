@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from './generated/client';
 
 const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;
@@ -25,13 +25,22 @@ export const prisma =
 if (enableQueryLog && isDev) {
   // Type assertion needed due to conditional log configuration
   const queryableClient = prisma as PrismaClient & {
-    $on: (event: 'query', callback: (e: { query: string; params: string; duration: number }) => void) => void;
+    $on: (
+      event: 'query',
+      callback: (e: { query: string; params: string; duration: number }) => void
+    ) => void;
   };
-  queryableClient.$on('query', (e: { query: string; params: string; duration: number }) => {
-    console.log('Query: ' + e.query);
-    console.log('Params: ' + e.params);
-    console.log('Duration: ' + e.duration + 'ms');
-  });
+  queryableClient.$on(
+    'query',
+    (e: { query: string; params: string; duration: number }) => {
+      // eslint-disable-next-line no-console
+      console.log('Query: ' + e.query);
+      // eslint-disable-next-line no-console
+      console.log('Params: ' + e.params);
+      // eslint-disable-next-line no-console
+      console.log('Duration: ' + e.duration + 'ms');
+    }
+  );
 }
 
 if (process.env['NODE_ENV'] !== 'production') {
