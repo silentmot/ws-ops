@@ -1355,15 +1355,15 @@ setInterval(cleanupExpiredExports, 24 * 60 * 60 * 1000);
 
 #### Validation Checklist
 
-- [ ] Excel exports include frozen headers, filters, conditional formatting
-- [ ] PDF exports follow A4 format with proper margins
-- [ ] CSV exports are RFC 4180 compliant with UTF-8 BOM
-- [ ] Power BI CSV uses kebab_case columns
-- [ ] Progress tracking updates database correctly
-- [ ] File hash (SHA-256) generated for integrity verification
-- [ ] Cleanup job removes expired exports
-- [ ] All processors handle errors gracefully
-- [ ] TypeScript types are strict (NO any)
+- [x] Excel exports include frozen headers, filters, conditional formatting
+- [x] PDF exports follow A4 format with proper margins
+- [x] CSV exports are RFC 4180 compliant with UTF-8 BOM
+- [x] Power BI CSV uses kebab_case columns
+- [x] Progress tracking updates database correctly
+- [x] File hash (SHA-256) generated for integrity verification
+- [x] Cleanup job removes expired exports
+- [x] All processors handle errors gracefully
+- [x] TypeScript types are strict (NO any)
 
 #### Documentation References
 
