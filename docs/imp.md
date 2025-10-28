@@ -1,72 +1,54 @@
-DeskOps Remaining Implementation Tasks
+# DeskOps Remaining Implementation Tasks
 
-Document Version: 1.0
-Date: October 26, 2025
-Status: Pending Implementation
-Phases Covered: 9-13 (Remaining Tasks)
+<!--markdownlint-disable MD024 MD025 MD036-->
 
+**Document Version:** 1.0
+**Date:** October 26, 2025
+**Status:** Pending Implementation
+**Phases Covered:** 9-13 (Remaining Tasks)
 
+---
 
-Overview
+## Overview
 
 This document consolidates all remaining implementation tasks for the DeskOps Construction & Demolition Recycling Management System. These tasks follow the GZANSP × AOC protocol and build upon the completed foundation (Equipment & Manpower tracking, Dashboard KPI cards, and Interactive Charts).
 
-Completed Foundation:
+### Completed Foundation
 
+- ✅ Equipment Tracking Page with Form and Chart
+- ✅ Manpower Attendance Page with Form and Chart
+- ✅ Dashboard KPI Metric Cards with Animated Counters
+- ✅ Dashboard Interactive Chart Components (5 charts)
 
+### Remaining Work
 
+**13 tasks across 5 phases**
 
+---
 
-✅ Equipment Tracking Page with Form and Chart
+## Phase 9: Inventory Management (1 Task)
 
+### Task 9.3: Build Inventory Snapshot Page with Data Table and Movement Chart
 
+**Ticket ID:** `6bc8cdf1-11b3-4ac9-920b-e358ba41220e`
+**Size:** Story
+**Priority:** High
 
-✅ Manpower Attendance Page with Form and Chart
-
-
-
-✅ Dashboard KPI Metric Cards with Animated Counters
-
-
-
-✅ Dashboard Interactive Chart Components (5 charts)
-
-Remaining Work: 13 tasks across 5 phases
-
-
-
-Phase 9: Inventory Management (1 Task)
-
-Task 9.3: Build Inventory Snapshot Page with Data Table and Movement Chart
-
-Ticket ID: 6bc8cdf1-11b3-4ac9-920b-e358ba41220e
-Size: Story
-Priority: High
-
-Objective
+#### Objective
 
 Create a comprehensive inventory snapshot page displaying material stock levels with calculated closing balances and trend visualization.
 
-Implementation Details
+#### Implementation Details
 
-Files to Create:
+**Files to Create:**
 
+- `apps/web/src/app/dashboard/inventory/page.tsx` - Main inventory page
+- `apps/web/src/components/inventory/inventory-table.tsx` - Data table component
+- `apps/web/src/components/inventory/inventory-movement-chart.tsx` - Trend chart
 
+**Data Model:**
 
-
-
-apps/web/src/app/dashboard/inventory/page.tsx - Main inventory page
-
-
-
-apps/web/src/components/inventory/inventory-table.tsx - Data table component
-
-
-
-apps/web/src/components/inventory/inventory-movement-chart.tsx - Trend chart
-
-Data Model:
-
+```typescript
 interface InventorySnapshot {
   id: string;
   date: Date;
@@ -84,215 +66,91 @@ interface InventorySnapshot {
   adjustmentTon: number;
   closingTon: number; // Calculated: Opening + Produced + Received - Dispatched + Adjustment
 }
+```
 
-Key Features:
+#### Key Features
 
+**Data Table Columns:**
 
+- Date (sortable)
+- Material (code + name)
+- Opening Balance
+- Produced
+- Received
+- Dispatched
+- Adjustment
+- Closing Balance (calculated, color-coded)
 
+**Color Coding:**
 
+- 🔴 Red: Stock below threshold (< 100 TON)
+- 🟡 Yellow: Stock warning (100-500 TON)
+- 🟢 Green: Stock healthy (> 500 TON)
 
-Data Table Columns:
+**Filtering & Sorting:**
 
+- Filter by material category (AGGREGATES, PROCESSED_BASE, FINE, SPECIALTY, RAW_FEED)
+- Filter by date range
+- Sort by any column
+- Pagination (50 rows per page)
 
+**Summary Row:**
 
+- Totals by material category
+- Grand total across all materials
 
+**Movement Chart:**
 
-Date (sortable)
+- Line chart showing closing balance trends over time
+- Multiple series for different materials
+- Brush control for date range selection
+- Tooltip with detailed breakdown
 
+#### Validation Checklist
 
+- [ ] Table displays all columns with correct data types
+- [ ] Closing balance calculation is accurate
+- [ ] Color coding applies correctly based on thresholds
+- [ ] Filters work independently and in combination
+- [ ] Summary row calculates totals correctly
+- [ ] Chart renders trends accurately
+- [ ] Tabular number formatting aligns precisely
+- [ ] Responsive layout works on mobile/tablet/desktop
 
-Material (code + name)
+#### Documentation References
 
+- `DeskOps-ImplementationPlan.md` (lines 317-497)
+- `DeskOps-Interface-Overview.md` (lines 11-28)
+- `DeskOps-DB-Prisma.md` (lines 193-245)
 
+---
 
-Opening Balance
+---
 
+## Phase 10: State Management (3 Tasks)
 
+### Task 10.1: Setup React Query Client with Caching Strategy and Provider
 
-Produced
+**Ticket ID:** `2e994d46-f4a5-49a5-8402-55a8877febf2`
+**Size:** Issue
+**Priority:** Critical (Dependency for other tasks)
 
-
-
-Received
-
-
-
-Dispatched
-
-
-
-Adjustment
-
-
-
-Closing Balance (calculated, color-coded)
-
-
-
-Color Coding:
-
-
-
-
-
-Red: Stock below threshold (< 100 TON)
-
-
-
-Yellow: Stock warning (100-500 TON)
-
-
-
-Green: Stock healthy (> 500 TON)
-
-
-
-Filtering & Sorting:
-
-
-
-
-
-Filter by material category (AGGREGATES, PROCESSED_BASE, FINE, SPECIALTY, RAW_FEED)
-
-
-
-Filter by date range
-
-
-
-Sort by any column
-
-
-
-Pagination (50 rows per page)
-
-
-
-Summary Row:
-
-
-
-
-
-Totals by material category
-
-
-
-Grand total across all materials
-
-
-
-Movement Chart:
-
-
-
-
-
-Line chart showing closing balance trends over time
-
-
-
-Multiple series for different materials
-
-
-
-Brush control for date range selection
-
-
-
-Tooltip with detailed breakdown
-
-Validation Checklist:
-
-
-
-
-
-[ ] Table displays all columns with correct data types
-
-
-
-[ ] Closing balance calculation is accurate
-
-
-
-[ ] Color coding applies correctly based on thresholds
-
-
-
-[ ] Filters work independently and in combination
-
-
-
-[ ] Summary row calculates totals correctly
-
-
-
-[ ] Chart renders trends accurately
-
-
-
-[ ] Tabular number formatting aligns precisely
-
-
-
-[ ] Responsive layout works on mobile/tablet/desktop
-
-Documentation References:
-
-
-
-
-
-DeskOps-ImplementationPlan.md (lines 317-497)
-
-
-
-DeskOps-Interface-Overview.md (lines 11-28)
-
-
-
-DeskOps-DB-Prisma.md (lines 193-245)
-
-
-
-Phase 10: State Management (3 Tasks)
-
-Task 10.1: Setup React Query Client with Caching Strategy and Provider
-
-Ticket ID: 2e994d46-f4a5-49a5-8402-55a8877febf2
-Size: Issue
-Priority: Critical (Dependency for other tasks)
-
-Objective
+#### Objective
 
 Configure React Query infrastructure with optimized caching strategy and development tools.
 
-Implementation Details
+#### Implementation Details
 
-Files to Create/Update:
+**Files to Create/Update:**
 
+- `apps/web/src/lib/query-client.ts` - QueryClient configuration
+- `apps/web/src/lib/query-keys.ts` - Query key factory
+- `apps/web/src/components/providers/query-provider.tsx` - Update with devtools
+- `apps/web/src/app/layout.tsx` - Verify QueryProvider integration
 
+**QueryClient Configuration:**
 
-
-
-apps/web/src/lib/query-client.ts - QueryClient configuration
-
-
-
-apps/web/src/lib/query-keys.ts - Query key factory
-
-
-
-apps/web/src/components/providers/query-provider.tsx - Update with devtools
-
-
-
-apps/web/src/app/layout.tsx - Verify QueryProvider integration
-
-QueryClient Configuration:
-
+```typescript
 // apps/web/src/lib/query-client.ts
 import { QueryClient } from '@tanstack/react-query';
 
@@ -312,9 +170,11 @@ export const queryClient = new QueryClient({
     },
   },
 });
+```
 
-Query Key Factory Pattern:
+**Query Key Factory Pattern:**
 
+```typescript
 // apps/web/src/lib/query-keys.ts
 export const queryKeys = {
   production: {
@@ -327,95 +187,55 @@ export const queryKeys = {
   },
   dashboard: {
     all: ['dashboard'] as const,
-    metrics: (siteId: string) => [...queryKeys.dashboard.all, 'metrics', siteId] as const,
+    metrics: (siteId: string) =>
+      [...queryKeys.dashboard.all, 'metrics', siteId] as const,
   },
   // ... similar patterns for dispatch, received, equipment, manpower, inventory
 };
+```
 
-Validation Checklist:
+#### Validation Checklist
 
+- [ ] QueryClient configured with correct default options
+- [ ] Query key factory provides consistent cache keys
+- [ ] React Query Devtools loads in development only
+- [ ] Error boundary catches query errors
+- [ ] QueryProvider wraps app in root layout
 
+#### Documentation References
 
+- `DeskOps-Hooks.md` (lines 1098-1160)
+- `DeskOps-ImplementationPlan.md` (lines 498-682)
 
+---
 
-[ ] QueryClient configured with correct default options
+---
 
+### Task 10.2: Create Custom React Query Hooks for All Data Modules
 
+**Ticket ID:** `e6c077f2-53fc-4ba0-8531-2b092fb89874`
+**Size:** Story
+**Priority:** High
 
-[ ] Query key factory provides consistent cache keys
-
-
-
-[ ] React Query Devtools loads in development only
-
-
-
-[ ] Error boundary catches query errors
-
-
-
-[ ] QueryProvider wraps app in root layout
-
-Documentation References:
-
-
-
-
-
-DeskOps-Hooks.md (lines 1098-1160)
-
-
-
-DeskOps-ImplementationPlan.md (lines 498-682)
-
-
-
-Task 10.2: Create Custom React Query Hooks for All Data Modules
-
-Ticket ID: e6c077f2-53fc-4ba0-8531-2b092fb89874
-Size: Story
-Priority: High
-
-Objective
+#### Objective
 
 Implement type-safe data fetching hooks for all modules with proper error handling and cache invalidation.
 
-Implementation Details
+#### Implementation Details
 
-Files to Create:
+**Files to Create:**
 
+- `apps/web/src/hooks/use-api.ts` - Base API hook with Clerk auth
+- `apps/web/src/hooks/use-production.ts` - Production data hooks
+- `apps/web/src/hooks/use-dispatch.ts` - Dispatch data hooks
+- `apps/web/src/hooks/use-received.ts` - Received materials hooks
+- `apps/web/src/hooks/use-equipment.ts` - Equipment logs hooks
+- `apps/web/src/hooks/use-manpower.ts` - Manpower logs hooks
+- `apps/web/src/hooks/use-dashboard-metrics.ts` - Dashboard metrics hook
 
+**Base API Hook Pattern:**
 
-
-
-apps/web/src/hooks/use-api.ts - Base API hook with Clerk auth
-
-
-
-apps/web/src/hooks/use-production.ts - Production data hooks
-
-
-
-apps/web/src/hooks/use-dispatch.ts - Dispatch data hooks
-
-
-
-apps/web/src/hooks/use-received.ts - Received materials hooks
-
-
-
-apps/web/src/hooks/use-equipment.ts - Equipment logs hooks
-
-
-
-apps/web/src/hooks/use-manpower.ts - Manpower logs hooks
-
-
-
-apps/web/src/hooks/use-dashboard-metrics.ts - Dashboard metrics hook
-
-Base API Hook Pattern:
-
+```typescript
 // apps/web/src/hooks/use-api.ts
 import { useAuth } from '@clerk/nextjs';
 
@@ -465,9 +285,11 @@ export function useApi() {
     delete: <T>(url: string) => makeRequest<T>(url, { method: 'DELETE' }),
   };
 }
+```
 
-Module Hook Pattern (Example: Production):
+**Module Hook Pattern (Example: Production):**
 
+```typescript
 // apps/web/src/hooks/use-production.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApi } from './use-api';
@@ -535,119 +357,61 @@ export function useCreateProduction() {
     },
   });
 }
+```
 
-Hooks to Implement:
+**Hooks to Implement:**
 
+- `use-production.ts`: useProduction, useCreateProduction, useUpdateProduction, useDeleteProduction
+- `use-dispatch.ts`: useDispatch, useCreateDispatch, useUpdateDispatch, useDeleteDispatch
+- `use-received.ts`: useReceived, useCreateReceived, useUpdateReceived, useDeleteReceived
+- `use-equipment.ts`: useEquipment, useCreateEquipmentLog, useUpdateEquipmentLog, useDeleteEquipmentLog
+- `use-manpower.ts`: useManpower, useCreateManpowerLog, useUpdateManpowerLog, useDeleteManpowerLog
+- `use-dashboard-metrics.ts`: useDashboardMetrics (with 5-minute refetch interval)
 
+#### Validation Checklist
 
+- [ ] All hooks use proper TypeScript interfaces (NO any types)
+- [ ] Error handling implemented for all requests
+- [ ] Loading states exposed via isLoading
+- [ ] Mutation hooks invalidate related queries
+- [ ] Query keys use factory pattern
+- [ ] Stale times configured appropriately per module
+- [ ] Clerk authentication integrated in base API hook
 
+#### Documentation References
 
-use-production.ts: useProduction, useCreateProduction, useUpdateProduction, useDeleteProduction
+- `DeskOps-Hooks.md` (lines 22-295)
+- `DeskOps-ImplementationPlan.md` (lines 498-682)
 
+---
 
+---
 
-use-dispatch.ts: useDispatch, useCreateDispatch, useUpdateDispatch, useDeleteDispatch
+### Task 10.3: Implement Zustand State Stores for App and Export Management
 
+**Ticket ID:** `08a11a83-4faa-4360-96bf-a90f3f856f38`
+**Size:** Story
+**Priority:** High
 
-
-use-received.ts: useReceived, useCreateReceived, useUpdateReceived, useDeleteReceived
-
-
-
-use-equipment.ts: useEquipment, useCreateEquipmentLog, useUpdateEquipmentLog, useDeleteEquipmentLog
-
-
-
-use-manpower.ts: useManpower, useCreateManpowerLog, useUpdateManpowerLog, useDeleteManpowerLog
-
-
-
-use-dashboard-metrics.ts: useDashboardMetrics (with 5-minute refetch interval)
-
-Validation Checklist:
-
-
-
-
-
-[ ] All hooks use proper TypeScript interfaces (NO any types)
-
-
-
-[ ] Error handling implemented for all requests
-
-
-
-[ ] Loading states exposed via isLoading
-
-
-
-[ ] Mutation hooks invalidate related queries
-
-
-
-[ ] Query keys use factory pattern
-
-
-
-[ ] Stale times configured appropriately per module
-
-
-
-[ ] Clerk authentication integrated in base API hook
-
-Documentation References:
-
-
-
-
-
-DeskOps-Hooks.md (lines 22-295)
-
-
-
-DeskOps-ImplementationPlan.md (lines 498-682)
-
-
-
-Task 10.3: Implement Zustand State Stores for App and Export Management
-
-Ticket ID: 08a11a83-4faa-4360-96bf-a90f3f856f38
-Size: Story
-Priority: High
-
-Objective
+#### Objective
 
 Create client-side state management stores with localStorage persistence for app preferences and export job tracking.
 
-Implementation Details
+#### Implementation Details
 
-Files to Create:
+**Files to Create:**
 
+- `apps/web/src/stores/app-store.ts` - App-wide state (site, date, theme, sidebar)
+- `apps/web/src/stores/export-store.ts` - Export job state
 
+**Files to Update:**
 
+- `apps/web/src/components/layout/header.tsx` - Use app store
+- `apps/web/src/components/layout/sidebar.tsx` - Use app store
 
+**App Store Implementation:**
 
-apps/web/src/stores/app-store.ts - App-wide state (site, date, theme, sidebar)
-
-
-
-apps/web/src/stores/export-store.ts - Export job state
-
-Files to Update:
-
-
-
-
-
-apps/web/src/components/layout/header.tsx - Use app store
-
-
-
-apps/web/src/components/layout/sidebar.tsx - Use app store
-
-App Store Implementation:
-
+```typescript
 // apps/web/src/stores/app-store.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -717,9 +481,11 @@ export const useAppStore = create<AppState>()(
     }
   )
 );
+```
 
-Export Store Implementation:
+**Export Store Implementation:**
 
+```typescript
 // apps/web/src/stores/export-store.ts
 import { create } from 'zustand';
 
@@ -754,8 +520,7 @@ export const useExportStore = create<ExportState>((set) => ({
   exportDialogOpen: false,
   selectedModule: 'production',
 
-  addJob: (job) =>
-    set((state) => ({ activeJobs: [...state.activeJobs, job] })),
+  addJob: (job) => set((state) => ({ activeJobs: [...state.activeJobs, job] })),
 
   updateJob: (id, updates) =>
     set((state) => {
@@ -772,9 +537,7 @@ export const useExportStore = create<ExportState>((set) => ({
       }
 
       return {
-        activeJobs: state.activeJobs.map((j) =>
-          j.id === id ? updatedJob : j
-        ),
+        activeJobs: state.activeJobs.map((j) => (j.id === id ? updatedJob : j)),
       };
     }),
 
@@ -788,114 +551,96 @@ export const useExportStore = create<ExportState>((set) => ({
   setExportDialogOpen: (open) => set({ exportDialogOpen: open }),
   setSelectedModule: (module) => set({ selectedModule: module }),
 }));
+```
 
-Component Updates:
+**Component Updates:**
 
 Update Header component to use useAppStore:
 
+```typescript
 // Replace useState with useAppStore
-const { selectedSiteId, setSelectedSiteId, dateRange, setDateRange, theme, setTheme } = useAppStore();
+const {
+  selectedSiteId,
+  setSelectedSiteId,
+  dateRange,
+  setDateRange,
+  theme,
+  setTheme,
+} = useAppStore();
+```
 
 Update Sidebar component to use useAppStore:
 
+```typescript
 // Replace useState with useAppStore
 const { sidebarCollapsed, setSidebarCollapsed } = useAppStore();
+```
 
-Validation Checklist:
+#### Validation Checklist
 
+- [ ] App store persists to localStorage correctly
+- [ ] Export store manages job lifecycle (pending → processing → completed/failed)
+- [ ] Header component uses app store for site, date, theme
+- [ ] Sidebar component uses app store for collapse state
+- [ ] All state updates trigger re-renders
+- [ ] TypeScript interfaces are properly typed (NO any)
+- [ ] Persist middleware only saves selected fields
 
+#### Documentation References
 
+- `DeskOps-Hooks.md` (lines 413-583)
+- `DeskOps-ImplementationPlan.md` (lines 498-682)
 
+---
 
-[ ] App store persists to localStorage correctly
+---
 
+## Phase 11: Export System (3 Tasks)
 
+### Task 11.1: Create Export API Routes with Job Management and Rate Limiting
 
-[ ] Export store manages job lifecycle (pending → processing → completed/failed)
+**Ticket ID:** `b689605b-0b44-4ed3-8ebb-c7076f0bf52f`
+**Size:** Story
+**Priority:** High
 
-
-
-[ ] Header component uses app store for site, date, theme
-
-
-
-[ ] Sidebar component uses app store for collapse state
-
-
-
-[ ] All state updates trigger re-renders
-
-
-
-[ ] TypeScript interfaces are properly typed (NO any)
-
-
-
-[ ] Persist middleware only saves selected fields
-
-Documentation References:
-
-
-
-
-
-DeskOps-Hooks.md (lines 413-583)
-
-
-
-DeskOps-ImplementationPlan.md (lines 498-682)
-
-
-
-Phase 11: Export System (3 Tasks)
-
-Task 11.1: Create Export API Routes with Job Management and Rate Limiting
-
-Ticket ID: b689605b-0b44-4ed3-8ebb-c7076f0bf52f
-Size: Story
-Priority: High
-
-Objective
+#### Objective
 
 Implement backend API routes for export job creation, status tracking, download, and retry with authentication and rate limiting.
 
-Implementation Details
+#### Implementation Details
 
-Files to Create:
+**Files to Create:**
 
+- `apps/web/src/app/api/exports/route.ts` - POST (create), GET (list)
+- `apps/web/src/app/api/exports/[jobId]/route.ts` - GET (status)
+- `apps/web/src/app/api/exports/[jobId]/download/route.ts` - GET (download)
+- `apps/web/src/app/api/exports/[jobId]/retry/route.ts` - POST (retry)
 
+**Zod Validation Schema:**
 
-
-
-apps/web/src/app/api/exports/route.ts - POST (create), GET (list)
-
-
-
-apps/web/src/app/api/exports/[jobId]/route.ts - GET (status)
-
-
-
-apps/web/src/app/api/exports/[jobId]/download/route.ts - GET (download)
-
-
-
-apps/web/src/app/api/exports/[jobId]/retry/route.ts - POST (retry)
-
-Zod Validation Schema:
-
+```typescript
 import { z } from 'zod';
 
 const ExportJobSchema = z.object({
   siteId: z.string().cuid(),
-  module: z.enum(['production', 'dispatch', 'received', 'equipment', 'manpower', 'inventory']),
+  module: z.enum([
+    'production',
+    'dispatch',
+    'received',
+    'equipment',
+    'manpower',
+    'inventory',
+  ]),
   dateFrom: z.string().datetime(),
   dateTo: z.string().datetime(),
   granularity: z.enum(['daily', 'weekly', 'monthly']).default('daily'),
   format: z.enum(['xlsx', 'csv', 'pdf']),
 });
+```
 
-Main Export Route:
+**Main Export Route:**
 
+```typescript
 // apps/web/src/app/api/exports/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
@@ -965,9 +710,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return handleApiError(error);
   }
 }
+```
 
-Job Status Route:
+**Job Status Route:**
 
+```typescript
 // apps/web/src/app/api/exports/[jobId]/route.ts
 export async function GET(
   request: NextRequest,
@@ -992,9 +739,11 @@ export async function GET(
     return handleApiError(error);
   }
 }
+```
 
-Download Route:
+**Download Route:**
 
+```typescript
 // apps/web/src/app/api/exports/[jobId]/download/route.ts
 export async function GET(
   request: NextRequest,
@@ -1033,9 +782,11 @@ export async function GET(
     return handleApiError(error);
   }
 }
+```
 
-Retry Route:
+**Retry Route:**
 
+```typescript
 // apps/web/src/app/api/exports/[jobId]/retry/route.ts
 export async function POST(
   request: NextRequest,
@@ -1075,10 +826,13 @@ export async function POST(
     return handleApiError(error);
   }
 }
+```
 
-Audit Trail:
+**Audit Trail:**
+
 After successful export completion, create audit record:
 
+```typescript
 await prisma.exportAudit.create({
   data: {
     jobId: job.id,
@@ -1091,103 +845,53 @@ await prisma.exportAudit.create({
     fileHash: fileHash,
   },
 });
+```
 
-Validation Checklist:
+#### Validation Checklist
 
+- [ ] All routes follow /api/exports/[resource] pattern (NO versioning)
+- [ ] Clerk authentication enforced on all routes
+- [ ] Rate limiting prevents abuse (max 5 active jobs)
+- [ ] Zod validation applied to request bodies
+- [ ] Audit trail created for completed exports
+- [ ] Signed URLs generated with 24-hour expiry
+- [ ] Error handling uses handleApiError utility
+- [ ] TypeScript types are strict (NO any)
 
+#### Documentation References
 
+- `DeskOps-Backend.md` (lines 704-798)
+- `DeskOps-Interface-Overview.md` (lines 124-186)
+- `DeskOps-ImplementationPlan.md` (lines 498-682)
 
+---
 
-[ ] All routes follow /api/exports/[resource] pattern (NO versioning)
+### Task 11.2: Implement Export File Processors for Excel, PDF, and CSV Formats
 
+**Ticket ID:** `48e11ab4-ef93-42ea-a114-ffa52b69e373`
+**Size:** Epic
+**Priority:** High
 
-
-[ ] Clerk authentication enforced on all routes
-
-
-
-[ ] Rate limiting prevents abuse (max 5 active jobs)
-
-
-
-[ ] Zod validation applied to request bodies
-
-
-
-[ ] Audit trail created for completed exports
-
-
-
-[ ] Signed URLs generated with 24-hour expiry
-
-
-
-[ ] Error handling uses handleApiError utility
-
-
-
-[ ] TypeScript types are strict (NO any)
-
-Documentation References:
-
-
-
-
-
-DeskOps-Backend.md (lines 704-798)
-
-
-
-DeskOps-Interface-Overview.md (lines 124-186)
-
-
-
-DeskOps-ImplementationPlan.md (lines 498-682)
-
-
-
-Task 11.2: Implement Export File Processors for Excel, PDF, and CSV Formats
-
-Ticket ID: 48e11ab4-ef93-42ea-a114-ffa52b69e373
-Size: Epic
-Priority: High
-
-Objective
+#### Objective
 
 Create file generation processors for Excel, PDF, and CSV formats with progress tracking and integrity verification.
 
-Implementation Details
+#### Implementation Details
 
-Files to Create:
+**Files to Create:**
 
+- `apps/web/src/lib/exporters/types.ts` - Shared interfaces
+- `apps/web/src/lib/exporters/excel.ts` - Excel processor (ExcelJS)
+- `apps/web/src/lib/exporters/pdf.ts` - PDF processor (pdf-lib)
+- `apps/web/src/lib/exporters/csv.ts` - CSV processor (Node streams)
+- `apps/web/src/lib/exporters/powerbi-csv.ts` - Power BI CSV processor
+- `apps/web/src/lib/exporters/export-processor.ts` - Job orchestrator
 
+**Shared Types:**
 
-
-
-apps/web/src/lib/exporters/types.ts - Shared interfaces
-
-
-
-apps/web/src/lib/exporters/excel.ts - Excel processor (ExcelJS)
-
-
-
-apps/web/src/lib/exporters/pdf.ts - PDF processor (pdf-lib)
-
-
-
-apps/web/src/lib/exporters/csv.ts - CSV processor (Node streams)
-
-
-
-apps/web/src/lib/exporters/powerbi-csv.ts - Power BI CSV processor
-
-
-
-apps/web/src/lib/exporters/export-processor.ts - Job orchestrator
-
-Shared Types:
-
+````typescript
+// apps/web/src/lib/exporters/types.ts
+```typescript
 // apps/web/src/lib/exporters/types.ts
 export interface ExportJobData {
   id: string;
@@ -1214,9 +918,11 @@ export interface ExporterOptions {
   jobData: ExportJobData;
   onProgress: ProgressCallback;
 }
+````
 
-Excel Processor:
+**Excel Processor:**
 
+```typescript
 // apps/web/src/lib/exporters/excel.ts
 import ExcelJS from 'exceljs';
 import { createHash } from 'crypto';
@@ -1324,9 +1030,11 @@ async function fetchModuleData(jobData: ExportJobData): Promise<unknown[]> {
       throw new Error(`Unsupported module: ${jobData.module}`);
   }
 }
+```
 
-PDF Processor:
+**PDF Processor:**
 
+```typescript
 // apps/web/src/lib/exporters/pdf.ts
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createHash } from 'crypto';
@@ -1413,9 +1121,11 @@ export async function generatePDFReport(
     recordCount: data.length,
   };
 }
+```
 
-CSV Processor:
+**CSV Processor:**
 
+```typescript
 // apps/web/src/lib/exporters/csv.ts
 import { createWriteStream } from 'fs';
 import { pipeline } from 'stream/promises';
@@ -1486,9 +1196,11 @@ export async function generateCSVReport(
     recordCount: data.length,
   };
 }
+```
 
-Export Processor Orchestrator:
+**Export Processor Orchestrator:**
 
+```typescript
 // apps/web/src/lib/exporters/export-processor.ts
 import { prisma } from '@/lib/db';
 import { generateExcelReport } from './excel';
@@ -1603,9 +1315,11 @@ export class ExportJobProcessor {
     });
   }
 }
+```
 
-Cleanup Job for Expired Exports:
+**Cleanup Job for Expired Exports:**
 
+```typescript
 // apps/web/src/lib/exporters/cleanup.ts
 import { prisma } from '@/lib/db';
 import { unlink } from 'fs/promises';
@@ -1636,107 +1350,54 @@ export async function cleanupExpiredExports(): Promise<void> {
 
 // Run cleanup daily
 setInterval(cleanupExpiredExports, 24 * 60 * 60 * 1000);
+```
 
-Validation Checklist:
+#### Validation Checklist
 
+- [ ] Excel exports include frozen headers, filters, conditional formatting
+- [ ] PDF exports follow A4 format with proper margins
+- [ ] CSV exports are RFC 4180 compliant with UTF-8 BOM
+- [ ] Power BI CSV uses kebab_case columns
+- [ ] Progress tracking updates database correctly
+- [ ] File hash (SHA-256) generated for integrity verification
+- [ ] Cleanup job removes expired exports
+- [ ] All processors handle errors gracefully
+- [ ] TypeScript types are strict (NO any)
 
+#### Documentation References
 
+- `DeskOps-Backend.md` (lines 929-1044)
+- `DeskOps-Interface-Overview.md` (lines 156-162)
+- `DeskOps-ImplementationPlan.md` (lines 498-682)
 
+---
 
-[ ] Excel exports include frozen headers, filters, conditional formatting
+### Task 11.3: Build Export Dialog and Progress Tracking UI Components
 
+**Ticket ID:** `7551e02b-04c0-4991-ab6a-895399e7e8ae`
+**Size:** Story
+**Priority:** High
 
-
-[ ] PDF exports follow A4 format with proper margins
-
-
-
-[ ] CSV exports are RFC 4180 compliant with UTF-8 BOM
-
-
-
-[ ] Power BI CSV uses kebab_case columns
-
-
-
-[ ] Progress tracking updates database correctly
-
-
-
-[ ] File hash (SHA-256) generated for integrity verification
-
-
-
-[ ] Cleanup job removes expired exports
-
-
-
-[ ] All processors handle errors gracefully
-
-
-
-[ ] TypeScript types are strict (NO any)
-
-Documentation References:
-
-
-
-
-
-DeskOps-Backend.md (lines 929-1044)
-
-
-
-DeskOps-Interface-Overview.md (lines 156-162)
-
-
-
-DeskOps-ImplementationPlan.md (lines 498-682)
-
-
-
-Task 11.3: Build Export Dialog and Progress Tracking UI Components
-
-Ticket ID: 7551e02b-04c0-4991-ab6a-895399e7e8ae
-Size: Story
-Priority: High
-
-Objective
+#### Objective
 
 Create user-facing export UI with dialog form, real-time progress tracking, and export history.
 
-Implementation Details
+#### Implementation Details
 
-Files to Create:
+**Files to Create:**
 
+- `apps/web/src/components/export/export-dialog.tsx` - Export form dialog
+- `apps/web/src/components/export/export-progress.tsx` - Progress bar with SSE
+- `apps/web/src/components/export/export-history.tsx` - Completed exports list
+- `apps/web/src/hooks/use-export-progress.ts` - SSE hook for real-time updates
 
+**Files to Update:**
 
+- `apps/web/src/components/layout/header.tsx` - Add export button
 
+**Export Dialog Component:**
 
-apps/web/src/components/export/export-dialog.tsx - Export form dialog
-
-
-
-apps/web/src/components/export/export-progress.tsx - Progress bar with SSE
-
-
-
-apps/web/src/components/export/export-history.tsx - Completed exports list
-
-
-
-apps/web/src/hooks/use-export-progress.ts - SSE hook for real-time updates
-
-Files to Update:
-
-
-
-
-
-apps/web/src/components/layout/header.tsx - Add export button
-
-Export Dialog Component:
-
+```typescript
 // apps/web/src/components/export/export-dialog.tsx
 'use client';
 
@@ -1927,9 +1588,11 @@ export function ExportDialog(): React.JSX.Element {
     </Dialog>
   );
 }
+```
 
-Export Progress Component:
+**Export Progress Component:**
 
+```typescript
 // apps/web/src/components/export/export-progress.tsx
 'use client';
 
@@ -1976,9 +1639,11 @@ export function ExportProgress(): React.JSX.Element {
     </div>
   );
 }
+```
 
-Export History Component:
+**Export History Component:**
 
+```typescript
 // apps/web/src/components/export/export-history.tsx
 'use client';
 
@@ -2117,9 +1782,11 @@ export function ExportHistory(): React.JSX.Element {
     </Card>
   );
 }
+```
 
-SSE Hook for Real-time Updates:
+**SSE Hook for Real-time Updates:**
 
+```typescript
 // apps/web/src/hooks/use-export-progress.ts
 import { useEffect } from 'react';
 import { useAuth } from '@clerk/nextjs';
@@ -2164,109 +1831,66 @@ export function useExportProgress(): void {
     };
   }, [getToken, updateJob]);
 }
+```
 
-Update Header Component:
+**Update Header Component:**
 
+```typescript
 // Add to apps/web/src/components/layout/header.tsx
 import { ExportDialog } from '@/components/export/export-dialog';
 
 // In the header JSX, add:
 <ExportDialog />
+```
 
-Validation Checklist:
+#### Validation Checklist
 
+- [ ] Export dialog validates form inputs with Zod
+- [ ] Progress component shows real-time updates via SSE
+- [ ] History component lists completed exports with download/retry
+- [ ] Export button added to Header component
+- [ ] SSE hook connects and reconnects automatically
+- [ ] Download triggers file download correctly
+- [ ] Retry re-queues failed jobs
+- [ ] All components use Zustand export store
+- [ ] TypeScript types are strict (NO any)
 
+#### Documentation References
 
+- `DeskOps-Hooks.md` (lines 586-735)
+- `DeskOps-Interface-Overview.md` (lines 124-147)
+- `DeskOps-ImplementationPlan.md` (lines 498-682)
 
+---
 
-[ ] Export dialog validates form inputs with Zod
+---
 
+## Phase 12: Authentication (2 Tasks)
 
+### Task 12.1: Configure Clerk Authentication Middleware with Route Protection
 
-[ ] Progress component shows real-time updates via SSE
+**Ticket ID:** `42597a1b-d91b-4a9a-966b-3c86241e4b25`
+**Size:** Issue
+**Priority:** Critical
 
-
-
-[ ] History component lists completed exports with download/retry
-
-
-
-[ ] Export button added to Header component
-
-
-
-[ ] SSE hook connects and reconnects automatically
-
-
-
-[ ] Download triggers file download correctly
-
-
-
-[ ] Retry re-queues failed jobs
-
-
-
-[ ] All components use Zustand export store
-
-
-
-[ ] TypeScript types are strict (NO any)
-
-Documentation References:
-
-
-
-
-
-DeskOps-Hooks.md (lines 586-735)
-
-
-
-DeskOps-Interface-Overview.md (lines 124-147)
-
-
-
-DeskOps-ImplementationPlan.md (lines 498-682)
-
-
-
-Phase 12: Authentication (2 Tasks)
-
-Task 12.1: Configure Clerk Authentication Middleware with Route Protection
-
-Ticket ID: 42597a1b-d91b-4a9a-966b-3c86241e4b25
-Size: Issue
-Priority: Critical
-
-Objective
+#### Objective
 
 Implement Next.js middleware for route protection and role-based access control using Clerk.
 
-Implementation Details
+#### Implementation Details
 
-Files to Create:
+**Files to Create:**
 
+- `apps/web/src/middleware.ts` - Clerk authentication middleware
 
+**Files to Update:**
 
+- `.env.local` - Add Clerk environment variables
+- `.env.example` - Document Clerk variables
 
+**Middleware Implementation:**
 
-apps/web/src/middleware.ts - Clerk authentication middleware
-
-Files to Update:
-
-
-
-
-
-.env.local - Add Clerk environment variables
-
-
-
-.env.example - Document Clerk variables
-
-Middleware Implementation:
-
+```typescript
 // apps/web/src/middleware.ts
 import { authMiddleware, redirectToSignIn } from '@clerk/nextjs';
 import { NextResponse } from 'next/server';
@@ -2302,9 +1926,11 @@ export default authMiddleware({
 export const config = {
   matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
 };
+```
 
-Environment Variables:
+**Environment Variables:**
 
+```bash
 # .env.local
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
@@ -2321,87 +1947,60 @@ NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
 NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+```
 
-Validation Checklist:
+#### Validation Checklist
 
+- [ ] Middleware protects all routes except public/ignored
+- [ ] Unauthenticated users redirected to sign-in
+- [ ] Role-based access control checks user metadata
+- [ ] Admin routes restricted to ADMIN role
+- [ ] ClerkProvider verified in root layout
+- [ ] Environment variables documented in .env.example
 
+#### Documentation References
 
+- `DeskOps-Backend.md` (lines 1048-1082)
+- `DeskOps-ImplementationPlan.md` (lines 683-804)
 
-
-[ ] Middleware protects all routes except public/ignored
-
-
-
-[ ] Unauthenticated users redirected to sign-in
-
-
-
-[ ] Role-based access control checks user metadata
-
-
-
-[ ] Admin routes restricted to ADMIN role
-
-
+---
 
 [ ] ClerkProvider verified in root layout
-
-
 
 [ ] Environment variables documented in .env.example
 
 Documentation References:
 
+- `DeskOps-Backend.md` (lines 1048-1082)
+- `DeskOps-ImplementationPlan.md` (lines 683-804)
 
+---
 
+### Task 12.2: Create Clerk Authentication Pages and Custom useAuth Hook
 
+**Ticket ID:** `df3ce88e-fe40-4c06-84b6-5358a024fdd5`
+**Size:** Story
+**Priority:** High
 
-DeskOps-Backend.md (lines 1048-1082)
-
-
-
-DeskOps-ImplementationPlan.md (lines 683-804)
-
-
-
-Task 12.2: Create Clerk Authentication Pages and Custom useAuth Hook
-
-Ticket ID: df3ce88e-fe40-4c06-84b6-5358a024fdd5
-Size: Story
-Priority: High
-
-Objective
+#### Objective
 
 Implement authentication pages and custom hook for role-based UI rendering.
 
-Implementation Details
+#### Implementation Details
 
-Files to Create:
+**Files to Create:**
 
+- `apps/web/src/app/sign-in/[[...sign-in]]/page.tsx` - Sign-in page
+- `apps/web/src/app/sign-up/[[...sign-up]]/page.tsx` - Sign-up page
+- `apps/web/src/hooks/use-auth.ts` - Custom auth hook
 
+**Files to Update:**
 
+- `apps/web/src/components/layout/header.tsx` - Use custom useAuth hook
 
+**Sign-In Page:**
 
-apps/web/src/app/sign-in/[[...sign-in]]/page.tsx - Sign-in page
-
-
-
-apps/web/src/app/sign-up/[[...sign-up]]/page.tsx - Sign-up page
-
-
-
-apps/web/src/hooks/use-auth.ts - Custom auth hook
-
-Files to Update:
-
-
-
-
-
-apps/web/src/components/layout/header.tsx - Use custom useAuth hook
-
-Sign-In Page:
-
+```typescript
 // apps/web/src/app/sign-in/[[...sign-in]]/page.tsx
 import { SignIn } from '@clerk/nextjs';
 
@@ -2427,9 +2026,11 @@ export default function SignInPage(): React.JSX.Element {
     </div>
   );
 }
+```
 
-Sign-Up Page:
+**Sign-Up Page:**
 
+```typescript
 // apps/web/src/app/sign-up/[[...sign-up]]/page.tsx
 import { SignUp } from '@clerk/nextjs';
 
@@ -2455,9 +2056,11 @@ export default function SignUpPage(): React.JSX.Element {
     </div>
   );
 }
+```
 
-Custom useAuth Hook:
+**Custom useAuth Hook:**
 
+```typescript
 // apps/web/src/hooks/use-auth.ts
 import { useUser, useAuth as useClerkAuth } from '@clerk/nextjs';
 import { UserRole } from '@deskops/constants';
@@ -2508,9 +2111,11 @@ export function useAuth(): {
     signOut,
   };
 }
+```
 
-Update Header Component:
+**Update Header Component:**
 
+```typescript
 // apps/web/src/components/layout/header.tsx
 import { useAuth } from '@/hooks/use-auth';
 
@@ -2538,101 +2143,54 @@ export function Header(): React.JSX.Element {
     </header>
   );
 }
+```
 
-Validation Checklist:
+#### Validation Checklist
 
+- [ ] Sign-in page renders Clerk SignIn component
+- [ ] Sign-up page renders Clerk SignUp component
+- [ ] Custom useAuth hook wraps Clerk hooks
+- [ ] hasRole function checks user metadata correctly
+- [ ] AuthUser interface uses UserRole enum from constants
+- [ ] Header component uses custom useAuth hook
+- [ ] Role-based UI rendering works correctly
+- [ ] TypeScript types are strict (NO any)
 
+#### Documentation References
 
+- `DeskOps-Hooks.md` (lines 916-967)
+- `DeskOps-ImplementationPlan.md` (lines 683-804)
 
+---
 
-[ ] Sign-in page renders Clerk SignIn component
+## Phase 13: Testing Infrastructure (3 Tasks)
 
+### Task 13.1: Configure Vitest Testing Framework with Mocks and Utilities
 
+**Ticket ID:** `3c1d5d89-2517-4a22-9407-d19ff91365b1`
+**Size:** Story
+**Priority:** High
 
-[ ] Sign-up page renders Clerk SignUp component
-
-
-
-[ ] Custom useAuth hook wraps Clerk hooks
-
-
-
-[ ] hasRole function checks user metadata correctly
-
-
-
-[ ] AuthUser interface uses UserRole enum from constants
-
-
-
-[ ] Header component uses custom useAuth hook
-
-
-
-[ ] Role-based UI rendering works correctly
-
-
-
-[ ] TypeScript types are strict (NO any)
-
-Documentation References:
-
-
-
-
-
-DeskOps-Hooks.md (lines 916-967)
-
-
-
-DeskOps-ImplementationPlan.md (lines 683-804)
-
-
-
-Phase 13: Testing Infrastructure (3 Tasks)
-
-Task 13.1: Configure Vitest Testing Framework with Mocks and Utilities
-
-Ticket ID: 3c1d5d89-2517-4a22-9407-d19ff91365b1
-Size: Story
-Priority: High
-
-Objective
+#### Objective
 
 Setup Vitest testing infrastructure with mocks for Next.js and Clerk, plus test utilities.
 
-Implementation Details
+#### Implementation Details
 
-Files to Create:
+**Files to Create:**
 
+- `apps/web/vitest.config.ts` - Vitest configuration
+- `apps/web/src/test/setup.ts` - Global test setup with mocks
+- `apps/web/src/test/utils.tsx` - Test utilities (renderWithProviders)
+- `apps/web/src/test/mocks/` - Mock files directory
 
+**Files to Update:**
 
+- `apps/web/package.json` - Add test scripts
 
+**Vitest Configuration:**
 
-apps/web/vitest.config.ts - Vitest configuration
-
-
-
-apps/web/src/test/setup.ts - Global test setup with mocks
-
-
-
-apps/web/src/test/utils.tsx - Test utilities (renderWithProviders)
-
-
-
-apps/web/src/test/mocks/ - Mock files directory
-
-Files to Update:
-
-
-
-
-
-apps/web/package.json - Add test scripts
-
-Vitest Configuration:
-
+```typescript
 // apps/web/vitest.config.ts
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
@@ -2647,12 +2205,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'src/test/',
-        '**/*.config.*',
-        '**/*.d.ts',
-      ],
+      exclude: ['node_modules/', 'src/test/', '**/*.config.*', '**/*.d.ts'],
       thresholds: {
         statements: 80,
         branches: 80,
@@ -2665,14 +2218,22 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@deskops/ui': path.resolve(__dirname, '../../packages/ui/src'),
-      '@deskops/constants': path.resolve(__dirname, '../../packages/constants/src'),
-      '@deskops/database': path.resolve(__dirname, '../../packages/database/src'),
+      '@deskops/constants': path.resolve(
+        __dirname,
+        '../../packages/constants/src'
+      ),
+      '@deskops/database': path.resolve(
+        __dirname,
+        '../../packages/database/src'
+      ),
     },
   },
 });
+```
 
-Test Setup with Mocks:
+**Test Setup with Mocks:**
 
+```typescript
 // apps/web/src/test/setup.ts
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
@@ -2723,9 +2284,11 @@ global.console = {
   warn: vi.fn(),
   error: vi.fn(),
 };
+```
 
-Test Utilities:
+**Test Utilities:**
 
+```typescript
 // apps/web/src/test/utils.tsx
 import { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
@@ -2770,12 +2333,12 @@ export function renderWithProviders(
 
 export * from '@testing-library/react';
 export { renderWithProviders as render };
+```
 
-Mock Files:
+**Mock Files:**
 
+```typescript
 // apps/web/src/test/mocks/handlers.ts
-import { rest } from 'msw';
-
 export const handlers = [
   rest.get('/api/production', (req, res, ctx) => {
     return res(
@@ -2796,9 +2359,11 @@ export const handlers = [
     );
   }),
 ];
+```
 
-Update package.json:
+**Update package.json:**
 
+```json
 {
   "scripts": {
     "test": "vitest",
@@ -2817,95 +2382,49 @@ Update package.json:
     "msw": "^2.0.0"
   }
 }
+```
 
-Validation Checklist:
+#### Validation Checklist
 
+- [ ] Vitest configured with React plugin and jsdom
+- [ ] Path aliases match tsconfig
+- [ ] Coverage thresholds set to 80%
+- [ ] Next.js router mocked correctly
+- [ ] Clerk auth mocked correctly
+- [ ] renderWithProviders wraps QueryClient and Theme providers
+- [ ] Test scripts added to package.json
+- [ ] Mock handlers created for API routes
 
+#### Documentation References
 
+- `DeskOps-Configuration.md` (lines 867-985)
+- `DeskOps-ImplementationPlan.md` (lines 805-990)
 
+---
 
-[ ] Vitest configured with React plugin and jsdom
+### Task 13.2: Write Sample Unit and Integration Tests for Key Components
 
+**Ticket ID:** `3cde6329-deed-46b9-bea6-88930c0684eb`
+**Size:** Story
+**Priority:** Medium
 
-
-[ ] Path aliases match tsconfig
-
-
-
-[ ] Coverage thresholds set to 80%
-
-
-
-[ ] Next.js router mocked correctly
-
-
-
-[ ] Clerk auth mocked correctly
-
-
-
-[ ] renderWithProviders wraps QueryClient and Theme providers
-
-
-
-[ ] Test scripts added to package.json
-
-
-
-[ ] Mock handlers created for API routes
-
-Documentation References:
-
-
-
-
-
-DeskOps-Configuration.md (lines 867-985)
-
-
-
-DeskOps-ImplementationPlan.md (lines 805-990)
-
-
-
-Task 13.2: Write Sample Unit and Integration Tests for Key Components
-
-Ticket ID: 3cde6329-deed-46b9-bea6-88930c0684eb
-Size: Story
-Priority: Medium
-
-Objective
+#### Objective
 
 Create sample tests demonstrating testing patterns for forms, hooks, components, utilities, and stores.
 
-Implementation Details
+#### Implementation Details
 
-Files to Create:
+**Files to Create:**
 
+- `apps/web/src/components/forms/__tests__/production-form.test.tsx`
+- `apps/web/src/hooks/__tests__/use-production.test.ts`
+- `apps/web/src/components/dashboard/__tests__/kpi-card.test.tsx`
+- `apps/web/src/lib/exporters/__tests__/excel.test.ts`
+- `apps/web/src/stores/__tests__/app-store.test.ts`
 
+**Production Form Test:**
 
-
-
-apps/web/src/components/forms/__tests__/production-form.test.tsx
-
-
-
-apps/web/src/hooks/__tests__/use-production.test.ts
-
-
-
-apps/web/src/components/dashboard/__tests__/kpi-card.test.tsx
-
-
-
-apps/web/src/lib/exporters/__tests__/excel.test.ts
-
-
-
-apps/web/src/stores/__tests__/app-store.test.ts
-
-Production Form Test:
-
+```typescript
 // apps/web/src/components/forms/__tests__/production-form.test.tsx
 import { describe, it, expect, vi } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
@@ -2975,9 +2494,11 @@ describe('ProductionForm', () => {
     });
   });
 });
+```
 
-Use Production Hook Test:
+**Use Production Hook Test:**
 
+```typescript
 // apps/web/src/hooks/__tests__/use-production.test.ts
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
@@ -3039,13 +2560,14 @@ describe('useProduction', () => {
       { wrapper: createWrapper() }
     );
 
-    expect(result.current.isLoading).toBe(false);
     expect(result.current.data).toEqual([]);
   });
 });
+```
 
-KPI Card Test:
+**KPI Card Test:**
 
+```typescript
 // apps/web/src/components/dashboard/__tests__/kpi-card.test.tsx
 import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
@@ -3114,9 +2636,11 @@ describe('KPICard', () => {
     expect(screen.getByTestId('skeleton')).toBeInTheDocument();
   });
 });
+```
 
-Excel Exporter Test:
+**Excel Exporter Test:**
 
+```typescript
 // apps/web/src/lib/exporters/__tests__/excel.test.ts
 import { describe, it, expect, vi } from 'vitest';
 import { generateExcelReport } from '../excel';
@@ -3167,9 +2691,11 @@ describe('generateExcelReport', () => {
     expect(onProgress).toHaveBeenCalledWith(100);
   });
 });
+```
 
-App Store Test:
+**App Store Test:**
 
+```typescript
 // apps/web/src/stores/__tests__/app-store.test.ts
 import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
@@ -3241,62 +2767,35 @@ describe('useAppStore', () => {
     expect(stored).toContain('persisted_site');
   });
 });
+```
 
-Validation Checklist:
+#### Validation Checklist
 
+- [ ] All tests follow AAA pattern (Arrange, Act, Assert)
+- [ ] Tests use renderWithProviders from test utilities
+- [ ] Form tests cover rendering, validation, submission success/error
+- [ ] Hook tests cover data fetching, loading, error states
+- [ ] Component tests cover rendering, interactions, loading states
+- [ ] Utility tests cover core functionality
+- [ ] Store tests cover state updates and persistence
+- [ ] Coverage meets 80% threshold
+- [ ] All tests use proper TypeScript types (NO any)
 
+#### Documentation References
 
+- `DeskOps-Configuration.md` (lines 867-985)
+- `DeskOps-ImplementationPlan.md` (lines 805-990)
 
+---
 
-[ ] All tests follow AAA pattern (Arrange, Act, Assert)
+#### Documentation References
 
+- `DeskOps-Configuration.md` (lines 867-985)
+- `DeskOps-ImplementationPlan.md` (lines 805-990)
 
+---
 
-[ ] Tests use renderWithProviders from test utilities
-
-
-
-[ ] Form tests cover rendering, validation, submission success/error
-
-
-
-[ ] Hook tests cover data fetching, loading, error states
-
-
-
-[ ] Component tests cover rendering, interactions, loading states
-
-
-
-[ ] Utility tests cover core functionality
-
-
-
-[ ] Store tests cover state updates and persistence
-
-
-
-[ ] Coverage meets 80% threshold
-
-
-
-[ ] All tests use proper TypeScript types (NO any)
-
-Documentation References:
-
-
-
-
-
-DeskOps-Configuration.md (lines 867-985)
-
-
-
-DeskOps-ImplementationPlan.md (lines 805-990)
-
-
-
-Task 13.3: Configure Playwright E2E Tests for Critical User Flows
+### Task 13.3: Configure Playwright E2E Tests for Critical User Flows
 
 Ticket ID: d0b439aa-d8db-4a9a-87cd-47ea2c0cc1ba
 Size: Story
@@ -3304,40 +2803,30 @@ Priority: Medium
 
 Objective
 
+**Ticket ID:** `6b8c5821-df64-4c2a-9b5f-c4b92e7f8a3d`
+**Size:** Task
+**Priority:** Medium
+
+**Objective:**
+
 Setup Playwright E2E testing for critical user flows including authentication, production, dashboard, and export.
 
-Implementation Details
+#### Implementation Details
 
-Files to Verify:
+**Files to Verify:**
 
+- `apps/web-e2e/playwright.config.ts` - Playwright configuration
 
+**Files to Create:**
 
+- `apps/web-e2e/src/auth.spec.ts` - Authentication flow tests
+- `apps/web-e2e/src/production.spec.ts` - Production form tests
+- `apps/web-e2e/src/dashboard.spec.ts` - Dashboard tests
+- `apps/web-e2e/src/export.spec.ts` - Export flow tests
 
+**Playwright Configuration (Verify):**
 
-apps/web-e2e/playwright.config.ts - Playwright configuration
-
-Files to Create:
-
-
-
-
-
-apps/web-e2e/src/auth.spec.ts - Authentication flow tests
-
-
-
-apps/web-e2e/src/production.spec.ts - Production form tests
-
-
-
-apps/web-e2e/src/dashboard.spec.ts - Dashboard tests
-
-
-
-apps/web-e2e/src/export.spec.ts - Export flow tests
-
-Playwright Configuration (Verify):
-
+```typescript
 // apps/web-e2e/playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';
 import { nxE2EPreset } from '@nx/playwright/preset';
@@ -3374,14 +2863,13 @@ export default defineConfig({
   ],
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: [
-    ['html'],
-    ['junit', { outputFile: 'test-results/junit.xml' }],
-  ],
+  reporter: [['html'], ['junit', { outputFile: 'test-results/junit.xml' }]],
 });
+```
 
-Authentication Flow Test:
+**Authentication Flow Test:**
 
+```typescript
 // apps/web-e2e/src/auth.spec.ts
 import { test, expect } from '@playwright/test';
 
@@ -3425,9 +2913,11 @@ test.describe('Authentication Flow', () => {
     await expect(page).toHaveURL('/');
   });
 });
+```
 
-Production Form Test:
+**Production Form Test:**
 
+```typescript
 // apps/web-e2e/src/production.spec.ts
 import { test, expect } from '@playwright/test';
 
@@ -3470,7 +2960,9 @@ test.describe('Production Form', () => {
     await page.click('button[type="submit"]');
 
     // Verify success
-    await expect(page.locator('.toast')).toContainText('Production record created');
+    await expect(page.locator('.toast')).toContainText(
+      'Production record created'
+    );
     await expect(page.locator('[role="dialog"]')).not.toBeVisible();
   });
 
@@ -3485,9 +2977,11 @@ test.describe('Production Form', () => {
     await expect(page.locator('text=Quantity must be positive')).toBeVisible();
   });
 });
+```
 
-Dashboard Test:
+**Dashboard Test:**
 
+```typescript
 // apps/web-e2e/src/dashboard.spec.ts
 import { test, expect } from '@playwright/test';
 
@@ -3516,14 +3010,18 @@ test.describe('Dashboard', () => {
   });
 
   test('should display trend indicators', async ({ page }) => {
-    const trendIndicator = page.locator('[data-testid="trend-indicator"]').first();
+    const trendIndicator = page
+      .locator('[data-testid="trend-indicator"]')
+      .first();
 
     await expect(trendIndicator).toBeVisible();
     await expect(trendIndicator).toHaveAttribute('data-trend', /up|down/);
   });
 
   test('should render charts', async ({ page }) => {
-    await expect(page.locator('[data-testid="production-chart"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="production-chart"]')
+    ).toBeVisible();
     await expect(page.locator('[data-testid="inventory-chart"]')).toBeVisible();
   });
 
@@ -3534,9 +3032,11 @@ test.describe('Dashboard', () => {
     await expect(page.locator('.recharts-tooltip')).toBeVisible();
   });
 });
+```
 
-Export Flow Test:
+**Export Flow Test:**
 
+```typescript
 // apps/web-e2e/src/export.spec.ts
 import { test, expect } from '@playwright/test';
 
@@ -3592,595 +3092,188 @@ test.describe('Export Flow', () => {
     expect(download.suggestedFilename()).toMatch(/DeskOps_.*\.(xlsx|csv|pdf)/);
   });
 });
+```
 
-Validation Checklist:
+#### Validation Checklist
 
+- [ ] Playwright config verified with correct test projects
+- [ ] WebServer configured to start dev server before tests
+- [ ] Auth tests cover sign-in, sign-up, sign-out flows
+- [ ] Production tests cover form submission end-to-end
+- [ ] Dashboard tests cover metrics display and chart interactions
+- [ ] Export tests cover job creation and download
+- [ ] Test retries configured (2 retries in CI)
+- [ ] Screenshots captured on failure
+- [ ] Test reports generated (HTML + JUnit)
+- [ ] Tests run in parallel efficiently
 
+#### Documentation References
 
+- `DeskOps-Configuration.md` (lines 986-1039)
+- `DeskOps-ImplementationPlan.md` (lines 805-990)
 
+---
 
-[ ] Playwright config verified with correct test projects
+## Phase 14: Final Review (1 Task)
 
+- `DeskOps-Configuration.md` (lines 986-1039)
+- `DeskOps-ImplementationPlan.md` (lines 805-990)
 
+---
 
-[ ] WebServer configured to start dev server before tests
+## Phase 14: Final Review (1 Task)
 
+### Task 14.1: Review Completed Implementation of Phases 8-13
 
+**Ticket ID:** `574628ea-438f-4725-909d-3bebc2b99e80`
+**Size:** Story
+**Priority:** High
 
-[ ] Auth tests cover sign-in, sign-up, sign-out flows
-
-
-
-[ ] Production tests cover form submission end-to-end
-
-
-
-[ ] Dashboard tests cover metrics display and chart interactions
-
-
-
-[ ] Export tests cover job creation and download
-
-
-
-[ ] Test retries configured (2 retries in CI)
-
-
-
-[ ] Screenshots captured on failure
-
-
-
-[ ] Test reports generated (HTML + JUnit)
-
-
-
-[ ] Tests run in parallel efficiently
-
-Documentation References:
-
-
-
-
-
-DeskOps-Configuration.md (lines 986-1039)
-
-
-
-DeskOps-ImplementationPlan.md (lines 805-990)
-
-
-
-Phase 14: Final Review (1 Task)
-
-Task 14.1: Review Completed Implementation of Phases 8-13
-
-Ticket ID: 574628ea-438f-4725-909d-3bebc2b99e80
-Size: Story
-Priority: High
-
-Objective
+**Objective:**
 
 Comprehensive review of all implemented features to ensure quality, compliance, and functionality.
 
-Review Checklist
+#### Review Checklist
+
+**1. Pages & UI Components**
+
+- [ ] All pages render without errors
+- [ ] Responsive layouts work on mobile/tablet/desktop
+- [ ] Design matches specifications from `DeskOps-Interface-Overview.md`
+- [ ] Loading states display correctly
+- [ ] Empty states show appropriate messages
+- [ ] Error states provide clear feedback
+
+**2. Forms & Validation**
+
+- [ ] All forms validate with Zod schemas
+- [ ] Required fields marked correctly
+- [ ] Error messages display inline
+- [ ] Success feedback via toast notifications
+- [ ] Form resets after successful submission
+- [ ] Disabled states prevent double submission
+
+**3. API Routes**
+
+- [ ] All routes follow `/api/[module]/[resource]` pattern
+- [ ] NO versioned paths (`/api/v1/...`)
+- [ ] Clerk authentication enforced
+- [ ] Zod validation applied to request bodies
+- [ ] Error handling uses `handleApiError` utility
+- [ ] Rate limiting implemented where needed
+
+**4. Type Safety**
+
+- [ ] NO `any` types anywhere in codebase
+- [ ] All interfaces properly typed
+- [ ] Function parameters and return types explicit
+- [ ] Generic types used correctly
+- [ ] Type guards implemented where needed
 
-1. Pages & UI Components
+**5. Constants & SSOT**
+
+- [ ] All constants imported from `@deskops/constants`
+- [ ] NO duplicate constant definitions
+- [ ] Material, equipment, role definitions centralized
+- [ ] Operation types referenced from SSOT
+- [ ] UOM types consistent across codebase
 
+**6. State Management**
 
+- [ ] React Query hooks invalidate caches correctly
+- [ ] Query keys use factory pattern
+- [ ] Zustand stores persist to localStorage
+- [ ] App store manages site, date, theme correctly
+- [ ] Export store tracks job lifecycle
 
+**7. Export System**
 
+- [ ] Excel exports include frozen headers and filters
+- [ ] PDF exports follow A4 format
+- [ ] CSV exports are RFC 4180 compliant
+- [ ] Progress tracking updates in real-time
+- [ ] File hash generated for integrity
+- [ ] Cleanup job removes expired exports
 
-[ ] All pages render without errors
+**8. Authentication**
 
+- [ ] Clerk middleware protects routes
+- [ ] Role-based access control works
+- [ ] Sign-in/sign-up pages render correctly
+- [ ] Custom `useAuth` hook provides role checking
+- [ ] User metadata includes role information
 
+**9. Testing**
 
-[ ] Responsive layouts work on mobile/tablet/desktop
+- [ ] Unit tests achieve 80% coverage
+- [ ] Integration tests cover key flows
+- [ ] E2E tests cover critical user journeys
+- [ ] All tests pass consistently
+- [ ] Test utilities work correctly
+- [ ] Mocks configured properly
 
+**10. GZANSP Compliance**
 
+- [ ] Zero assumptions made in implementation
+- [ ] All decisions source-backed from documentation
+- [ ] Single source of truth maintained
+- [ ] Method-first architecture followed
+- [ ] No banned terminology used
+- [ ] Endpoint standardization enforced
 
-[ ] Design matches specifications from DeskOps-Interface-Overview.md
+#### Documentation References
 
+- `DeskOps-ImplementationPlan.md` (lines 991-1026)
+- `DeskOps-Interface-Overview.md` (entire document)
+- `DeskOps-Backend.md` (entire document)
+- `DeskOps-Frontend.md` (entire document)
+- `DeskOps-DB-Prisma.md` (entire document)
+- `DeskOps-Configuration.md` (entire document)
+- `DeskOps-constants.md` (entire document)
+- `DeskOps-Hooks.md` (entire document)
+- `AGENTS.md` (entire document)
 
+---
 
-[ ] Loading states display correctly
+## ---
 
+## Success Criteria
 
+**Technical Requirements:**
 
-[ ] Empty states show appropriate messages
+- ✅ All TypeScript code strictly typed (NO `any`)
+- ✅ All constants imported from centralized location
+- ✅ All API routes follow `/api/[module]/[resource]` pattern
+- ✅ All forms validate with Zod schemas
+- ✅ Test coverage ≥ 80%
 
+**Functional Requirements:**
 
+- ✅ Inventory page displays calculated closing balances
+- ✅ React Query hooks manage server state
+- ✅ Zustand stores manage client state
+- ✅ Export system generates valid files
+- ✅ Authentication protects routes
+- ✅ E2E tests cover critical flows
 
-[ ] Error states provide clear feedback
+**Quality Requirements:**
 
-2. Forms & Validation
+- ✅ GZANSP compliance verified
+- ✅ No banned terminology used
+- ✅ Source-backed decisions documented
+- ✅ Single source of truth maintained
+- ✅ Method-first architecture followed
 
+---
 
+## Notes
 
+- This document consolidates 13 remaining tasks from the original implementation plan
+- All tasks follow GZANSP × AOC protocol strictly
+- Implementation should proceed in phase order to maintain dependencies
+- Each task includes validation checklists and documentation references
+- Final review ensures all requirements met before deployment
 
+---
 
-[ ] All forms validate with Zod schemas
-
-
-
-[ ] Required fields marked correctly
-
-
-
-[ ] Error messages display inline
-
-
-
-[ ] Success feedback via toast notifications
-
-
-
-[ ] Form resets after successful submission
-
-
-
-[ ] Disabled states prevent double submission
-
-3. API Routes
-
-
-
-
-
-[ ] All routes follow /api/[module]/[resource] pattern
-
-
-
-[ ] NO versioned paths (/api/v1/...)
-
-
-
-[ ] Clerk authentication enforced
-
-
-
-[ ] Zod validation applied to request bodies
-
-
-
-[ ] Error handling uses handleApiError utility
-
-
-
-[ ] Rate limiting implemented where needed
-
-4. Type Safety
-
-
-
-
-
-[ ] NO any types anywhere in codebase
-
-
-
-[ ] All interfaces properly typed
-
-
-
-[ ] Function parameters and return types explicit
-
-
-
-[ ] Generic types used correctly
-
-
-
-[ ] Type guards implemented where needed
-
-5. Constants & SSOT
-
-
-
-
-
-[ ] All constants imported from @deskops/constants
-
-
-
-[ ] NO duplicate constant definitions
-
-
-
-[ ] Material, equipment, role definitions centralized
-
-
-
-[ ] Operation types referenced from SSOT
-
-
-
-[ ] UOM types consistent across codebase
-
-6. State Management
-
-
-
-
-
-[ ] React Query hooks invalidate caches correctly
-
-
-
-[ ] Query keys use factory pattern
-
-
-
-[ ] Zustand stores persist to localStorage
-
-
-
-[ ] App store manages site, date, theme correctly
-
-
-
-[ ] Export store tracks job lifecycle
-
-7. Export System
-
-
-
-
-
-[ ] Excel exports include frozen headers and filters
-
-
-
-[ ] PDF exports follow A4 format
-
-
-
-[ ] CSV exports are RFC 4180 compliant
-
-
-
-[ ] Progress tracking updates in real-time
-
-
-
-[ ] File hash generated for integrity
-
-
-
-[ ] Cleanup job removes expired exports
-
-8. Authentication
-
-
-
-
-
-[ ] Clerk middleware protects routes
-
-
-
-[ ] Role-based access control works
-
-
-
-[ ] Sign-in/sign-up pages render correctly
-
-
-
-[ ] Custom useAuth hook provides role checking
-
-
-
-[ ] User metadata includes role information
-
-9. Testing
-
-
-
-
-
-[ ] Unit tests achieve 80% coverage
-
-
-
-[ ] Integration tests cover key flows
-
-
-
-[ ] E2E tests cover critical user journeys
-
-
-
-[ ] All tests pass consistently
-
-
-
-[ ] Test utilities work correctly
-
-
-
-[ ] Mocks configured properly
-
-10. GZANSP Compliance
-
-
-
-
-
-[ ] Zero assumptions made in implementation
-
-
-
-[ ] All decisions source-backed from documentation
-
-
-
-[ ] Single source of truth maintained
-
-
-
-[ ] Method-first architecture followed
-
-
-
-[ ] No banned terminology used
-
-
-
-[ ] Endpoint standardization enforced
-
-Documentation References:
-
-
-
-
-
-DeskOps-ImplementationPlan.md (lines 991-1026)
-
-
-
-DeskOps-Interface-Overview.md (entire document)
-
-
-
-DeskOps-Backend.md (entire document)
-
-
-
-DeskOps-Frontend.md (entire document)
-
-
-
-DeskOps-DB-Prisma.md (entire document)
-
-
-
-DeskOps-Configuration.md (entire document)
-
-
-
-DeskOps-constants.md (entire document)
-
-
-
-DeskOps-Hooks.md (entire document)
-
-
-
-AGENTS.md (entire document)
-
-
-
-Implementation Timeline
-
-Estimated Duration: 13-19 days
-
-
-
-
-
-
-
-Phase
-
-
-
-Tasks
-
-
-
-Estimated Days
-
-
-
-
-
-Phase 9: Inventory
-
-
-
-1 task
-
-
-
-2-3 days
-
-
-
-
-
-Phase 10: State Management
-
-
-
-3 tasks
-
-
-
-3-4 days
-
-
-
-
-
-Phase 11: Export System
-
-
-
-3 tasks
-
-
-
-4-6 days
-
-
-
-
-
-Phase 12: Authentication
-
-
-
-2 tasks
-
-
-
-2-3 days
-
-
-
-
-
-Phase 13: Testing
-
-
-
-3 tasks
-
-
-
-3-4 days
-
-
-
-
-
-Phase 14: Review
-
-
-
-1 task
-
-
-
-1-2 days
-
-
-
-Success Criteria
-
-Technical Requirements:
-
-
-
-
-
-✅ All TypeScript code strictly typed (NO any)
-
-
-
-✅ All constants imported from centralized location
-
-
-
-✅ All API routes follow /api/[module]/[resource] pattern
-
-
-
-✅ All forms validate with Zod schemas
-
-
-
-✅ Test coverage ≥ 80%
-
-Functional Requirements:
-
-
-
-
-
-✅ Inventory page displays calculated closing balances
-
-
-
-✅ React Query hooks manage server state
-
-
-
-✅ Zustand stores manage client state
-
-
-
-✅ Export system generates valid files
-
-
-
-✅ Authentication protects routes
-
-
-
-✅ E2E tests cover critical flows
-
-Quality Requirements:
-
-
-
-
-
-✅ GZANSP compliance verified
-
-
-
-✅ No banned terminology used
-
-
-
-✅ Source-backed decisions documented
-
-
-
-✅ Single source of truth maintained
-
-
-
-✅ Method-first architecture followed
-
-
-
-Notes
-
-
-
-
-
-This document consolidates 13 remaining tasks from the original implementation plan
-
-
-
-All tasks follow GZANSP × AOC protocol strictly
-
-
-
-Implementation should proceed in phase order to maintain dependencies
-
-
-
-Each task includes validation checklists and documentation references
-
-
-
-Final review ensures all requirements met before deployment
-
-
-
-End of Document
+**End of Document**
