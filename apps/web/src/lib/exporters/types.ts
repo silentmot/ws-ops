@@ -30,6 +30,10 @@ export interface ExporterOptions {
 export interface ExportProcessor {
   processJob(jobId: string): Promise<void>;
   updateProgress(jobId: string, progress: number): Promise<void>;
-  completeJob(jobId: string, result: ExportResult): Promise<void>;
+  completeJob(
+    jobId: string,
+    result: ExportResult,
+    downloadUrl: string
+  ): Promise<void>;
   failJob(jobId: string, error: string): Promise<void>;
 }

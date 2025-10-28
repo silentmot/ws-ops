@@ -3,30 +3,16 @@ import { prisma } from '@/lib/db';
 import { generateExcelExport } from '../exporters/excel';
 import { generatePDFExport } from '../exporters/pdf';
 import { generateCSVExport } from '../exporters/csv';
-
-interface ExportResult {
-  filePath: string;
-  fileSize: number;
-  fileHash: string;
-  recordCount: number;
-}
-
-interface ExportJobProcessor {
-  processJob(jobId: string): Promise<void>;
-  updateProgress(jobId: string, progress: number): Promise<void>;
-  completeJob(
-    jobId: string,
-    result: ExportResult,
-    downloadUrl: string
-  ): Promise<void>;
-  failJob(jobId: string, errorMessage: string): Promise<void>;
-}
+import type {
+  ExportResult,
+  ExportProcessor as IExportProcessor,
+} from '../exporters/types';
 
 // Placeholder constants
 const EXPORT_STORAGE_PATH = '{EXPORT_STORAGE_PATH}';
 const HASH_ALGORITHM = 'sha256';
 
-export class ExportProcessor implements ExportJobProcessor {
+export class ExportProcessor implements IExportProcessor {
   async processJob(jobId: string): Promise<void> {
     const job = await prisma.exportJob.findUnique({
       where: { id: jobId },
@@ -56,9 +42,6 @@ export class ExportProcessor implements ExportJobProcessor {
           break;
         case 'csv':
           result = await generateCSVExport(options);
-          break;
-        case 'powerbi-csv':
-          result = await generateCSVExport({ ...options, powerBI: true });
           break;
         case 'pdf':
           result = await generatePDFExport(options);
@@ -129,12 +112,12 @@ export class ExportProcessor implements ExportJobProcessor {
     });
   }
 
-  async failJob(jobId: string, errorMessage: string): Promise<void> {
+  async failJob(jobId: string, error: string): Promise<void> {
     await prisma.exportJob.update({
       where: { id: jobId },
       data: {
         status: 'failed',
-        errorMessage,
+        errorMessage: error,
       },
     });
   }

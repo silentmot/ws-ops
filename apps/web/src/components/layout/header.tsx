@@ -14,6 +14,7 @@ import {
 } from '@deskops/ui';
 import { SiteSelector } from '@/components/site-selector';
 import { DateRangePicker } from '@/components/date-range-picker';
+import { ExportDialog } from '@/components/export/export-dialog';
 import { useAppStore } from '@/stores/app-store';
 
 export function Header(): React.JSX.Element {
@@ -36,6 +37,7 @@ export function Header(): React.JSX.Element {
         <DateRangePicker value={dateRange} onChange={setDateRange} />
       </div>
       <div className="flex items-center space-x-4">
+        <ExportDialog />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">

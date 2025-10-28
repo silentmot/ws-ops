@@ -35,3 +35,4 @@ export * from './components/form';
 export * from './components/calendar';
 export * from './components/textarea';
 export * from './components/table';
+export { Progress } from './components/progress';

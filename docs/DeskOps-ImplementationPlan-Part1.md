@@ -1846,15 +1846,15 @@ import { ExportDialog } from '@/components/export/export-dialog';
 
 #### Validation Checklist
 
-- [ ] Export dialog validates form inputs with Zod
-- [ ] Progress component shows real-time updates via SSE
-- [ ] History component lists completed exports with download/retry
-- [ ] Export button added to Header component
-- [ ] SSE hook connects and reconnects automatically
-- [ ] Download triggers file download correctly
-- [ ] Retry re-queues failed jobs
-- [ ] All components use Zustand export store
-- [ ] TypeScript types are strict (NO any)
+- [x] Export dialog validates form inputs with Zod
+- [x] Progress component shows real-time updates via SSE
+- [x] History component lists completed exports with download/retry
+- [x] Export button added to Header component
+- [x] SSE hook connects and reconnects automatically
+- [x] Download triggers file download correctly
+- [x] Retry re-queues failed jobs
+- [x] All components use Zustand export store
+- [x] TypeScript types are strict (NO any)
 
 #### Documentation References
 
