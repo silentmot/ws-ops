@@ -93,7 +93,7 @@ export const config = {
 **Environment Variables:**
 
 ```bash
-# .env.local
+# .env
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
@@ -113,12 +113,12 @@ NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 
 #### Validation Checklist
 
-- [ ] Middleware protects all routes except public/ignored
-- [ ] Unauthenticated users redirected to sign-in
-- [ ] Role-based access control checks user metadata
-- [ ] Admin routes restricted to ADMIN role
-- [ ] ClerkProvider verified in root layout
-- [ ] Environment variables documented in .env.example
+- [x] Middleware protects all routes except public/ignored
+- [x] Unauthenticated users redirected to sign-in
+- [x] Role-based access control checks user metadata
+- [x] Admin routes restricted to ADMIN role
+- [x] ClerkProvider verified in root layout
+- [x] Environment variables documented in .env.example
 
 #### Documentation References
 

@@ -1,11 +1,15 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+import { UserRole } from '@deskops/constants';
 
 const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/api/(.*)']);
 
-const isPublicRoute = createRouteMatcher(['/api/auth/session']);
+const isPublicRoute = createRouteMatcher(['/api/auth/session', '/api/health']);
+
+const isAdminRoute = createRouteMatcher(['/admin(.*)']);
 
 export default clerkMiddleware(async (auth, req) => {
-  // Allow session checks without authentication
+  // Allow public routes without authentication
   if (isPublicRoute(req)) {
     return;
   }
@@ -15,15 +19,22 @@ export default clerkMiddleware(async (auth, req) => {
     await auth.protect();
   }
 
-  // TODO: Role-based access control
-  // Check user roles from Clerk session metadata and restrict /admin routes
-  // to users with admin role (requires Clerk metadata configuration)
-  // Example:
-  // const { userId, sessionClaims } = await auth();
-  // const userRole = sessionClaims?.metadata?.role;
-  // if (req.nextUrl.pathname.startsWith('/admin') && userRole !== 'admin') {
-  //   return NextResponse.redirect(new URL('/unauthorized', req.url));
-  // }
+  // Role-based access control for admin routes
+  if (isAdminRoute(req)) {
+    const { userId, sessionClaims } = await auth();
+
+    if (!userId) {
+      return NextResponse.redirect(new URL('/sign-in', req.url));
+    }
+
+    const userRole = (sessionClaims?.['metadata'] as { role?: UserRole })?.role;
+
+    if (userRole !== UserRole.ADMIN) {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
+  }
+
+  return NextResponse.next();
 });
 
 export const config = {

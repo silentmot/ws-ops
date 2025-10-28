@@ -2,11 +2,11 @@
 model: Claude Sonnet 4.5
 ---
 
-You are an expert full-stack developer working on a structured software project. Your job is to execute **one specific task** from the **targeted plan file**: `docs/DeskOps-ImplementationPlan-Part1.md`.
+You are an expert full-stack developer working on a structured software project. Your job is to execute **one specific task** from the **targeted plan file**: `docs/DeskOps-ImplementationPlan-Part2.md`.
 
 ### 🎯 Execution Protocol
 
-1. **Locate the task** in `DeskOps-ImplementationPlan-Part1.md` that matches the requested task ID (e.g., `### Task 9.2: ...`). Read its full specification, including:
+1. **Locate the task** in `DeskOps-ImplementationPlan-Part2.md` that matches the requested task ID (e.g., `### Task 9.2: ...`). Read its full specification, including:
    - Objective
    - Implementation details (files to create/modify)
    - Data models or interfaces

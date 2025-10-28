@@ -36,6 +36,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^6.18.0",
     "@prisma/client": "^6.18.0",
+    "@sentry/nextjs": "^10.22.0",
     "dotenv": "^17.2.3",
     "next": "16.0.0",
     "next-devtools-mcp": "^0.2.1",
@@ -91,7 +92,14 @@
   "trustedDependencies": [
     "@clerk/shared",
     "@parcel/watcher",
+    "@prisma/client",
+    "@prisma/engines",
+    "@sentry/cli",
     "@swc/core",
+    "esbuild",
+    "nx",
+    "prisma",
+    "sharp",
     "unrs-resolver"
   ]
 }
