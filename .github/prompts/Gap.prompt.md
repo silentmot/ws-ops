@@ -17,7 +17,7 @@ Here is a prompt template designed for an AI coding agent to perform a detailed 
 
 **1. Documentation:**
 
-`docs`
+`docs/**.md`
 
 **2. Source Code:**
 
