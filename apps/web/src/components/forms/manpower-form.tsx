@@ -65,8 +65,6 @@ export function ManpowerForm({ siteId, onSuccess }: ManpowerFormProps) {
       siteId,
       date: new Date(),
       roleId: '',
-      headcount: 0,
-      hours: 0,
       shift: null,
       notes: '',
     },

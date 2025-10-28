@@ -15,7 +15,7 @@ import { Plus, ArrowUpDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { DataTable } from '@/components/data-table/data-table';
 import { EquipmentForm } from '@/components/forms/equipment-form';
-import { DEFAULT_SITE_CODE } from '@deskops/constants';
+import { DEFAULT_SITE_ID } from '@deskops/constants';
 import { toast } from 'sonner';
 
 interface EquipmentLog {
@@ -135,7 +135,7 @@ export default function EquipmentPage() {
   const [equipmentLogs, setEquipmentLogs] = useState<EquipmentLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedSite] = useState(DEFAULT_SITE_CODE);
+  const [selectedSite] = useState(DEFAULT_SITE_ID);
 
   const fetchEquipmentLogs = async () => {
     try {

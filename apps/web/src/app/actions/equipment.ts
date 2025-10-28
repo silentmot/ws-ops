@@ -44,7 +44,7 @@ export async function createEquipmentLog(data: unknown) {
     });
 
     revalidatePath('/dashboard');
-    revalidatePath('/equipment');
+    revalidatePath('/dashboard/equipment');
 
     return { success: true, data: equipmentLog };
   } catch (error) {
@@ -65,19 +65,30 @@ export async function updateEquipmentLog(id: string, data: unknown) {
 
     const validatedData = EquipmentLogSchema.partial().parse(data);
 
-    if (validatedData.equipmentId && !isValidEquipmentId(validatedData.equipmentId)) {
+    if (
+      validatedData.equipmentId &&
+      !isValidEquipmentId(validatedData.equipmentId)
+    ) {
       throw new Error('Invalid equipment ID');
     }
 
     const updateData: Record<string, unknown> = {};
-    if (validatedData.siteId !== undefined) updateData['siteId'] = validatedData.siteId;
-    if (validatedData.date !== undefined) updateData['date'] = validatedData.date;
-    if (validatedData.equipmentId !== undefined) updateData['equipmentId'] = validatedData.equipmentId;
-    if (validatedData.hours !== undefined) updateData['hours'] = validatedData.hours;
-    if (validatedData.count !== undefined) updateData['count'] = validatedData.count;
-    if (validatedData.shift !== undefined) updateData['shift'] = validatedData.shift ?? null;
-    if (validatedData.status !== undefined) updateData['status'] = validatedData.status ?? null;
-    if (validatedData.notes !== undefined) updateData['notes'] = validatedData.notes ?? null;
+    if (validatedData.siteId !== undefined)
+      updateData['siteId'] = validatedData.siteId;
+    if (validatedData.date !== undefined)
+      updateData['date'] = validatedData.date;
+    if (validatedData.equipmentId !== undefined)
+      updateData['equipmentId'] = validatedData.equipmentId;
+    if (validatedData.hours !== undefined)
+      updateData['hours'] = validatedData.hours;
+    if (validatedData.count !== undefined)
+      updateData['count'] = validatedData.count;
+    if (validatedData.shift !== undefined)
+      updateData['shift'] = validatedData.shift ?? null;
+    if (validatedData.status !== undefined)
+      updateData['status'] = validatedData.status ?? null;
+    if (validatedData.notes !== undefined)
+      updateData['notes'] = validatedData.notes ?? null;
     updateData['updatedAt'] = new Date();
 
     const equipmentLog = await prisma.equipmentLog.update({
@@ -95,7 +106,7 @@ export async function updateEquipmentLog(id: string, data: unknown) {
     });
 
     revalidatePath('/dashboard');
-    revalidatePath('/equipment');
+    revalidatePath('/dashboard/equipment');
 
     return { success: true, data: equipmentLog };
   } catch (error) {
@@ -119,7 +130,7 @@ export async function deleteEquipmentLog(id: string) {
     });
 
     revalidatePath('/dashboard');
-    revalidatePath('/equipment');
+    revalidatePath('/dashboard/equipment');
 
     return { success: true };
   } catch (error) {

@@ -37,7 +37,7 @@ export async function createManpowerLog(data: unknown) {
     });
 
     revalidatePath('/dashboard');
-    revalidatePath('/manpower');
+    revalidatePath('/dashboard/manpower');
 
     return { success: true, data: manpowerLog };
   } catch (error) {
@@ -59,13 +59,20 @@ export async function updateManpowerLog(id: string, data: unknown) {
     const validatedData = ManpowerLogSchema.partial().parse(data);
 
     const updateData: Record<string, unknown> = {};
-    if (validatedData.siteId !== undefined) updateData['siteId'] = validatedData.siteId;
-    if (validatedData.date !== undefined) updateData['date'] = validatedData.date;
-    if (validatedData.roleId !== undefined) updateData['roleId'] = validatedData.roleId;
-    if (validatedData.headcount !== undefined) updateData['headcount'] = validatedData.headcount;
-    if (validatedData.hours !== undefined) updateData['hours'] = validatedData.hours;
-    if (validatedData.shift !== undefined) updateData['shift'] = validatedData.shift ?? null;
-    if (validatedData.notes !== undefined) updateData['notes'] = validatedData.notes ?? null;
+    if (validatedData.siteId !== undefined)
+      updateData['siteId'] = validatedData.siteId;
+    if (validatedData.date !== undefined)
+      updateData['date'] = validatedData.date;
+    if (validatedData.roleId !== undefined)
+      updateData['roleId'] = validatedData.roleId;
+    if (validatedData.headcount !== undefined)
+      updateData['headcount'] = validatedData.headcount;
+    if (validatedData.hours !== undefined)
+      updateData['hours'] = validatedData.hours;
+    if (validatedData.shift !== undefined)
+      updateData['shift'] = validatedData.shift ?? null;
+    if (validatedData.notes !== undefined)
+      updateData['notes'] = validatedData.notes ?? null;
     updateData['updatedAt'] = new Date();
 
     const manpowerLog = await prisma.manpowerLog.update({
@@ -82,7 +89,7 @@ export async function updateManpowerLog(id: string, data: unknown) {
     });
 
     revalidatePath('/dashboard');
-    revalidatePath('/manpower');
+    revalidatePath('/dashboard/manpower');
 
     return { success: true, data: manpowerLog };
   } catch (error) {
@@ -106,7 +113,7 @@ export async function deleteManpowerLog(id: string) {
     });
 
     revalidatePath('/dashboard');
-    revalidatePath('/manpower');
+    revalidatePath('/dashboard/manpower');
 
     return { success: true };
   } catch (error) {
