@@ -850,14 +850,14 @@ await prisma.exportAudit.create({
 
 #### Validation Checklist
 
-- [ ] All routes follow /api/exports/[resource] pattern (NO versioning)
-- [ ] Clerk authentication enforced on all routes
-- [ ] Rate limiting prevents abuse (max 5 active jobs)
-- [ ] Zod validation applied to request bodies
-- [ ] Audit trail created for completed exports
-- [ ] Signed URLs generated with 24-hour expiry
-- [ ] Error handling uses handleApiError utility
-- [ ] TypeScript types are strict (NO any)
+- [x] All routes follow /api/exports/[resource] pattern (NO versioning)
+- [x] Clerk authentication enforced on all routes
+- [x] Rate limiting prevents abuse (max 5 active jobs)
+- [x] Zod validation applied to request bodies
+- [x] Audit trail created for completed exports
+- [x] Signed URLs generated with 24-hour expiry
+- [x] Error handling uses handleApiError utility
+- [x] TypeScript types are strict (NO any)
 
 #### Documentation References
 
