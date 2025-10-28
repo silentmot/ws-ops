@@ -16,11 +16,14 @@ import { SiteSelector } from '@/components/site-selector';
 import { DateRangePicker } from '@/components/date-range-picker';
 import { ExportDialog } from '@/components/export/export-dialog';
 import { useAppStore } from '@/stores/app-store';
+import { useAuth } from '@/hooks/use-auth';
+import { UserRole } from '@deskops/constants';
 
 export function Header(): React.JSX.Element {
   const { theme, setTheme } = useTheme();
   const { selectedSiteId, setSelectedSiteId, dateRange, setDateRange } =
     useAppStore();
+  const { user, hasRole } = useAuth();
 
   const toggleTheme = (): void => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -38,6 +41,19 @@ export function Header(): React.JSX.Element {
       </div>
       <div className="flex items-center space-x-4">
         <ExportDialog />
+        {/* Admin-only features */}
+        {hasRole(UserRole.ADMIN) && (
+          <Button variant="ghost" size="sm">
+            <Settings className="mr-2 h-4 w-4" />
+            Admin
+          </Button>
+        )}
+        {/* User info badge */}
+        {user && (
+          <Badge variant="outline" className="hidden md:flex">
+            {user.role}
+          </Badge>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
