@@ -1,0 +1,317 @@
+'use client';
+
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { CalendarIcon, Loader2 } from 'lucide-react';
+import { format } from 'date-fns';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Calendar,
+  Textarea,
+  cn,
+} from '@deskops/ui';
+import { toast } from 'sonner';
+import { EQUIPMENT, SHIFT_TYPES, EQUIPMENT_STATUSES } from '@deskops/constants';
+import { createEquipmentLog } from '@/app/actions/equipment';
+
+const equipmentFormSchema = z.object({
+  siteId: z.string().cuid(),
+  date: z.date(),
+  equipmentId: z.string().min(1, 'Equipment is required'),
+  hours: z.number().min(0).max(24, 'Hours must be between 0 and 24'),
+  count: z.number().int().min(0).max(100, 'Count must be between 0 and 100'),
+  shift: z.enum(SHIFT_TYPES).optional(),
+  status: z.enum(EQUIPMENT_STATUSES).optional(),
+  notes: z.string().max(500).optional(),
+});
+
+type EquipmentFormData = z.infer<typeof equipmentFormSchema>;
+
+interface EquipmentFormProps {
+  siteId: string;
+  onSuccess?: () => void;
+}
+
+export function EquipmentForm({ siteId, onSuccess }: EquipmentFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm<EquipmentFormData>({
+    resolver: zodResolver(equipmentFormSchema),
+    defaultValues: {
+      siteId,
+      date: new Date(),
+      equipmentId: '',
+      hours: undefined,
+      count: undefined,
+      shift: undefined,
+      status: undefined,
+      notes: '',
+    },
+  });
+
+  const onSubmit = async (data: EquipmentFormData) => {
+    try {
+      setIsSubmitting(true);
+      const result = await createEquipmentLog(data);
+
+      if (result.success) {
+        toast.success('Equipment log created successfully');
+        form.reset();
+        onSuccess?.();
+      } else {
+        toast.error(result.error || 'Failed to create equipment log');
+      }
+    } catch (_error) {
+      toast.error('An unexpected error occurred');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Add Equipment Log</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Date</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              'w-full pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, 'PPP')
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date('1900-01-01')
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="equipmentId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Equipment</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select equipment" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {EQUIPMENT.map((equipment) => (
+                          <SelectItem key={equipment.id} value={equipment.id}>
+                            {equipment.code} - {equipment.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="hours"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Hours</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="24"
+                        placeholder="0.00"
+                        {...field}
+                        value={field.value ?? ''}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === '' ? undefined : parseFloat(value)
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="count"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Count</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="1"
+                        min="0"
+                        max="100"
+                        placeholder="0"
+                        {...field}
+                        value={field.value ?? ''}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === '' ? undefined : parseInt(value, 10)
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="shift"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Shift (Optional)</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select shift" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {SHIFT_TYPES.map((shift) => (
+                          <SelectItem key={shift} value={shift}>
+                            {shift}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status (Optional)</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {EQUIPMENT_STATUSES.map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {status}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notes (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Additional notes..."
+                      maxLength={500}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                'Create Equipment Log'
+              )}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+}
