@@ -1,6 +1,6 @@
 'use client';
 
-import { JSX, useState } from 'react';
+import type { JSX } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@deskops/ui';
@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@deskops/ui';
+import { useAppStore } from '@/stores/app-store';
 
 interface NavigationItem {
   name: string;
@@ -43,19 +44,19 @@ const navigation: NavigationItem[] = [
 ];
 
 export function Sidebar(): JSX.Element {
-  const [collapsed, setCollapsed] = useState(false);
+  const { sidebarCollapsed, setSidebarCollapsed } = useAppStore();
   const pathname = usePathname();
 
   const toggleCollapsed = (): void => {
-    setCollapsed(!collapsed);
+    setSidebarCollapsed(!sidebarCollapsed);
   };
 
   return (
     <TooltipProvider>
       <div
         className={cn(
-          'flex flex-col border-r bg-card transition-all duration-300',
-          collapsed ? 'w-16' : 'w-60'
+          'bg-card flex flex-col border-r transition-all duration-300',
+          sidebarCollapsed ? 'w-16' : 'w-60'
         )}
       >
         <div className="flex h-16 items-center justify-end px-4">
@@ -65,7 +66,7 @@ export function Sidebar(): JSX.Element {
             onClick={toggleCollapsed}
             className="h-8 w-8"
           >
-            {collapsed ? (
+            {sidebarCollapsed ? (
               <ChevronRight className="h-4 w-4" />
             ) : (
               <ChevronLeft className="h-4 w-4" />
@@ -89,15 +90,15 @@ export function Sidebar(): JSX.Element {
                   isActive
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-                  collapsed && 'justify-center'
+                  sidebarCollapsed && 'justify-center'
                 )}
               >
-                <Icon className={cn('h-5 w-5', !collapsed && 'mr-3')} />
-                {!collapsed && (
+                <Icon className={cn('h-5 w-5', !sidebarCollapsed && 'mr-3')} />
+                {!sidebarCollapsed && (
                   <span className="flex-1">
                     {item.name}
                     {item.badge && (
-                      <span className="ml-2 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                      <span className="bg-primary text-primary-foreground ml-2 rounded-full px-2 py-0.5 text-xs">
                         {item.badge}
                       </span>
                     )}
@@ -106,7 +107,7 @@ export function Sidebar(): JSX.Element {
               </Link>
             );
 
-            if (collapsed) {
+            if (sidebarCollapsed) {
               return (
                 <Tooltip key={item.href}>
                   <TooltipTrigger asChild>{linkContent}</TooltipTrigger>

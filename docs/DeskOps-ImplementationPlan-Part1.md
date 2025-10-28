@@ -579,13 +579,13 @@ const { sidebarCollapsed, setSidebarCollapsed } = useAppStore();
 
 #### Validation Checklist
 
-- [ ] App store persists to localStorage correctly
-- [ ] Export store manages job lifecycle (pending → processing → completed/failed)
-- [ ] Header component uses app store for site, date, theme
-- [ ] Sidebar component uses app store for collapse state
-- [ ] All state updates trigger re-renders
-- [ ] TypeScript interfaces are properly typed (NO any)
-- [ ] Persist middleware only saves selected fields
+- [x] App store persists to localStorage correctly
+- [x] Export store manages job lifecycle (pending → processing → completed/failed)
+- [x] Header component uses app store for site, date, theme
+- [x] Sidebar component uses app store for collapse state
+- [x] All state updates trigger re-renders
+- [x] TypeScript interfaces are properly typed (NO any)
+- [x] Persist middleware only saves selected fields
 
 #### Documentation References
 
