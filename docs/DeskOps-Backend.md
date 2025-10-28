@@ -26,18 +26,15 @@ Complete backend architecture using Next.js 16 App Router with API routes, Serve
 ```typescript
 // src/app/api/auth/session/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
 
 export async function GET(): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const session = {
@@ -49,10 +46,32 @@ export async function GET(): Promise<NextResponse> {
     return NextResponse.json(session);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Session validation failed' },
+      { message: 'Session validation failed' },
       { status: 500 }
     );
   }
+}
+```
+
+### Health Check Route
+
+```typescript
+// src/app/api/hello/route.ts
+import { NextResponse } from 'next/server';
+
+/**
+ * Health check endpoint for monitoring service availability
+ * Purpose: Simple health check for load balancer health checks and uptime monitoring
+ * Request: No parameters
+ * Response: Plain text 'Hello, from API!'
+ * Status: 200
+ * Use cases:
+ * - Load balancer health checks
+ * - Uptime monitoring services
+ * - Basic API connectivity tests
+ */
+export async function GET(): Promise<NextResponse> {
+  return NextResponse.json('Hello, from API!');
 }
 ```
 
@@ -61,7 +80,7 @@ export async function GET(): Promise<NextResponse> {
 ```typescript
 // src/app/api/sites/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
 import { z } from 'zod';
 
@@ -74,9 +93,9 @@ const CreateSiteSchema = z.object({
 
 export async function GET(): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const sites = await prisma.site.findMany({
@@ -95,7 +114,7 @@ export async function GET(): Promise<NextResponse> {
     return NextResponse.json({ sites });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch sites' },
+      { message: 'Failed to fetch sites' },
       { status: 500 }
     );
   }
@@ -103,9 +122,9 @@ export async function GET(): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -122,13 +141,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Validation failed', details: error.errors },
+        {
+          message: 'Validation failed',
+          code: 'VALIDATION_ERROR',
+          details: error.errors,
+        },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Failed to create site' },
+      { message: 'Failed to create site' },
       { status: 500 }
     );
   }
@@ -138,7 +161,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 ```typescript
 // src/app/api/sites/[siteId]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
 
 interface RouteParams {
@@ -152,9 +175,9 @@ export async function GET(
   { params }: RouteParams
 ): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const site = await prisma.site.findUnique({
@@ -172,13 +195,13 @@ export async function GET(
     });
 
     if (!site) {
-      return NextResponse.json({ error: 'Site not found' }, { status: 404 });
+      return NextResponse.json({ message: 'Site not found' }, { status: 404 });
     }
 
     return NextResponse.json({ site });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch site' },
+      { message: 'Failed to fetch site' },
       { status: 500 }
     );
   }
@@ -190,16 +213,16 @@ export async function GET(
 ```typescript
 // src/app/api/production/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
 import { ProductionSchema } from '@deskops/database';
 import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -209,7 +232,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     if (!siteId) {
       return NextResponse.json(
-        { error: 'siteId parameter required' },
+        { message: 'siteId parameter required' },
         { status: 400 }
       );
     }
@@ -241,16 +264,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           },
         },
       },
-      orderBy: [
-        { date: 'desc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
     });
 
     return NextResponse.json({ productions });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch production data' },
+      { message: 'Failed to fetch production data' },
       { status: 500 }
     );
   }
@@ -258,9 +278,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -269,7 +289,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Validate material ID exists
     if (!isValidMaterialId(validatedData.materialId)) {
       return NextResponse.json(
-        { error: 'Invalid material ID' },
+        { message: 'Invalid material ID' },
         { status: 400 }
       );
     }
@@ -277,7 +297,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Validate operation type
     if (!isValidOperationType(validatedData.operation)) {
       return NextResponse.json(
-        { error: 'Invalid operation type' },
+        { message: 'Invalid operation type' },
         { status: 400 }
       );
     }
@@ -302,13 +322,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Validation failed', details: error.errors },
+        {
+          message: 'Validation failed',
+          code: 'VALIDATION_ERROR',
+          details: error.errors,
+        },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Failed to create production record' },
+      { message: 'Failed to create production record' },
       { status: 500 }
     );
   }
@@ -320,16 +344,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 ```typescript
 // src/app/api/dispatch/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
 import { DispatchSchema } from '@deskops/database';
 import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -339,7 +363,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     if (!siteId) {
       return NextResponse.json(
-        { error: 'siteId parameter required' },
+        { message: 'siteId parameter required' },
         { status: 400 }
       );
     }
@@ -371,16 +395,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           },
         },
       },
-      orderBy: [
-        { date: 'desc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
     });
 
     return NextResponse.json({ dispatches });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch dispatch data' },
+      { message: 'Failed to fetch dispatch data' },
       { status: 500 }
     );
   }
@@ -388,9 +409,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -399,7 +420,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Validate material ID exists
     if (!isValidMaterialId(validatedData.materialId)) {
       return NextResponse.json(
-        { error: 'Invalid material ID' },
+        { message: 'Invalid material ID' },
         { status: 400 }
       );
     }
@@ -407,7 +428,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Validate operation type
     if (!isValidOperationType(validatedData.operation)) {
       return NextResponse.json(
-        { error: 'Invalid operation type' },
+        { message: 'Invalid operation type' },
         { status: 400 }
       );
     }
@@ -432,13 +453,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Validation failed', details: error.errors },
+        {
+          message: 'Validation failed',
+          code: 'VALIDATION_ERROR',
+          details: error.errors,
+        },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Failed to create dispatch record' },
+      { message: 'Failed to create dispatch record' },
       { status: 500 }
     );
   }
@@ -450,16 +475,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 ```typescript
 // src/app/api/equipment/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
 import { EquipmentLogSchema } from '@deskops/database';
 import { isValidEquipmentId } from '@deskops/constants';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -469,7 +494,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     if (!siteId) {
       return NextResponse.json(
-        { error: 'siteId parameter required' },
+        { message: 'siteId parameter required' },
         { status: 400 }
       );
     }
@@ -500,16 +525,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           },
         },
       },
-      orderBy: [
-        { date: 'desc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
     });
 
     return NextResponse.json({ equipmentLogs });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch equipment logs' },
+      { message: 'Failed to fetch equipment logs' },
       { status: 500 }
     );
   }
@@ -517,9 +539,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -528,7 +550,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Validate equipment ID exists
     if (!isValidEquipmentId(validatedData.equipmentId)) {
       return NextResponse.json(
-        { error: 'Invalid equipment ID' },
+        { message: 'Invalid equipment ID' },
         { status: 400 }
       );
     }
@@ -553,13 +575,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Validation failed', details: error.errors },
+        {
+          message: 'Validation failed',
+          code: 'VALIDATION_ERROR',
+          details: error.errors,
+        },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Failed to create equipment log' },
+      { message: 'Failed to create equipment log' },
       { status: 500 }
     );
   }
@@ -571,25 +597,49 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 ```typescript
 // src/app/api/dashboard/metrics/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
 
 interface DashboardMetrics {
-  totalProductionToday: number;
-  receivedMaterialsToday: number;
-  totalDispatchedToday: number;
-  currentInventoryStatus: number;
-  productionChange: number;
-  receivedChange: number;
-  dispatchedChange: number;
-  inventoryChange: number;
+  totalProduction: {
+    current: number;
+    previous: number;
+    percentageChange: number;
+  };
+  totalDispatched: {
+    current: number;
+    previous: number;
+    percentageChange: number;
+  };
+  totalReceived: {
+    current: number;
+    previous: number;
+    percentageChange: number;
+  };
+  equipmentUtilization: {
+    current: number;
+    previous: number;
+    percentageChange: number;
+  };
+  currentInventoryStatus: {
+    current: number;
+    previous: number;
+    percentageChange: number;
+  };
+}
+
+function calculatePercentageChange(current: number, previous: number): number {
+  if (previous === 0) {
+    return current > 0 ? 100 : 0;
+  }
+  return ((current - previous) / previous) * 100;
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -597,7 +647,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     if (!siteId) {
       return NextResponse.json(
-        { error: 'siteId parameter required' },
+        { message: 'siteId parameter required' },
         { status: 400 }
       );
     }
@@ -608,51 +658,51 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    // Today's metrics
+    // Fetch current and previous period metrics
     const [
-      todayProduction,
-      todayReceived,
-      todayDispatched,
-      latestInventory,
-      yesterdayProduction,
-      yesterdayReceived,
-      yesterdayDispatched,
-      previousInventory,
+      currentProductionSum,
+      previousProductionSum,
+      currentDispatchedSum,
+      previousDispatchedSum,
+      currentReceivedSum,
+      previousReceivedSum,
+      currentInventorySum,
+      previousInventorySum,
     ] = await Promise.all([
-      // Today's production
+      // Current production
       prisma.production.aggregate({
         where: { siteId, date: today },
         _sum: { qtyTon: true },
       }),
-      // Today's received
-      prisma.receivedMaterial.aggregate({
-        where: { siteId, date: today },
+      // Previous production
+      prisma.production.aggregate({
+        where: { siteId, date: yesterday },
         _sum: { qtyTon: true },
       }),
-      // Today's dispatched
+      // Current dispatched
       prisma.dispatch.aggregate({
         where: { siteId, date: today },
         _sum: { qtyTon: true },
       }),
-      // Latest inventory
+      // Previous dispatched
+      prisma.dispatch.aggregate({
+        where: { siteId, date: yesterday },
+        _sum: { qtyTon: true },
+      }),
+      // Current received
+      prisma.receivedMaterial.aggregate({
+        where: { siteId, date: today },
+        _sum: { qtyTon: true },
+      }),
+      // Previous received
+      prisma.receivedMaterial.aggregate({
+        where: { siteId, date: yesterday },
+        _sum: { qtyTon: true },
+      }),
+      // Current inventory
       prisma.inventorySnapshot.aggregate({
         where: { siteId, date: { lte: today } },
         _sum: { closingTon: true },
-      }),
-      // Yesterday's production
-      prisma.production.aggregate({
-        where: { siteId, date: yesterday },
-        _sum: { qtyTon: true },
-      }),
-      // Yesterday's received
-      prisma.receivedMaterial.aggregate({
-        where: { siteId, date: yesterday },
-        _sum: { qtyTon: true },
-      }),
-      // Yesterday's dispatched
-      prisma.dispatch.aggregate({
-        where: { siteId, date: yesterday },
-        _sum: { qtyTon: true },
       }),
       // Previous inventory
       prisma.inventorySnapshot.aggregate({
@@ -662,42 +712,52 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     ]);
 
     const metrics: DashboardMetrics = {
-      totalProductionToday: Number(todayProduction._sum.qtyTon) || 0,
-      receivedMaterialsToday: Number(todayReceived._sum.qtyTon) || 0,
-      totalDispatchedToday: Number(todayDispatched._sum.qtyTon) || 0,
-      currentInventoryStatus: Number(latestInventory._sum.closingTon) || 0,
-
-      // Calculate percentage changes
-      productionChange: calculatePercentageChange(
-        Number(yesterdayProduction._sum.qtyTon) || 0,
-        Number(todayProduction._sum.qtyTon) || 0
-      ),
-      receivedChange: calculatePercentageChange(
-        Number(yesterdayReceived._sum.qtyTon) || 0,
-        Number(todayReceived._sum.qtyTon) || 0
-      ),
-      dispatchedChange: calculatePercentageChange(
-        Number(yesterdayDispatched._sum.qtyTon) || 0,
-        Number(todayDispatched._sum.qtyTon) || 0
-      ),
-      inventoryChange: calculatePercentageChange(
-        Number(previousInventory._sum.closingTon) || 0,
-        Number(latestInventory._sum.closingTon) || 0
-      ),
+      totalProduction: {
+        current: Number(currentProductionSum._sum.qtyTon ?? 0),
+        previous: Number(previousProductionSum._sum.qtyTon ?? 0),
+        percentageChange: calculatePercentageChange(
+          Number(currentProductionSum._sum.qtyTon ?? 0),
+          Number(previousProductionSum._sum.qtyTon ?? 0)
+        ),
+      },
+      totalDispatched: {
+        current: Number(currentDispatchedSum._sum.qtyTon ?? 0),
+        previous: Number(previousDispatchedSum._sum.qtyTon ?? 0),
+        percentageChange: calculatePercentageChange(
+          Number(currentDispatchedSum._sum.qtyTon ?? 0),
+          Number(previousDispatchedSum._sum.qtyTon ?? 0)
+        ),
+      },
+      totalReceived: {
+        current: Number(currentReceivedSum._sum.qtyTon ?? 0),
+        previous: Number(previousReceivedSum._sum.qtyTon ?? 0),
+        percentageChange: calculatePercentageChange(
+          Number(currentReceivedSum._sum.qtyTon ?? 0),
+          Number(previousReceivedSum._sum.qtyTon ?? 0)
+        ),
+      },
+      equipmentUtilization: {
+        current: 0, // Placeholder - implement equipment hours sum
+        previous: 0,
+        percentageChange: 0,
+      },
+      currentInventoryStatus: {
+        current: Number(currentInventorySum._sum.closingTon ?? 0),
+        previous: Number(previousInventorySum._sum.closingTon ?? 0),
+        percentageChange: calculatePercentageChange(
+          Number(currentInventorySum._sum.closingTon ?? 0),
+          Number(previousInventorySum._sum.closingTon ?? 0)
+        ),
+      },
     };
 
-    return NextResponse.json({ metrics });
+    return NextResponse.json(metrics);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch dashboard metrics' },
+      { message: 'Failed to fetch dashboard metrics' },
       { status: 500 }
     );
   }
-}
-
-function calculatePercentageChange(oldValue: number, newValue: number): number {
-  if (oldValue === 0) return newValue > 0 ? 100 : 0;
-  return ((newValue - oldValue) / oldValue) * 100;
 }
 ```
 
@@ -706,13 +766,20 @@ function calculatePercentageChange(oldValue: number, newValue: number): number {
 ```typescript
 // src/app/api/exports/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
 import { z } from 'zod';
 
 const ExportJobSchema = z.object({
   siteId: z.string().cuid(),
-  module: z.enum(['production', 'dispatch', 'received', 'equipment', 'manpower', 'inventory']),
+  module: z.enum([
+    'production',
+    'dispatch',
+    'received',
+    'equipment',
+    'manpower',
+    'inventory',
+  ]),
   dateFrom: z.string().datetime(),
   dateTo: z.string().datetime(),
   granularity: z.enum(['daily', 'weekly', 'monthly']).default('daily'),
@@ -721,9 +788,9 @@ const ExportJobSchema = z.object({
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -739,7 +806,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (activeJobs >= 5) {
       return NextResponse.json(
-        { error: 'Rate limit exceeded: maximum 5 active jobs per user' },
+        { message: 'Rate limit exceeded: maximum 5 active jobs per user' },
         { status: 429 }
       );
     }
@@ -762,13 +829,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Validation failed', details: error.errors },
+        {
+          message: 'Validation failed',
+          code: 'VALIDATION_ERROR',
+          details: error.errors,
+        },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Failed to create export job' },
+      { message: 'Failed to create export job' },
       { status: 500 }
     );
   }
@@ -776,9 +847,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const jobs = await prisma.exportJob.findMany({
@@ -790,7 +861,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ jobs });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch export jobs' },
+      { message: 'Failed to fetch export jobs' },
       { status: 500 }
     );
   }
@@ -805,7 +876,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 // src/app/actions/production.ts
 'use server';
 
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
 import { ProductionSchema, type ProductionInput } from '@deskops/database';
@@ -814,22 +885,22 @@ import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
 export async function createProduction(data: ProductionInput): Promise<{
   success: boolean;
   production?: unknown;
-  error?: string;
+  message?: string;
 }> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return { success: false, error: 'Unauthorized' };
+      return { success: false, message: 'Unauthorized' };
     }
 
     const validatedData = ProductionSchema.parse(data);
 
     if (!isValidMaterialId(validatedData.materialId)) {
-      return { success: false, error: 'Invalid material ID' };
+      return { success: false, message: 'Invalid material ID' };
     }
 
     if (!isValidOperationType(validatedData.operation)) {
-      return { success: false, error: 'Invalid operation type' };
+      return { success: false, message: 'Invalid operation type' };
     }
 
     const production = await prisma.production.create({
@@ -849,12 +920,12 @@ export async function createProduction(data: ProductionInput): Promise<{
     });
 
     revalidatePath('/dashboard');
-    revalidatePath('/production');
+    revalidatePath('/dashboard/production');
 
     return { success: true, production };
   } catch (error) {
     console.error('Failed to create production:', error);
-    return { success: false, error: 'Failed to create production record' };
+    return { success: false, message: 'Failed to create production record' };
   }
 }
 
@@ -864,12 +935,12 @@ export async function updateProduction(
 ): Promise<{
   success: boolean;
   production?: unknown;
-  error?: string;
+  message?: string;
 }> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return { success: false, error: 'Unauthorized' };
+      return { success: false, message: 'Unauthorized' };
     }
 
     const production = await prisma.production.update({
@@ -890,23 +961,23 @@ export async function updateProduction(
     });
 
     revalidatePath('/dashboard');
-    revalidatePath('/production');
+    revalidatePath('/dashboard/production');
 
     return { success: true, production };
   } catch (error) {
     console.error('Failed to update production:', error);
-    return { success: false, error: 'Failed to update production record' };
+    return { success: false, message: 'Failed to update production record' };
   }
 }
 
 export async function deleteProduction(id: string): Promise<{
   success: boolean;
-  error?: string;
+  message?: string;
 }> {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
-      return { success: false, error: 'Unauthorized' };
+      return { success: false, message: 'Unauthorized' };
     }
 
     await prisma.production.delete({
@@ -914,12 +985,586 @@ export async function deleteProduction(id: string): Promise<{
     });
 
     revalidatePath('/dashboard');
-    revalidatePath('/production');
+    revalidatePath('/dashboard/production');
 
     return { success: true };
   } catch (error) {
     console.error('Failed to delete production:', error);
-    return { success: false, error: 'Failed to delete production record' };
+    return { success: false, message: 'Failed to delete production record' };
+  }
+}
+```
+
+### Dispatch Server Actions
+
+```typescript
+// src/app/actions/dispatch.ts
+'use server';
+
+import { auth } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
+import { prisma } from '@/lib/db';
+import { DispatchSchema, type DispatchInput } from '@deskops/database';
+import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
+
+export async function createDispatch(data: DispatchInput): Promise<{
+  success: boolean;
+  dispatch?: unknown;
+  message?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, message: 'Unauthorized' };
+    }
+
+    const validatedData = DispatchSchema.parse(data);
+
+    if (!isValidMaterialId(validatedData.materialId)) {
+      return { success: false, message: 'Invalid material ID' };
+    }
+
+    if (!isValidOperationType(validatedData.operation)) {
+      return { success: false, message: 'Invalid operation type' };
+    }
+
+    const dispatch = await prisma.dispatch.create({
+      data: {
+        ...validatedData,
+        createdBy: userId,
+      },
+      include: {
+        material: {
+          select: {
+            code: true,
+            name: true,
+            uom: true,
+          },
+        },
+      },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/dashboard/dispatch');
+
+    return { success: true, dispatch };
+  } catch (error) {
+    console.error('Failed to create dispatch:', error);
+    return { success: false, message: 'Failed to create dispatch record' };
+  }
+}
+
+export async function updateDispatch(
+  id: string,
+  data: Partial<DispatchInput>
+): Promise<{
+  success: boolean;
+  dispatch?: unknown;
+  message?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, message: 'Unauthorized' };
+    }
+
+    const dispatch = await prisma.dispatch.update({
+      where: { id },
+      data: {
+        ...data,
+        updatedAt: new Date(),
+      },
+      include: {
+        material: {
+          select: {
+            code: true,
+            name: true,
+            uom: true,
+          },
+        },
+      },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/dashboard/dispatch');
+
+    return { success: true, dispatch };
+  } catch (error) {
+    console.error('Failed to update dispatch:', error);
+    return { success: false, message: 'Failed to update dispatch record' };
+  }
+}
+
+export async function deleteDispatch(id: string): Promise<{
+  success: boolean;
+  message?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, message: 'Unauthorized' };
+    }
+
+    await prisma.dispatch.delete({
+      where: { id },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/dashboard/dispatch');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete dispatch:', error);
+    return { success: false, message: 'Failed to delete dispatch record' };
+  }
+}
+```
+
+### Received Material Server Actions
+
+```typescript
+// src/app/actions/received.ts
+'use server';
+
+import { auth } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
+import { prisma } from '@/lib/db';
+import { ReceivedMaterialSchema } from '@deskops/database';
+import { isValidMaterialId } from '@deskops/constants';
+
+interface ReceivedMaterial {
+  id: string;
+  siteId: string;
+  date: Date;
+  materialId: string;
+  qtyTon: number;
+  source?: string;
+  vehicleRef?: string;
+  notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: string;
+  material: {
+    code: string;
+    name: string;
+    category: string;
+  };
+}
+
+export async function createReceivedMaterial(data: unknown): Promise<{
+  success: boolean;
+  data?: ReceivedMaterial;
+  error?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    const validatedData = ReceivedMaterialSchema.parse(data);
+
+    if (!isValidMaterialId(validatedData.materialId)) {
+      return { success: false, error: 'Invalid material ID' };
+    }
+
+    const receivedMaterial = await prisma.receivedMaterial.create({
+      data: {
+        ...validatedData,
+        createdBy: userId,
+      },
+      include: {
+        material: {
+          select: {
+            code: true,
+            name: true,
+            category: true,
+          },
+        },
+      },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/received');
+
+    return { success: true, data: receivedMaterial as ReceivedMaterial };
+  } catch (error) {
+    console.error('Failed to create received material:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to create received material record',
+    };
+  }
+}
+
+export async function updateReceivedMaterial(
+  id: string,
+  data: unknown
+): Promise<{
+  success: boolean;
+  data?: ReceivedMaterial;
+  error?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    const validatedData = ReceivedMaterialSchema.parse(data);
+
+    if (
+      validatedData.materialId &&
+      !isValidMaterialId(validatedData.materialId)
+    ) {
+      return { success: false, error: 'Invalid material ID' };
+    }
+
+    const receivedMaterial = await prisma.receivedMaterial.update({
+      where: { id },
+      data: {
+        ...validatedData,
+        updatedAt: new Date(),
+      },
+      include: {
+        material: {
+          select: {
+            code: true,
+            name: true,
+            category: true,
+          },
+        },
+      },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/received');
+
+    return { success: true, data: receivedMaterial as ReceivedMaterial };
+  } catch (error) {
+    console.error('Failed to update received material:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to update received material record',
+    };
+  }
+}
+
+export async function deleteReceivedMaterial(id: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    await prisma.receivedMaterial.delete({
+      where: { id },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/received');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete received material:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to delete received material record',
+    };
+  }
+}
+```
+
+### Equipment Tracking Server Actions
+
+```typescript
+// src/app/actions/equipment.ts
+'use server';
+
+import { auth } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
+import { prisma } from '@/lib/db';
+import { EquipmentLogSchema, type EquipmentLogInput } from '@deskops/database';
+import { isValidEquipmentId } from '@deskops/constants';
+
+export async function createEquipmentLog(data: unknown): Promise<{
+  success: boolean;
+  data?: unknown;
+  error?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    const validatedData = EquipmentLogSchema.parse(data);
+
+    if (!isValidEquipmentId(validatedData.equipmentId)) {
+      return { success: false, error: 'Invalid equipment ID' };
+    }
+
+    const equipmentLog = await prisma.equipmentLog.create({
+      data: {
+        ...validatedData,
+        createdBy: userId,
+      },
+      include: {
+        equipment: {
+          select: {
+            code: true,
+            name: true,
+            type: true,
+          },
+        },
+      },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/equipment');
+
+    return { success: true, data: equipmentLog };
+  } catch (error) {
+    console.error('Failed to create equipment log:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to create equipment log',
+    };
+  }
+}
+
+export async function updateEquipmentLog(
+  id: string,
+  data: unknown
+): Promise<{
+  success: boolean;
+  data?: unknown;
+  error?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    const validatedData = EquipmentLogSchema.parse(data);
+
+    if (
+      validatedData.equipmentId &&
+      !isValidEquipmentId(validatedData.equipmentId)
+    ) {
+      return { success: false, error: 'Invalid equipment ID' };
+    }
+
+    const equipmentLog = await prisma.equipmentLog.update({
+      where: { id },
+      data: {
+        ...validatedData,
+        updatedAt: new Date(),
+      },
+      include: {
+        equipment: {
+          select: {
+            code: true,
+            name: true,
+            type: true,
+          },
+        },
+      },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/equipment');
+
+    return { success: true, data: equipmentLog };
+  } catch (error) {
+    console.error('Failed to update equipment log:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to update equipment log',
+    };
+  }
+}
+
+export async function deleteEquipmentLog(id: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    await prisma.equipmentLog.delete({
+      where: { id },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/equipment');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete equipment log:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to delete equipment log',
+    };
+  }
+}
+```
+
+### Manpower Attendance Server Actions
+
+```typescript
+// src/app/actions/manpower.ts
+'use server';
+
+import { auth } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
+import { prisma } from '@/lib/db';
+import { ManpowerLogSchema, type ManpowerLogInput } from '@deskops/database';
+
+export async function createManpowerLog(data: unknown): Promise<{
+  success: boolean;
+  data?: unknown;
+  error?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    const validatedData = ManpowerLogSchema.parse(data);
+
+    const manpowerLog = await prisma.manpowerLog.create({
+      data: {
+        ...validatedData,
+        createdBy: userId,
+      },
+      include: {
+        role: {
+          select: {
+            code: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/manpower');
+
+    return { success: true, data: manpowerLog };
+  } catch (error) {
+    console.error('Failed to create manpower log:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to create manpower log',
+    };
+  }
+}
+
+export async function updateManpowerLog(
+  id: string,
+  data: unknown
+): Promise<{
+  success: boolean;
+  data?: unknown;
+  error?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    const validatedData = ManpowerLogSchema.parse(data);
+
+    const manpowerLog = await prisma.manpowerLog.update({
+      where: { id },
+      data: {
+        ...validatedData,
+        updatedAt: new Date(),
+      },
+      include: {
+        role: {
+          select: {
+            code: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/manpower');
+
+    return { success: true, data: manpowerLog };
+  } catch (error) {
+    console.error('Failed to update manpower log:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to update manpower log',
+    };
+  }
+}
+
+export async function deleteManpowerLog(id: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    await prisma.manpowerLog.delete({
+      where: { id },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/manpower');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete manpower log:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to delete manpower log',
+    };
   }
 }
 ```
@@ -938,7 +1583,12 @@ import { generateCSVReport } from '@/lib/exporters/csv';
 interface ExportJobProcessor {
   processJob(jobId: string): Promise<void>;
   updateProgress(jobId: string, progress: number): Promise<void>;
-  completeJob(jobId: string, filePath: string, fileSize: number, fileHash: string): Promise<void>;
+  completeJob(
+    jobId: string,
+    filePath: string,
+    fileSize: number,
+    fileHash: string
+  ): Promise<void>;
   failJob(jobId: string, error: string): Promise<void>;
 }
 
@@ -976,7 +1626,10 @@ export class ExportJobProcessor implements ExportJobProcessor {
       await this.completeJob(jobId, filePath, fileSize, fileHash);
     } catch (error) {
       console.error(`Export job ${jobId} failed:`, error);
-      await this.failJob(jobId, error instanceof Error ? error.message : 'Unknown error');
+      await this.failJob(
+        jobId,
+        error instanceof Error ? error.message : 'Unknown error'
+      );
     }
   }
 
@@ -1049,35 +1702,33 @@ export class ExportJobProcessor implements ExportJobProcessor {
 
 ```typescript
 // src/middleware.ts
-import { authMiddleware } from '@clerk/nextjs';
-import { NextResponse } from 'next/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-export default authMiddleware({
-  publicRoutes: ['/'],
-  ignoredRoutes: ['/api/health'],
+const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/api/(.*)']);
 
-  beforeAuth: (req) => {
-    // Add any pre-auth logic here
-  },
+const isPublicRoute = createRouteMatcher(['/api/auth/session']);
 
-  afterAuth: (auth, req) => {
-    // Handle users who aren't authenticated
-    if (!auth.userId && !auth.isPublicRoute) {
-      return redirectToSignIn({ returnBackUrl: req.url });
-    }
+export default clerkMiddleware(async (auth, req) => {
+  // Allow session checks without authentication
+  if (isPublicRoute(req)) {
+    return;
+  }
 
-    // Add role-based access control here if needed
-    if (auth.userId && req.nextUrl.pathname.startsWith('/admin')) {
-      // Check if user has admin role
-      // This would require additional logic to check user roles
-    }
+  // Protect all other routes
+  if (isProtectedRoute(req)) {
+    await auth.protect();
+  }
 
-    return NextResponse.next();
-  },
+  // TODO: Role-based access control
+  // Check user roles from Clerk session metadata and restrict /admin routes
+  // to users with admin role (requires Clerk metadata configuration)
 });
 
 export const config = {
-  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+  matcher: [
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api|trpc)(.*)',
+  ],
 };
 ```
 
@@ -1103,7 +1754,7 @@ export function handleApiError(error: unknown): NextResponse {
   if (error instanceof z.ZodError) {
     return NextResponse.json(
       {
-        error: 'Validation failed',
+        message: 'Validation failed',
         code: 'VALIDATION_ERROR',
         details: error.errors,
       },
@@ -1116,7 +1767,7 @@ export function handleApiError(error: unknown): NextResponse {
       case 'P2002':
         return NextResponse.json(
           {
-            error: 'Unique constraint violation',
+            message: 'Unique constraint violation',
             code: 'DUPLICATE_RECORD',
             details: error.meta,
           },
@@ -1125,7 +1776,7 @@ export function handleApiError(error: unknown): NextResponse {
       case 'P2025':
         return NextResponse.json(
           {
-            error: 'Record not found',
+            message: 'Record not found',
             code: 'NOT_FOUND',
           },
           { status: 404 }
@@ -1133,7 +1784,7 @@ export function handleApiError(error: unknown): NextResponse {
       default:
         return NextResponse.json(
           {
-            error: 'Database error',
+            message: 'Database error',
             code: 'DATABASE_ERROR',
           },
           { status: 500 }
@@ -1143,7 +1794,7 @@ export function handleApiError(error: unknown): NextResponse {
 
   return NextResponse.json(
     {
-      error: 'Internal server error',
+      message: 'Internal server error',
       code: 'INTERNAL_ERROR',
     },
     { status: 500 }

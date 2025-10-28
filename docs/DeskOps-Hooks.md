@@ -155,12 +155,7 @@ export function useProduction({
 } {
   const api = useApi();
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['production', siteId, dateFrom, dateTo],
     queryFn: async (): Promise<Production[]> => {
       const params = new URLSearchParams({ siteId });
@@ -227,14 +222,32 @@ import { useQuery } from '@tanstack/react-query';
 import { useApi } from './use-api';
 
 interface DashboardMetrics {
-  totalProductionToday: number;
-  receivedMaterialsToday: number;
-  totalDispatchedToday: number;
-  currentInventoryStatus: number;
-  productionChange: number;
-  receivedChange: number;
-  dispatchedChange: number;
-  inventoryChange: number;
+  totalProduction: {
+    current: number;
+    previous: number;
+    percentageChange: number; // Calculated as ((current - previous) / previous) * 100
+  };
+  totalDispatched: {
+    current: number;
+    previous: number;
+    percentageChange: number; // Calculated as ((current - previous) / previous) * 100
+  };
+  totalReceived: {
+    current: number;
+    previous: number;
+    percentageChange: number; // Calculated as ((current - previous) / previous) * 100
+  };
+  equipmentUtilization: {
+    current: number;
+    previous: number;
+    percentageChange: number; // Calculated as ((current - previous) / previous) * 100
+  };
+  currentInventoryStatus: {
+    current: number;
+    previous: number;
+    percentageChange: number; // Calculated as ((current - previous) / previous) * 100
+    // Note: If previous === 0, returns 100 if current > 0, else 0
+  };
 }
 
 interface UseDashboardMetricsParams {
@@ -253,12 +266,7 @@ export function useDashboardMetrics({
 } {
   const api = useApi();
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['dashboard-metrics', siteId],
     queryFn: async (): Promise<DashboardMetrics> => {
       const response = await api.get<{ metrics: DashboardMetrics }>(
@@ -269,16 +277,23 @@ export function useDashboardMetrics({
         throw new Error(response.error || 'Failed to fetch dashboard metrics');
       }
 
-      return response.data?.metrics || {
-        totalProductionToday: 0,
-        receivedMaterialsToday: 0,
-        totalDispatchedToday: 0,
-        currentInventoryStatus: 0,
-        productionChange: 0,
-        receivedChange: 0,
-        dispatchedChange: 0,
-        inventoryChange: 0,
-      };
+      return (
+        response.data?.metrics || {
+          totalProduction: { current: 0, previous: 0, percentageChange: 0 },
+          totalDispatched: { current: 0, previous: 0, percentageChange: 0 },
+          totalReceived: { current: 0, previous: 0, percentageChange: 0 },
+          equipmentUtilization: {
+            current: 0,
+            previous: 0,
+            percentageChange: 0,
+          },
+          currentInventoryStatus: {
+            current: 0,
+            previous: 0,
+            percentageChange: 0,
+          },
+        }
+      );
     },
     enabled: enabled && !!siteId,
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
@@ -345,12 +360,7 @@ export function useEquipment({
 } {
   const api = useApi();
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['equipment', siteId, dateFrom, dateTo],
     queryFn: async (): Promise<EquipmentLog[]> => {
       const params = new URLSearchParams({ siteId });
@@ -466,17 +476,14 @@ export const useAppStore = create<AppState>()(
       exportFormat: 'xlsx',
 
       // Actions
-      setSelectedSiteId: (siteId: string) =>
-        set({ selectedSiteId: siteId }),
+      setSelectedSiteId: (siteId: string) => set({ selectedSiteId: siteId }),
 
-      setDateRange: (range: DateRange) =>
-        set({ dateRange: range }),
+      setDateRange: (range: DateRange) => set({ dateRange: range }),
 
       setSidebarCollapsed: (collapsed: boolean) =>
         set({ sidebarCollapsed: collapsed }),
 
-      setTheme: (theme: 'light' | 'dark' | 'system') =>
-        set({ theme }),
+      setTheme: (theme: 'light' | 'dark' | 'system') => set({ theme }),
 
       setDashboardRefreshInterval: (interval: number) =>
         set({ dashboardRefreshInterval: interval }),
@@ -548,18 +555,21 @@ export const useExportStore = create<ExportState>((set, get) => ({
 
   updateJob: (id: string, updates: Partial<ExportJob>) =>
     set((state) => {
-      const updatedJob = { ...state.activeJobs.find(j => j.id === id), ...updates };
+      const updatedJob = {
+        ...state.activeJobs.find((j) => j.id === id),
+        ...updates,
+      };
 
       // Move to completed if status is completed or failed
       if (updates.status === 'completed' || updates.status === 'failed') {
         return {
-          activeJobs: state.activeJobs.filter(j => j.id !== id),
+          activeJobs: state.activeJobs.filter((j) => j.id !== id),
           completedJobs: [...state.completedJobs, updatedJob],
         };
       }
 
       return {
-        activeJobs: state.activeJobs.map(job =>
+        activeJobs: state.activeJobs.map((job) =>
           job.id === id ? { ...job, ...updates } : job
         ),
       };
@@ -567,18 +577,15 @@ export const useExportStore = create<ExportState>((set, get) => ({
 
   removeJob: (id: string) =>
     set((state) => ({
-      activeJobs: state.activeJobs.filter(job => job.id !== id),
-      completedJobs: state.completedJobs.filter(job => job.id !== id),
+      activeJobs: state.activeJobs.filter((job) => job.id !== id),
+      completedJobs: state.completedJobs.filter((job) => job.id !== id),
     })),
 
-  clearCompletedJobs: () =>
-    set({ completedJobs: [] }),
+  clearCompletedJobs: () => set({ completedJobs: [] }),
 
-  setExportDialogOpen: (open: boolean) =>
-    set({ exportDialogOpen: open }),
+  setExportDialogOpen: (open: boolean) => set({ exportDialogOpen: open }),
 
-  setSelectedModule: (module: string) =>
-    set({ selectedModule: module }),
+  setSelectedModule: (module: string) => set({ selectedModule: module }),
 }));
 ```
 
@@ -720,7 +727,11 @@ export function useExportProgress(): {
     if (data) {
       updateJob(data.jobId, {
         progress: data.progress,
-        status: data.status as 'pending' | 'processing' | 'completed' | 'failed',
+        status: data.status as
+          | 'pending'
+          | 'processing'
+          | 'completed'
+          | 'failed',
         downloadUrl: data.downloadUrl,
         errorMessage: data.errorMessage,
       });
@@ -782,7 +793,7 @@ export function useFormState<T extends Record<string, unknown>>({
   });
 
   const setValue = useCallback((field: keyof T, value: unknown): void => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       values: {
         ...prev.values,
@@ -792,7 +803,7 @@ export function useFormState<T extends Record<string, unknown>>({
   }, []);
 
   const setValues = useCallback((values: Partial<T>): void => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       values: {
         ...prev.values,
@@ -801,54 +812,60 @@ export function useFormState<T extends Record<string, unknown>>({
     }));
   }, []);
 
-  const setFieldTouched = useCallback((field: keyof T, touched = true): void => {
-    setState(prev => ({
-      ...prev,
-      touched: {
-        ...prev.touched,
-        [field]: touched,
-      },
-    }));
-  }, []);
-
-  const validateField = useCallback((field: keyof T): boolean => {
-    if (!validationSchema) return true;
-
-    try {
-      validationSchema.parse(state.values);
-      setState(prev => ({
+  const setFieldTouched = useCallback(
+    (field: keyof T, touched = true): void => {
+      setState((prev) => ({
         ...prev,
-        errors: {
-          ...prev.errors,
-          [field]: undefined,
+        touched: {
+          ...prev.touched,
+          [field]: touched,
         },
       }));
-      return true;
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const fieldError = error.errors.find(err =>
-          err.path.includes(field as string)
-        );
-        if (fieldError) {
-          setState(prev => ({
-            ...prev,
-            errors: {
-              ...prev.errors,
-              [field]: fieldError.message,
-            },
-          }));
+    },
+    []
+  );
+
+  const validateField = useCallback(
+    (field: keyof T): boolean => {
+      if (!validationSchema) return true;
+
+      try {
+        validationSchema.parse(state.values);
+        setState((prev) => ({
+          ...prev,
+          errors: {
+            ...prev.errors,
+            [field]: undefined,
+          },
+        }));
+        return true;
+      } catch (error) {
+        if (error instanceof ZodError) {
+          const fieldError = error.errors.find((err) =>
+            err.path.includes(field as string)
+          );
+          if (fieldError) {
+            setState((prev) => ({
+              ...prev,
+              errors: {
+                ...prev.errors,
+                [field]: fieldError.message,
+              },
+            }));
+          }
         }
+        return false;
       }
-      return false;
-    }
-  }, [state.values, validationSchema]);
+    },
+    [state.values, validationSchema]
+  );
 
   const validateForm = useCallback((): boolean => {
     if (!validationSchema) return true;
 
     try {
       validationSchema.parse(state.values);
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         errors: {},
         isValid: true,
@@ -857,13 +874,13 @@ export function useFormState<T extends Record<string, unknown>>({
     } catch (error) {
       if (error instanceof ZodError) {
         const errors: Partial<Record<keyof T, string>> = {};
-        error.errors.forEach(err => {
+        error.errors.forEach((err) => {
           const field = err.path[0] as keyof T;
           if (field) {
             errors[field] = err.message;
           }
         });
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           errors,
           isValid: false,
@@ -876,13 +893,13 @@ export function useFormState<T extends Record<string, unknown>>({
   const handleSubmit = useCallback(async (): Promise<void> => {
     if (!validateForm() || !onSubmit) return;
 
-    setState(prev => ({ ...prev, isSubmitting: true }));
+    setState((prev) => ({ ...prev, isSubmitting: true }));
     try {
       await onSubmit(state.values);
     } catch (error) {
       console.error('Form submission failed:', error);
     } finally {
-      setState(prev => ({ ...prev, isSubmitting: false }));
+      setState((prev) => ({ ...prev, isSubmitting: false }));
     }
   }, [state.values, validateForm, onSubmit]);
 
@@ -938,13 +955,15 @@ export function useAuth(): {
   const { user, isLoaded } = useUser();
   const { isSignedIn, signOut } = useClerkAuth();
 
-  const authUser: AuthUser | null = user ? {
-    id: user.id,
-    email: user.emailAddresses[0]?.emailAddress || '',
-    name: user.fullName || '',
-    role: (user.publicMetadata.role as UserRole) || UserRole.MODERATOR,
-    avatar: user.imageUrl,
-  } : null;
+  const authUser: AuthUser | null = user
+    ? {
+        id: user.id,
+        email: user.emailAddresses[0]?.emailAddress || '',
+        name: user.fullName || '',
+        role: (user.publicMetadata.role as UserRole) || UserRole.MODERATOR,
+        avatar: user.imageUrl,
+      }
+    : null;
 
   const hasRole = (role: UserRole): boolean => {
     if (!authUser) return false;
@@ -981,7 +1000,13 @@ import { toast } from 'sonner';
 
 interface ExportJobRequest {
   siteId: string;
-  module: 'production' | 'dispatch' | 'received' | 'equipment' | 'manpower' | 'inventory';
+  module:
+    | 'production'
+    | 'dispatch'
+    | 'received'
+    | 'equipment'
+    | 'manpower'
+    | 'inventory';
   dateFrom: string;
   dateTo: string;
   granularity: 'daily' | 'weekly' | 'monthly';
@@ -1013,10 +1038,7 @@ export function useExportManager(): {
   const { addJob } = useExportStore();
 
   // Fetch user's export jobs
-  const {
-    data: jobs = [],
-    isLoading: isLoadingJobs,
-  } = useQuery({
+  const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({
     queryKey: ['export-jobs'],
     queryFn: async (): Promise<ExportJob[]> => {
       const response = await api.get<{ jobs: ExportJob[] }>('/api/exports');
@@ -1031,7 +1053,10 @@ export function useExportManager(): {
   // Create export job mutation
   const createJobMutation = useMutation({
     mutationFn: async (request: ExportJobRequest): Promise<ExportJob> => {
-      const response = await api.post<{ exportJob: ExportJob }>('/api/exports', request);
+      const response = await api.post<{ exportJob: ExportJob }>(
+        '/api/exports',
+        request
+      );
       if (!response.success) {
         throw new Error(response.error || 'Failed to create export job');
       }

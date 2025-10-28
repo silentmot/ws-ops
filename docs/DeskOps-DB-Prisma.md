@@ -310,7 +310,7 @@ import {
   MATERIALS,
   EQUIPMENT,
   ROLES,
-  DEFAULT_SITE_CODE
+  DEFAULT_SITE_CODE,
 } from '@deskops/constants';
 
 const prisma = new PrismaClient();
@@ -468,18 +468,20 @@ const globalForPrisma = globalThis as unknown as {
 const isDev = process.env.NODE_ENV === 'development';
 const enableQueryLog = process.env.PRISMA_QUERY_LOG === 'true' || isDev;
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({
-  log: enableQueryLog
-    ? [
-        { emit: 'event', level: 'query' },
-        { emit: 'stdout', level: 'error' },
-        { emit: 'stdout', level: 'warn' },
-      ]
-    : [
-        { emit: 'stdout', level: 'error' },
-        { emit: 'stdout', level: 'warn' },
-      ],
-});
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    log: enableQueryLog
+      ? [
+          { emit: 'event', level: 'query' },
+          { emit: 'stdout', level: 'error' },
+          { emit: 'stdout', level: 'warn' },
+        ]
+      : [
+          { emit: 'stdout', level: 'error' },
+          { emit: 'stdout', level: 'warn' },
+        ],
+  });
 
 // Log queries in development only
 if (enableQueryLog && isDev) {
@@ -501,10 +503,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 ```typescript
 // packages/database/src/schemas/production.ts
 import { z } from 'zod';
-import {
-  OperationType,
-  ShiftType,
-} from '@deskops/constants';
+import { OperationType, ShiftType } from '@deskops/constants';
 
 export const ProductionSchema = z.object({
   siteId: z.string().cuid(),
@@ -528,6 +527,39 @@ export const DispatchSchema = z.object({
   notes: z.string().max(500).optional(),
 });
 
+export const ReceivedMaterialSchema = z.object({
+  siteId: z.string().cuid(), // Required CUID for site reference
+  date: z.date(), // Required date of material receipt
+  materialId: z.string(), // Required material identifier, must be validated with isValidMaterialId
+  qtyTon: z.number().positive().max(999999.999), // Required quantity in tons, must be positive, max 999,999.999
+  source: z.string().max(200).optional(), // Optional source/supplier name, max 200 characters
+  vehicleRef: z.string().max(100).optional(), // Optional vehicle reference/plate number, max 100 characters
+  notes: z.string().max(500).optional(), // Optional notes, max 500 characters
+});
+
+export type ReceivedMaterialInput = z.infer<typeof ReceivedMaterialSchema>;
+
+/**
+ * Usage Example:
+ *
+ * import { ReceivedMaterialSchema, ReceivedMaterialInput } from '@deskops/database';
+ * import { prisma } from '@/lib/db';
+ *
+ * const data: unknown = req.body;
+ * const validatedData = ReceivedMaterialSchema.parse(data); // Validates and throws if invalid
+ *
+ * const receivedMaterial = await prisma.receivedMaterial.create({
+ *   data: validatedData
+ * });
+ *
+ * Note: This schema is used by both:
+ * - API route: apps/web/src/app/api/received/route.ts
+ * - Server action: apps/web/src/app/actions/received.ts
+ *
+ * Cross-reference: ReceivedMaterial Prisma model (lines 160-178) includes additional
+ * auto-generated fields (id, createdAt, updatedAt, createdBy) not part of input schema.
+ */
+
 export const EquipmentLogSchema = z.object({
   siteId: z.string().cuid(),
   date: z.date(),
@@ -535,7 +567,9 @@ export const EquipmentLogSchema = z.object({
   hours: z.number().min(0).max(24),
   count: z.number().int().min(0).max(100),
   shift: z.enum(['MORNING', 'AFTERNOON', 'NIGHT']).optional(),
-  status: z.enum(['OPERATIONAL', 'MAINTENANCE', 'BREAKDOWN', 'IDLE']).optional(),
+  status: z
+    .enum(['OPERATIONAL', 'MAINTENANCE', 'BREAKDOWN', 'IDLE'])
+    .optional(),
   notes: z.string().max(500).optional(),
 });
 
