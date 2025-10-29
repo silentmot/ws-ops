@@ -21,11 +21,7 @@ interface Site {
 }
 
 export function SiteSelector({ value, onValueChange }: SiteSelectorProps) {
-  const {
-    data: sites,
-    isLoading,
-    isError,
-  } = useQuery<Site[]>({
+  const { data, isLoading, isError } = useQuery<{ sites: Site[] }>({
     queryKey: ['sites'],
     queryFn: async () => {
       const response = await fetch('/api/sites');
@@ -35,6 +31,8 @@ export function SiteSelector({ value, onValueChange }: SiteSelectorProps) {
       return response.json();
     },
   });
+
+  const sites = data?.sites ?? [];
 
   if (isLoading) {
     return (
@@ -46,7 +44,7 @@ export function SiteSelector({ value, onValueChange }: SiteSelectorProps) {
     );
   }
 
-  if (isError || !sites) {
+  if (isError || !sites || sites.length === 0) {
     return (
       <Select value={value} onValueChange={onValueChange}>
         <SelectTrigger className="w-[200px]">

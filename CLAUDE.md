@@ -9,6 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Essential Development Commands
 
 ### Running the Application
+
 ```bash
 bun run dev              # Start Next.js dev server (Turbopack)
 bun run build            # Build all projects for production
@@ -16,6 +17,7 @@ bun run start            # Start production server
 ```
 
 ### Database Operations
+
 ```bash
 bun run db:generate      # Generate Prisma client (MUST run after schema changes)
 bun run db:migrate       # Run database migrations
@@ -27,6 +29,7 @@ bun run db:generate      # Generate Prisma client for web app
 ```
 
 ### Code Quality
+
 ```bash
 bun run lint             # Lint all projects
 bun run type-check       # TypeScript type checking
@@ -39,6 +42,7 @@ bun run test:e2e         # Run E2E tests (Playwright)
 ```
 
 ### Nx Workspace Commands
+
 ```bash
 # Run tasks for specific project
 bunx nx dev web          # Start web app dev server
@@ -90,12 +94,12 @@ ws-ops/
 
 ```typescript
 import {
-  MATERIALS,           // 17 materials (aggregates, fine, raw feed, etc.)
-  EQUIPMENT,           // 9 equipment items
-  ROLES,               // 5 manpower roles
-  SHIFT_TYPES,         // 3 shifts: MORNING, AFTERNOON, NIGHT
-  OPERATION_TYPES,     // 4 operation types: CRU-PRO, CRU-DIS, SEG-OP, CRU-OP
-  getMaterialById,     // Helper functions
+  MATERIALS, // 17 materials (aggregates, fine, raw feed, etc.)
+  EQUIPMENT, // 9 equipment items
+  ROLES, // 5 manpower roles
+  SHIFT_TYPES, // 3 shifts: MORNING, AFTERNOON, NIGHT
+  OPERATION_TYPES, // 4 operation types: CRU-PRO, CRU-DIS, SEG-OP, CRU-OP
+  getMaterialById, // Helper functions
   getEquipmentByCode,
   isValidMaterialId,
 } from '@deskops/constants';
@@ -107,14 +111,15 @@ Centralized Prisma client and Zod schemas:
 
 ```typescript
 import {
-  prisma,              // Singleton Prisma client
-  ProductionSchema,    // Zod validation schemas
+  prisma, // Singleton Prisma client
+  ProductionSchema, // Zod validation schemas
   DispatchSchema,
   EquipmentLogSchema,
 } from '@deskops/database';
 ```
 
 **Database Models** (12 total):
+
 - **Core Config**: Site, Material, Equipment, ManpowerRole
 - **Transactions**: Production, Dispatch, ReceivedMaterial, EquipmentLog, ManpowerLog
 - **Calculated**: InventorySnapshot
@@ -123,8 +128,9 @@ import {
 #### 4. Inventory Calculation Formula
 
 **CRITICAL BUSINESS LOGIC**:
+
 ```typescript
-closingStock = openingStock + production + received - dispatched + adjustment
+closingStock = openingStock + production + received - dispatched + adjustment;
 ```
 
 All inventory snapshots MUST follow this formula. This is calculated and stored in `InventorySnapshot` model.
@@ -134,11 +140,13 @@ All inventory snapshots MUST follow this formula. This is calculated and stored 
 The Prisma schema is located at `packages/database/prisma/schema.prisma` (NOT in the standard `prisma/` directory).
 
 Configuration is in `prisma.config.ts`:
+
 - Schema path: `packages/database/prisma/schema.prisma`
 - Migrations: `packages/database/prisma/migrations`
 - Generated client: `packages/database/src/generated/client`
 
 **After ANY schema changes**:
+
 ```bash
 bun run db:generate  # MUST run this to regenerate client
 ```
@@ -238,6 +246,7 @@ export function ProductionForm() {
 ## Technology Stack
 
 ### Frontend
+
 - **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript 5.9
 - **Styling**: Tailwind CSS v4
@@ -247,6 +256,7 @@ export function ProductionForm() {
 - **State**: Zustand + React Query
 
 ### Backend
+
 - **Runtime**: Bun
 - **Database**: PostgreSQL 17
 - **ORM**: Prisma
@@ -254,6 +264,7 @@ export function ProductionForm() {
 - **Validation**: Zod
 
 ### DevOps
+
 - **Monorepo**: Nx
 - **Testing**: Vitest + Playwright
 - **Linting**: ESLint + Prettier
@@ -292,6 +303,7 @@ export function ProductionForm() {
 ### Material Categories
 
 **17 Materials Total**:
+
 - **Aggregates** (9): G1, 3/4, 3/8, S1, APBC, FILLING, RIPRAP, 4 INCH, 6 INCH
 - **Fine** (2): WASHED SAND, NATURAL SAND
 - **Specialty** (1): BEDDING SAND
@@ -301,6 +313,7 @@ export function ProductionForm() {
 ### Equipment Types
 
 **9 Equipment Items**:
+
 - **Crushing/Screening**: Jaw Crusher, Cone Crusher, Vibrating Screen
 - **Earth Moving**: Excavator CAT320, Excavator PC200, Wheel Loader
 - **Hauling**: Dump Truck 6W, Dump Truck 10W
@@ -309,6 +322,7 @@ export function ProductionForm() {
 ### Manpower Roles
 
 **5 Roles**:
+
 - Equipment Driver
 - Crusher Operator
 - Maintenance Worker
@@ -375,6 +389,7 @@ NODE_ENV="development"
 ## Documentation References
 
 Full documentation is in `docs/`:
+
 - `DeskOps-ImplementationPlan.md` - Remaining implementation phases
 - `DeskOps-DB-Prisma.md` - Database schema documentation
 - `DeskOps-constants.md` - Constants reference guide
@@ -382,3 +397,26 @@ Full documentation is in `docs/`:
 - `DeskOps-Frontend.md` - Components and hooks guide
 - `DeskOps-Configuration.md` - Nx, TypeScript, Tailwind setup
 - `DeskOps-Interface-Overview.md` - UI/UX specifications
+
+<!-- nx configuration start-->
+<!-- Leave the start & end comments to automatically receive updates. -->
+
+# General Guidelines for working with Nx
+
+- When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
+- You have access to the Nx MCP server and its tools, use them to help the user
+- When answering questions about the repository, use the `nx_workspace` tool first to gain an understanding of the workspace architecture where applicable.
+- When working in individual projects, use the `nx_project_details` mcp tool to analyze and understand the specific project structure and dependencies
+- For questions around nx configuration, best practices or if you're unsure, use the `nx_docs` tool to get relevant, up-to-date docs. Always use this instead of assuming things about nx configuration
+- If the user needs help with an Nx configuration or project graph error, use the `nx_workspace` tool to get any errors
+
+# CI Error Guidelines
+
+If the user wants help with fixing an error in their CI pipeline, use the following flow:
+
+- Retrieve the list of current CI Pipeline Executions (CIPEs) using the `nx_cloud_cipe_details` tool
+- If there are any errors, use the `nx_cloud_fix_cipe_failure` tool to retrieve the logs for a specific task
+- Use the task logs to see what's wrong and help the user fix their problem. Use the appropriate tools if necessary
+- Make sure that the problem is fixed by running the task that you passed into the `nx_cloud_fix_cipe_failure` tool
+
+<!-- nx configuration end-->

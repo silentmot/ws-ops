@@ -119,11 +119,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [
-    require('tailwindcss-animate'),
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/forms'),
-  ],
 } satisfies Config;
 
 export default config;

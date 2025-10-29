@@ -304,7 +304,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/runner/work/ws-ops/ws-ops/packages/database/src/generated/client",
+      "value": "D:\\GitHub\\ws-ops\\packages\\database\\src\\generated\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -313,12 +313,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/runner/work/ws-ops/ws-ops/packages/database/prisma/schema.prisma",
+    "sourceFilePath": "D:\\GitHub\\ws-ops\\packages\\database\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -331,8 +331,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": true,
-  "ciName": "GitHub Actions",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
