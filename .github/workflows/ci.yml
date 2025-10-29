@@ -31,11 +31,11 @@ jobs:
           node-version: 20
 
       - name: Cache node modules (only if a lockfile exists)
-        if: ${{ hashFiles('**/package-lock.json') != '' || hashFiles('**/yarn.lock') != '' || hashFiles('**/npm-shrinkwrap.json') != '' }}
+        if: ${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/npm-shrinkwrap.json', '**/bun.lock') != '' }}
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json','**/yarn.lock','**/npm-shrinkwrap.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/npm-shrinkwrap.json', '**/bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
