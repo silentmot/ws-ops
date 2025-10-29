@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import type {
+  TooltipProps} from 'recharts';
 import {
   ComposedChart,
   Bar,
@@ -12,8 +14,7 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
-  Brush,
-  TooltipProps,
+  Brush
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
 import { formatWithPrecision } from '@deskops/constants';

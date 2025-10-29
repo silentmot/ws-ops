@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { SHIFT_TYPES, EQUIPMENT_STATUSES } from '@deskops/constants';
+import { z } from 'zod';
 
 export const EquipmentLogSchema = z.object({
   siteId: z.string().cuid(),

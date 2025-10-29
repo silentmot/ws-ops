@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import type {
+  TooltipProps} from 'recharts';
 import {
   AreaChart,
   Area,
@@ -11,8 +13,7 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceArea,
-  Brush,
-  TooltipProps,
+  Brush
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
 import { formatWithPrecision } from '@deskops/constants';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import { Button, Badge } from '@deskops/ui';
 import {
   Dialog,
@@ -14,11 +14,13 @@ import { Plus, ArrowUpDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { DataTable } from '@/components/data-table/data-table';
 import { ManpowerLogForm } from '@/components/forms/manpower-form';
-import { DEFAULT_SITE_ID, ShiftType } from '@deskops/constants';
+import type { ShiftType } from '@deskops/constants';
+import { DEFAULT_SITE_ID } from '@deskops/constants';
 import { toast } from 'sonner';
+import type {
+  ManpowerAttendanceData} from '@/components/charts/manpower-attendance-chart';
 import {
-  ManpowerAttendanceChart,
-  ManpowerAttendanceData,
+  ManpowerAttendanceChart
 } from '@/components/charts/manpower-attendance-chart';
 
 interface ManpowerLog {
