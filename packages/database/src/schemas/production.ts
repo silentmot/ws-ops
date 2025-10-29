@@ -1,9 +1,9 @@
-import { z } from 'zod';
 import {
   OPERATION_TYPES,
   SHIFT_TYPES,
   type OperationType,
 } from '@deskops/constants';
+import { z } from 'zod';
 
 const operationTypes = Object.keys(OPERATION_TYPES) as unknown as [
   OperationType,

@@ -2,9 +2,13 @@
     "name": "@deskops/eslint-config",
     "version": "1.0.0",
     "private": true,
-    "main": "./index.js",
+    "type": "module",
+    "main": "./index.mjs",
+    "exports": {
+        ".": "./index.mjs"
+    },
     "files": [
-        "index.js",
+        "index.mjs",
         "react.js"
     ],
     "dependencies": {

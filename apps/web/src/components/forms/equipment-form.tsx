@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import type { z } from 'zod';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import {
@@ -49,7 +49,7 @@ export function EquipmentLogForm({
 }: EquipmentFormProps): React.JSX.Element {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<EquipmentLogFormData>({
-    resolver: zodResolver(EquipmentLogSchema) as any,
+    resolver: zodResolver(EquipmentLogSchema),
     defaultValues: {
       siteId,
       date: new Date(),

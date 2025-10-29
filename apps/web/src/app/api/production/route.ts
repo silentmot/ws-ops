@@ -1,62 +1,31 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import { prisma } from '@/lib/db';
+import type { NextRequest} from 'next/server';
+import { NextResponse } from 'next/server';
 import { ProductionSchema } from '@deskops/database';
 import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
 import { handleApiError } from '@/lib/error-handler';
-import { z } from 'zod';
-
-const ProductionQuerySchema = z.object({
-  siteId: z.string().min(1),
-  dateFrom: z.string().datetime().optional(),
-  dateTo: z.string().datetime().optional(),
-});
+import {
+  checkAuth,
+  parseQueryParams,
+  validateDateRange,
+  buildDateRangeWhereClause,
+} from '@/lib/api-helpers';
+import { prisma } from '@/lib/db';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json(
-        { message: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const { userId, unauthorized } = await checkAuth();
+    if (unauthorized) return unauthorized;
 
     const { searchParams } = new URL(request.url);
-    const queryParams = ProductionQuerySchema.parse({
-      siteId: searchParams.get('siteId'),
-      dateFrom: searchParams.get('dateFrom') ?? undefined,
-      dateTo: searchParams.get('dateTo') ?? undefined,
-    });
-
+    const queryParams = parseQueryParams(searchParams);
     const { siteId, dateFrom, dateTo } = queryParams;
 
-    // Validate date range
-    if (dateFrom && dateTo) {
-      const dateFromObj = new Date(dateFrom);
-      const dateToObj = new Date(dateTo);
-      if (dateFromObj > dateToObj) {
-        return NextResponse.json(
-          { message: 'dateFrom must be less than or equal to dateTo' },
-          { status: 400 }
-        );
-      }
+    const validation = validateDateRange(dateFrom, dateTo);
+    if (!validation.valid && validation.error) {
+      return validation.error;
     }
 
-    const whereClause: { siteId: string; date?: { gte?: Date; lte?: Date } } = {
-      siteId,
-    };
-
-    if (dateFrom || dateTo) {
-      whereClause.date = {};
-      if (dateFrom) {
-        whereClause.date.gte = new Date(dateFrom);
-      }
-      if (dateTo) {
-        whereClause.date.lte = new Date(dateTo);
-      }
-    }
+    const whereClause = buildDateRangeWhereClause({ siteId, dateFrom, dateTo });
 
     const productions = await prisma.production.findMany({
       where: whereClause,
@@ -87,14 +56,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json(
-        { message: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const { userId, unauthorized } = await checkAuth();
+    if (unauthorized) return unauthorized;
 
     const body = await request.json();
     const validatedData = ProductionSchema.parse(body);
@@ -122,7 +85,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         qtyTon: validatedData.qtyTon,
         operation: validatedData.operation,
         notes: validatedData.notes ?? null,
-        createdBy: userId,
+        createdBy: userId as string,
       },
       include: {
         material: {
