@@ -592,6 +592,612 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 }
 ```
 
+### Received Materials Routes
+
+```typescript
+// src/app/api/received/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
+import { prisma } from '@/lib/db';
+import { ReceivedMaterialSchema } from '@deskops/database';
+import { isValidMaterialId } from '@deskops/constants';
+import { handleApiError } from '@/lib/error-handler';
+
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const siteId = searchParams.get('siteId');
+    const dateFrom = searchParams.get('dateFrom');
+    const dateTo = searchParams.get('dateTo');
+
+    if (!siteId) {
+      return NextResponse.json(
+        { message: 'siteId parameter required' },
+        { status: 400 }
+      );
+    }
+
+    const whereClause: { siteId: string; date?: { gte?: Date; lte?: Date } } = {
+      siteId,
+    };
+
+    if (dateFrom && dateTo) {
+      whereClause.date = {
+        gte: new Date(dateFrom),
+        lte: new Date(dateTo),
+      };
+    } else if (dateFrom) {
+      whereClause.date = {
+        gte: new Date(dateFrom),
+      };
+    } else if (dateTo) {
+      whereClause.date = {
+        lte: new Date(dateTo),
+      };
+    }
+
+    const receivedMaterials = await prisma.receivedMaterial.findMany({
+      where: whereClause,
+      include: {
+        material: {
+          select: {
+            code: true,
+            name: true,
+            category: true,
+            uom: true,
+          },
+        },
+        site: {
+          select: {
+            code: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
+    });
+
+    return NextResponse.json({ receivedMaterials });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const validatedData = ReceivedMaterialSchema.parse(body);
+
+    if (!isValidMaterialId(validatedData.materialId)) {
+      return NextResponse.json(
+        { message: 'Invalid material ID' },
+        { status: 400 }
+      );
+    }
+
+    const receivedMaterial = await prisma.receivedMaterial.create({
+      data: {
+        siteId: validatedData.siteId,
+        date: validatedData.date,
+        materialId: validatedData.materialId,
+        qtyTon: validatedData.qtyTon,
+        source: validatedData.source ?? null,
+        vehicleRef: validatedData.vehicleRef ?? null,
+        notes: validatedData.notes ?? null,
+        createdBy: userId,
+      },
+      include: {
+        material: {
+          select: {
+            code: true,
+            name: true,
+            uom: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(receivedMaterial, { status: 201 });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+```
+
+**Purpose:** Tracks incoming Construction & Demolition Waste (CDW) materials received at the facility. Critical for inventory calculation formula: `inventory = production + received - dispatched`.
+
+**Query Parameters (GET):**
+- `siteId` (required): Site identifier
+- `dateFrom` (optional): ISO 8601 datetime string for start date filter
+- `dateTo` (optional): ISO 8601 datetime string for end date filter
+
+**Request Body (POST):**
+```typescript
+{
+  siteId: string;
+  date: Date;
+  materialId: string;  // Must be valid material from constants
+  qtyTon: number;      // Decimal with 3-digit precision
+  source?: string;     // Source of material (e.g., "Municipal CDW", "Private Contractor")
+  vehicleRef?: string; // Vehicle reference number
+  notes?: string;      // Additional notes
+}
+```
+
+**Response (GET):**
+```typescript
+{
+  receivedMaterials: Array<{
+    id: string;
+    siteId: string;
+    date: Date;
+    materialId: string;
+    qtyTon: number;
+    source: string | null;
+    vehicleRef: string | null;
+    notes: string | null;
+    material: {
+      code: string;
+      name: string;
+      category: string;
+      uom: string;
+    };
+    site: {
+      code: string;
+      name: string;
+    };
+    createdAt: Date;
+    updatedAt: Date;
+    createdBy: string;
+  }>;
+}
+```
+
+**Response (POST):**
+Returns created received material record with same structure as GET response items.
+
+**Validation:**
+- Zod schema: `ReceivedMaterialSchema` from `@deskops/database`
+- Material ID validated against constants catalog
+- Date range validation for queries
+- Clerk authentication required
+
+**Error Handling:**
+- 401: Unauthorized (no valid session)
+- 400: Missing siteId parameter or invalid material ID
+- 500: Database or server error (handled by `handleApiError`)
+
+### Manpower Attendance Routes
+
+```typescript
+// src/app/api/manpower/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
+import { prisma } from '@/lib/db';
+import { ManpowerLogSchema } from '@deskops/database';
+import { handleApiError } from '@/lib/error-handler';
+
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const siteId = searchParams.get('siteId');
+    const dateFrom = searchParams.get('dateFrom');
+    const dateTo = searchParams.get('dateTo');
+
+    if (!siteId) {
+      return NextResponse.json(
+        { message: 'siteId parameter required' },
+        { status: 400 }
+      );
+    }
+
+    const whereClause: { siteId: string; date?: { gte?: Date; lte?: Date } } = {
+      siteId,
+    };
+
+    if (dateFrom && dateTo) {
+      whereClause.date = {
+        gte: new Date(dateFrom),
+        lte: new Date(dateTo),
+      };
+    } else if (dateFrom) {
+      whereClause.date = {
+        gte: new Date(dateFrom),
+      };
+    } else if (dateTo) {
+      whereClause.date = {
+        lte: new Date(dateTo),
+      };
+    }
+
+    const manpowerLogs = await prisma.manpowerLog.findMany({
+      where: whereClause,
+      include: {
+        role: {
+          select: {
+            code: true,
+            name: true,
+          },
+        },
+        site: {
+          select: {
+            code: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
+    });
+
+    return NextResponse.json({ manpowerLogs });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const validatedData = ManpowerLogSchema.parse(body);
+
+    const manpowerLog = await prisma.manpowerLog.create({
+      data: {
+        siteId: validatedData.siteId,
+        date: validatedData.date,
+        roleId: validatedData.roleId,
+        headcount: validatedData.headcount,
+        hours: validatedData.hours,
+        shift: validatedData.shift ?? null,
+        notes: validatedData.notes ?? null,
+        createdBy: userId,
+      },
+      include: {
+        role: {
+          select: {
+            code: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(manpowerLog, { status: 201 });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+```
+
+**Purpose:** Tracks daily manpower attendance and labor hours by role and shift. Used for labor analytics, cost tracking, and operational planning.
+
+**Query Parameters (GET):**
+- `siteId` (required): Site identifier
+- `dateFrom` (optional): ISO 8601 datetime string for start date filter
+- `dateTo` (optional): ISO 8601 datetime string for end date filter
+
+**Request Body (POST):**
+```typescript
+{
+  siteId: string;
+  date: Date;
+  roleId: string;      // Must be valid role from ManpowerRole table
+  headcount: number;   // Integer count of workers
+  hours: number;       // Decimal total hours worked
+  shift?: string;      // Shift identifier (e.g., "Morning", "Evening", "Night")
+  notes?: string;      // Additional notes
+}
+```
+
+**Response (GET):**
+```typescript
+{
+  manpowerLogs: Array<{
+    id: string;
+    siteId: string;
+    date: Date;
+    roleId: string;
+    headcount: number;
+    hours: number;
+    shift: string | null;
+    notes: string | null;
+    role: {
+      code: string;
+      name: string;
+    };
+    site: {
+      code: string;
+      name: string;
+    };
+    createdAt: Date;
+    updatedAt: Date;
+    createdBy: string;
+  }>;
+}
+```
+
+**Response (POST):**
+Returns created manpower log record with same structure as GET response items.
+
+**Validation:**
+- Zod schema: `ManpowerLogSchema` from `@deskops/database`
+- Role ID validated against ManpowerRole master table
+- Date range validation for queries
+- Clerk authentication required
+
+**Error Handling:**
+- 401: Unauthorized (no valid session)
+- 400: Missing siteId parameter or validation error
+- 500: Database or server error (handled by `handleApiError`)
+
+### Inventory Snapshot Routes
+
+```typescript
+// src/app/api/inventory/route.ts
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
+import { z } from 'zod';
+import { prisma } from '@/lib/db';
+import { InventorySnapshotCreateSchema } from '@deskops/database';
+import { isValidMaterialId } from '@deskops/constants';
+import { handleApiError } from '@/lib/error-handler';
+
+const InventoryQuerySchema = z.object({
+  siteId: z.string(),
+  dateFrom: z.string().datetime().optional(),
+  dateTo: z.string().datetime().optional(),
+});
+
+export async function GET(request: NextRequest) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const queryParams = {
+      siteId: searchParams.get('siteId') ?? undefined,
+      dateFrom: searchParams.get('dateFrom') ?? undefined,
+      dateTo: searchParams.get('dateTo') ?? undefined,
+    };
+
+    const { siteId, dateFrom, dateTo } =
+      InventoryQuerySchema.parse(queryParams);
+
+    // Validate date range order
+    if (dateFrom && dateTo) {
+      const from = new Date(dateFrom);
+      const to = new Date(dateTo);
+      if (from > to) {
+        return NextResponse.json(
+          { message: 'dateFrom must be less than or equal to dateTo' },
+          { status: 400 }
+        );
+      }
+    }
+
+    const whereClause: {
+      siteId: string;
+      date?: { gte?: Date; lte?: Date };
+    } = {
+      siteId,
+    };
+
+    if (dateFrom || dateTo) {
+      whereClause.date = {};
+      if (dateFrom) {
+        whereClause.date.gte = new Date(dateFrom);
+      }
+      if (dateTo) {
+        whereClause.date.lte = new Date(dateTo);
+      }
+    }
+
+    const inventorySnapshots = await prisma.inventorySnapshot.findMany({
+      where: whereClause,
+      include: {
+        material: {
+          select: {
+            code: true,
+            name: true,
+            category: true,
+            uom: true,
+          },
+        },
+        site: {
+          select: {
+            code: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+
+    return NextResponse.json({ inventorySnapshots });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+
+    // Convert string date to Date object
+    const dataWithDate = {
+      ...body,
+      date: body.date ? new Date(body.date) : new Date(),
+    };
+
+    const validatedData = InventorySnapshotCreateSchema.parse(dataWithDate);
+
+    // Ensure non-null decimals for Prisma
+    const producedTon = validatedData.producedTon ?? 0;
+    const receivedTon = validatedData.receivedTon ?? 0;
+    const dispatchedTon = validatedData.dispatchedTon ?? 0;
+
+    // Validate materialId
+    if (!isValidMaterialId(validatedData.materialId)) {
+      return NextResponse.json(
+        { message: 'Invalid material ID' },
+        { status: 400 }
+      );
+    }
+
+    // Calculate closingTon using inventory formula
+    // Formula: closingTon = openingTon + producedTon + receivedTon - dispatchedTon + adjustmentTon
+    const closingTon =
+      validatedData.closingTon ??
+      validatedData.openingTon +
+        producedTon +
+        receivedTon -
+        dispatchedTon +
+        validatedData.adjustmentTon;
+
+    const snapshot = await prisma.inventorySnapshot.create({
+      data: {
+        ...validatedData,
+        producedTon,
+        receivedTon,
+        dispatchedTon,
+        closingTon,
+        createdBy: userId,
+      },
+      include: {
+        material: {
+          select: {
+            code: true,
+            name: true,
+            category: true,
+            uom: true,
+          },
+        },
+        site: {
+          select: {
+            code: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(snapshot, { status: 201 });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+```
+
+**Purpose:** Manages daily inventory snapshots for materials at each site. Implements the core inventory calculation formula and provides historical tracking of stock levels.
+
+**Inventory Calculation Formula:**
+```typescript
+closingTon = openingTon + producedTon + receivedTon - dispatchedTon + adjustmentTon
+```
+
+**Query Parameters (GET):**
+- `siteId` (required): Site identifier
+- `dateFrom` (optional): ISO 8601 datetime string for start date filter
+- `dateTo` (optional): ISO 8601 datetime string for end date filter
+
+**Request Body (POST):**
+```typescript
+{
+  siteId: string;
+  date: Date;
+  materialId: string;      // Must be valid material from constants
+  openingTon: number;      // Opening stock (Decimal with 3-digit precision)
+  producedTon?: number;    // Production during period (defaults to 0)
+  receivedTon?: number;    // Materials received during period (defaults to 0)
+  dispatchedTon?: number;  // Materials dispatched during period (defaults to 0)
+  adjustmentTon: number;   // Manual adjustments (can be negative)
+  closingTon?: number;     // Closing stock (auto-calculated if not provided)
+  notes?: string;          // Additional notes
+}
+```
+
+**Response (GET):**
+```typescript
+{
+  inventorySnapshots: Array<{
+    id: string;
+    siteId: string;
+    date: Date;
+    materialId: string;
+    openingTon: number;
+    producedTon: number;
+    receivedTon: number;
+    dispatchedTon: number;
+    adjustmentTon: number;
+    closingTon: number;
+    notes: string | null;
+    material: {
+      code: string;
+      name: string;
+      category: string;
+      uom: string;
+    };
+    site: {
+      code: string;
+      name: string;
+    };
+    createdAt: Date;
+    updatedAt: Date;
+    createdBy: string;
+  }>;
+}
+```
+
+**Response (POST):**
+Returns created inventory snapshot record with same structure as GET response items.
+
+**Validation:**
+- Zod schema: `InventorySnapshotCreateSchema` from `@deskops/database`
+- Material ID validated against constants catalog
+- Date range order validation (dateFrom <= dateTo)
+- Auto-calculation of closingTon if not provided
+- Clerk authentication required
+
+**Error Handling:**
+- 401: Unauthorized (no valid session)
+- 400: Missing siteId parameter, invalid material ID, or invalid date range
+- 500: Database or server error (handled by `handleApiError`)
+
+**Business Logic Notes:**
+- Snapshots represent end-of-day inventory levels
+- Used for trend analysis and reconciliation
+- Critical for material flow tracking and audit compliance
+- Supports manual adjustments for physical inventory reconciliation
+
 ### Dashboard Analytics Routes
 
 ```typescript
@@ -866,6 +1472,462 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     );
   }
 }
+```
+
+### Export Job Detail Route
+
+```typescript
+// src/app/api/exports/[jobId]/route.ts
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
+import { prisma } from '@deskops/database';
+import { handleApiError } from '@/lib/error-handler';
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ jobId: string }> }
+): Promise<NextResponse> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { jobId } = await params;
+
+    const job = await prisma.exportJob.findUnique({
+      where: { id: jobId, userId },
+    });
+
+    if (!job) {
+      return NextResponse.json({ error: 'Job not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ job });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+```
+
+**Purpose:** Retrieve detailed status information for a specific export job.
+
+**Path Parameters:**
+- `jobId` (required): Unique export job identifier (CUID)
+
+**Response:**
+```typescript
+{
+  job: {
+    id: string;
+    userId: string;
+    siteId: string;
+    module: 'production' | 'dispatch' | 'received' | 'equipment' | 'manpower' | 'inventory';
+    format: 'xlsx' | 'csv' | 'pdf';
+    dateFrom: Date;
+    dateTo: Date;
+    granularity: 'daily' | 'weekly' | 'monthly';
+    status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
+    progress: number;        // 0-100
+    filePath: string | null;
+    fileSize: number | null;
+    fileHash: string | null;
+    downloadUrl: string | null;
+    expiresAt: Date | null;  // 24-hour expiry
+    errorMessage: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+  }
+}
+```
+
+**Error Handling:**
+- 401: Unauthorized (no valid session)
+- 404: Job not found or user does not own the job
+- 500: Server error
+
+### Export File Download Route
+
+```typescript
+// src/app/api/exports/[jobId]/download/route.ts
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
+import { readFile } from 'fs/promises';
+import { existsSync } from 'fs';
+import { prisma } from '@/lib/db';
+import { handleApiError } from '@/lib/error-handler';
+
+const CONTENT_TYPE_MAP: Record<string, string> = {
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  csv: 'text/csv',
+  pdf: 'application/pdf',
+};
+
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ jobId: string }> }
+) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { jobId } = await params;
+
+    const job = await prisma.exportJob.findUnique({
+      where: { id: jobId },
+    });
+
+    if (!job) {
+      return NextResponse.json(
+        { message: 'Export job not found' },
+        { status: 404 }
+      );
+    }
+
+    if (job.userId !== userId) {
+      return NextResponse.json(
+        { message: 'Forbidden: You do not own this export job' },
+        { status: 403 }
+      );
+    }
+
+    if (job.status !== 'completed') {
+      return NextResponse.json(
+        { message: 'Export job is not completed yet' },
+        { status: 400 }
+      );
+    }
+
+    if (!job.filePath) {
+      return NextResponse.json(
+        { message: 'Export file path not found' },
+        { status: 500 }
+      );
+    }
+
+    // Check if file has expired (24-hour expiry)
+    if (job.expiresAt && job.expiresAt < new Date()) {
+      return NextResponse.json(
+        { message: 'Export file has expired' },
+        { status: 410 }
+      );
+    }
+
+    // Verify file exists on filesystem
+    if (!existsSync(job.filePath)) {
+      return NextResponse.json(
+        { message: 'Export file not found on server' },
+        { status: 404 }
+      );
+    }
+
+    // Read file buffer
+    const fileBuffer = await readFile(job.filePath);
+
+    // Determine content type
+    const contentType =
+      CONTENT_TYPE_MAP[job.format] || 'application/octet-stream';
+
+    // Generate filename
+    const filename = `${job.module}_${job.dateFrom.toISOString().split('T')[0]}_to_${job.dateTo.toISOString().split('T')[0]}.${job.format}`;
+
+    // Upsert audit record and increment download count
+    await prisma.exportAudit.upsert({
+      where: { jobId: job.id },
+      update: {
+        downloadCount: { increment: 1 },
+        lastDownload: new Date(),
+      },
+      create: {
+        jobId: job.id,
+        siteId: job.siteId,
+        userId: job.userId,
+        module: job.module,
+        filtersJson: JSON.stringify({
+          dateFrom: job.dateFrom,
+          dateTo: job.dateTo,
+          granularity: job.granularity,
+        }),
+        recordCount: 0,
+        fileSize: job.fileSize || 0,
+        fileHash: job.fileHash || '',
+        downloadCount: 1,
+        lastDownload: new Date(),
+      },
+    });
+
+    // Return file response with appropriate headers
+    return new NextResponse(fileBuffer, {
+      status: 200,
+      headers: {
+        'Content-Type': contentType,
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Length': fileBuffer.length.toString(),
+      },
+    });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+```
+
+**Purpose:** Download the generated export file for a completed export job. Automatically creates audit records and tracks download count.
+
+**Path Parameters:**
+- `jobId` (required): Unique export job identifier (CUID)
+
+**Response:**
+Binary file download with appropriate content type headers:
+- Excel: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+- CSV: `text/csv`
+- PDF: `application/pdf`
+
+**Filename Format:**
+`{module}_{dateFrom}_to_{dateTo}.{format}`
+
+Example: `production_2025-01-01_to_2025-01-31.xlsx`
+
+**Audit Tracking:**
+- Automatically creates/updates `ExportAudit` record
+- Increments download count on each download
+- Records last download timestamp
+
+**Error Handling:**
+- 401: Unauthorized (no valid session)
+- 403: Forbidden (user does not own the job)
+- 404: Job not found or file not found on server
+- 400: Job not completed yet
+- 410: Gone (file has expired after 24 hours)
+- 500: Server error
+
+**Security Features:**
+- User ownership validation
+- 24-hour file expiry
+- SHA-256 hash verification via audit records
+- File existence validation before streaming
+
+### Export Job Retry Route
+
+```typescript
+// src/app/api/exports/[jobId]/retry/route.ts
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
+import { prisma } from '@/lib/db';
+import { handleApiError } from '@/lib/error-handler';
+import { ExportProcessor } from '@/lib/jobs/export-processor';
+
+export async function POST(
+  _request: NextRequest,
+  { params }: { params: Promise<{ jobId: string }> }
+) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { jobId } = await params;
+
+    const job = await prisma.exportJob.findUnique({
+      where: { id: jobId },
+    });
+
+    if (!job) {
+      return NextResponse.json(
+        { message: 'Export job not found' },
+        { status: 404 }
+      );
+    }
+
+    if (job.userId !== userId) {
+      return NextResponse.json(
+        { message: 'Forbidden: You do not own this export job' },
+        { status: 403 }
+      );
+    }
+
+    if (job.status !== 'failed') {
+      return NextResponse.json(
+        { message: 'Can only retry failed jobs' },
+        { status: 400 }
+      );
+    }
+
+    const updatedJob = await prisma.exportJob.update({
+      where: { id: jobId },
+      data: {
+        status: 'pending',
+        progress: 0,
+        errorMessage: null,
+      },
+    });
+
+    // Trigger background job processing
+    const processor = new ExportProcessor();
+    void processor.processJob(jobId).catch((e) => {
+      console.error('Export retry processing failed:', e);
+    });
+
+    return NextResponse.json(updatedJob);
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+```
+
+**Purpose:** Retry a failed export job by resetting its status to pending and triggering reprocessing.
+
+**Path Parameters:**
+- `jobId` (required): Unique export job identifier (CUID)
+
+**Response:**
+```typescript
+{
+  id: string;
+  status: 'pending';  // Reset to pending
+  progress: 0;        // Reset to 0
+  errorMessage: null; // Cleared
+  // ... other job fields
+}
+```
+
+**Business Logic:**
+1. Validates user ownership of the job
+2. Ensures job status is 'failed' (cannot retry pending/processing/completed jobs)
+3. Resets job status to 'pending'
+4. Clears progress counter and error message
+5. Triggers background processing via `ExportProcessor`
+
+**Error Handling:**
+- 401: Unauthorized (no valid session)
+- 403: Forbidden (user does not own the job)
+- 404: Job not found
+- 400: Cannot retry non-failed jobs
+- 500: Server error
+
+**Use Cases:**
+- Transient errors (network issues, temporary database connection problems)
+- Manual intervention after fixing data issues
+- Resource availability issues (disk space, etc.)
+
+### Export Progress Stream Route
+
+```typescript
+// src/app/api/exports/progress/route.ts
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
+import { z } from 'zod';
+import { prisma } from '@/lib/db';
+import { handleApiError } from '@/lib/error-handler';
+
+export const dynamic = 'force-dynamic';
+
+const ProgressQuerySchema = z.object({
+  jobIds: z.string().transform((val) => val.split(',')),
+});
+
+export async function GET(request: NextRequest) {
+  // Server-Sent Events implementation
+  // Polls job status every 2 seconds for up to 5 minutes
+  // Sends keepalive pings every 15 seconds
+  // Returns job status updates as SSE events
+}
+```
+
+**Purpose:** Stream real-time progress updates for one or more export jobs using Server-Sent Events (SSE). Provides live status, progress percentage, and completion notifications.
+
+**Query Parameters:**
+- `jobIds` (required): Comma-separated list of job IDs to monitor
+
+**Example Request:**
+```
+GET /api/exports/progress?jobIds=job1,job2,job3
+```
+
+**Response Format:** Server-Sent Events (SSE) stream
+
+**Event Types:**
+
+1. **Keepalive Event** (every 15 seconds):
+```typescript
+data: {
+  "type": "keepalive",
+  "timestamp": 1672531200000
+}
+```
+
+2. **Update Event** (every 2 seconds):
+```typescript
+data: {
+  "type": "update",
+  "jobs": [
+    {
+      "id": "clw123...",
+      "status": "processing",
+      "progress": 45,
+      "errorMessage": null,
+      "filePath": null,
+      "downloadUrl": null
+    }
+  ],
+  "timestamp": 1672531200000
+}
+```
+
+3. **Complete Event** (when all jobs terminal):
+```typescript
+data: {
+  "type": "complete",
+  "timestamp": 1672531200000
+}
+```
+
+**Configuration:**
+- Poll interval: 2 seconds
+- Keepalive interval: 15 seconds
+- Maximum polls: 150 (5 minutes total)
+- Auto-closes stream when all jobs reach terminal state or timeout
+
+**Terminal States:**
+- `completed`: Job finished successfully
+- `failed`: Job encountered error
+- `cancelled`: Job was cancelled
+
+**Error Handling:**
+- 401: Unauthorized (no valid session)
+- 400: Invalid jobIds parameter
+- 500: Server error
+
+**Performance Notes:**
+- TODO: In production, replace polling with Redis pub/sub for true real-time updates
+- Current implementation uses database polling every 2 seconds
+- Supports monitoring multiple jobs simultaneously
+- Automatically cleans up resources when stream closes
+
+**Usage Example:**
+```typescript
+// Client-side SSE connection
+const eventSource = new EventSource('/api/exports/progress?jobIds=job1,job2');
+
+eventSource.addEventListener('message', (event) => {
+  const data = JSON.parse(event.data);
+  
+  if (data.type === 'update') {
+    data.jobs.forEach(job => {
+      console.log(`Job ${job.id}: ${job.status} - ${job.progress}%`);
+    });
+  }
+  
+  if (data.type === 'complete') {
+    eventSource.close();
+  }
+});
 ```
 
 ---
