@@ -27,7 +27,7 @@ import {
 import { toast } from 'sonner';
 import { OPERATION_TYPES } from '@deskops/constants';
 import { createDispatch } from '@/app/actions/dispatch';
-import { DispatchSchema } from '@deskops/database';
+import { DispatchSchema } from '@deskops/database/schemas';
 import {
   DatePickerField,
   MaterialSelectField,
@@ -169,11 +169,13 @@ export function DispatchForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.entries(OPERATION_TYPES).map(([code, { label }]) => (
-                          <SelectItem key={code} value={code}>
-                            {label}
-                          </SelectItem>
-                        ))}
+                        {Object.entries(OPERATION_TYPES).map(
+                          ([code, { label }]) => (
+                            <SelectItem key={code} value={code}>
+                              {label}
+                            </SelectItem>
+                          )
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />

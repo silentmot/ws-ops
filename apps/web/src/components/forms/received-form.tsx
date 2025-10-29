@@ -17,7 +17,7 @@ import {
 } from '@deskops/ui';
 import { toast } from 'sonner';
 import { createReceivedMaterial } from '@/app/actions/received';
-import { ReceivedMaterialSchema } from '@deskops/database';
+import { ReceivedMaterialSchema } from '@deskops/database/schemas';
 import {
   DatePickerField,
   MaterialSelectField,

@@ -22,7 +22,7 @@ import {
 import { toast } from 'sonner';
 import { OPERATION_TYPES } from '@deskops/constants';
 import { createProduction } from '@/app/actions/production';
-import { ProductionSchema } from '@deskops/database';
+import { ProductionSchema } from '@deskops/database/schemas';
 import {
   DatePickerField,
   MaterialSelectField,

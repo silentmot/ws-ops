@@ -34,7 +34,7 @@ import {
 import { toast } from 'sonner';
 import { EQUIPMENT, SHIFT_TYPES, EQUIPMENT_STATUSES } from '@deskops/constants';
 import { createEquipmentLog } from '@/app/actions/equipment';
-import { EquipmentLogSchema } from '@deskops/database';
+import { EquipmentLogSchema } from '@deskops/database/schemas';
 
 type EquipmentLogFormData = z.infer<typeof EquipmentLogSchema>;
 
@@ -131,10 +131,7 @@ export function EquipmentLogForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Equipment</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select equipment" />

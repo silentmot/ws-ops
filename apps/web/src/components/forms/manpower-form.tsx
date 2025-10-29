@@ -34,7 +34,7 @@ import {
 import { toast } from 'sonner';
 import { ROLES, SHIFT_TYPES } from '@deskops/constants';
 import { createManpowerLog } from '@/app/actions/manpower';
-import { ManpowerLogSchema } from '@deskops/database';
+import { ManpowerLogSchema } from '@deskops/database/schemas';
 
 type ManpowerLogFormData = z.infer<typeof ManpowerLogSchema>;
 
