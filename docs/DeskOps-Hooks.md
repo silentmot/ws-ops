@@ -418,6 +418,612 @@ export function useCreateEquipmentLog(): {
 }
 ```
 
+### Dispatch Management Hooks
+
+```typescript
+// src/hooks/use-dispatch.ts
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useApi } from './use-api';
+import { queryKeys } from '@/lib/query-keys';
+import type { Dispatch, DispatchInput } from '@deskops/database';
+
+interface DispatchWithRelations extends Dispatch {
+  material: { code: string; name: string; uom: string };
+  site: { code: string; name: string };
+}
+
+interface DispatchListResponse {
+  dispatches: DispatchWithRelations[];
+}
+
+interface DispatchParams {
+  siteId: string;
+  dateFrom?: string;
+  dateTo?: string;
+  enabled?: boolean;
+}
+
+// Query hook for fetching dispatch list
+export function useDispatch(params: DispatchParams) {
+  const api = useApi();
+
+  return useQuery({
+    queryKey: queryKeys.dispatch.list(params),
+    queryFn: async (): Promise<DispatchWithRelations[]> => {
+      const searchParams = new URLSearchParams({ siteId: params.siteId });
+      if (params.dateFrom) searchParams.append('dateFrom', params.dateFrom);
+      if (params.dateTo) searchParams.append('dateTo', params.dateTo);
+
+      const response = await api.get<DispatchListResponse>(
+        `/api/dispatch?${searchParams}`
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch dispatch data');
+      }
+
+      return response.data?.dispatches || [];
+    },
+    enabled: params.enabled !== false && !!params.siteId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+// Query hook for fetching single dispatch by ID
+export function useDispatchById(id: string, enabled = true) {
+  const api = useApi();
+
+  return useQuery({
+    queryKey: queryKeys.dispatch.detail(id),
+    queryFn: async (): Promise<DispatchWithRelations> => {
+      const response = await api.get<{ dispatch: DispatchWithRelations }>(
+        `/api/dispatch/${id}`
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch dispatch record');
+      }
+
+      if (!response.data?.dispatch) {
+        throw new Error('Dispatch record not found');
+      }
+
+      return response.data.dispatch;
+    },
+    enabled: enabled && !!id,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+// Mutation hook for creating dispatch
+export function useCreateDispatch() {
+  const queryClient = useQueryClient();
+  const api = useApi();
+
+  return useMutation({
+    mutationFn: async (data: DispatchInput) => {
+      const response = await api.post<{ dispatch: Dispatch }>(
+        '/api/dispatch',
+        data
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to create dispatch record');
+      }
+
+      return response.data?.dispatch;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.dispatch.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+    },
+  });
+}
+
+// Mutation hook for updating dispatch
+export function useUpdateDispatch() {
+  const queryClient = useQueryClient();
+  const api = useApi();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<DispatchInput>;
+    }) => {
+      const response = await api.put<{ dispatch: Dispatch }>(
+        `/api/dispatch/${id}`,
+        data
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to update dispatch record');
+      }
+
+      return response.data?.dispatch;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.dispatch.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.dispatch.detail(variables.id),
+      });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+    },
+  });
+}
+
+// Mutation hook for deleting dispatch
+export function useDeleteDispatch() {
+  const queryClient = useQueryClient();
+  const api = useApi();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await api.delete<{ success: boolean }>(
+        `/api/dispatch/${id}`
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to delete dispatch record');
+      }
+
+      return response.data;
+    },
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.dispatch.all });
+      queryClient.removeQueries({ queryKey: queryKeys.dispatch.detail(id) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+    },
+  });
+}
+```
+
+**Purpose:** React Query hooks for managing dispatch transactions (material shipments to customers). Critical for inventory calculation and revenue tracking.
+
+**Hook: `useDispatch`**
+- **Parameters:**
+  - `siteId` (required): Site filter
+  - `dateFrom` (optional): Start date for range filter
+  - `dateTo` (optional): End date for range filter
+  - `enabled` (optional): Query enablement flag (default: true)
+- **Returns:** Query result with dispatch array, loading state, error, and refetch function
+- **Cache Configuration:** 5-minute stale time, invalidated on mutations
+- **Related Queries:** Invalidates dashboard and inventory caches on mutations
+
+**Hook: `useDispatchById`**
+- **Parameters:**
+  - `id` (required): Dispatch record ID
+  - `enabled` (optional): Query enablement flag (default: true)
+- **Returns:** Query result with single dispatch record
+- **Use Case:** Detail views, edit forms
+
+**Hook: `useCreateDispatch`**
+- **Parameters:** Dispatch input data
+- **Side Effects:** Invalidates dispatch, dashboard, and inventory query caches
+- **Use Case:** Create new dispatch transaction
+
+**Hook: `useUpdateDispatch`**
+- **Parameters:** Dispatch ID and partial update data
+- **Side Effects:** Invalidates dispatch (all + detail), dashboard, and inventory caches
+- **Use Case:** Edit existing dispatch record
+
+**Hook: `useDeleteDispatch`**
+- **Parameters:** Dispatch ID
+- **Side Effects:** Invalidates dispatch cache, removes detail query, invalidates dashboard and inventory
+- **Use Case:** Delete dispatch transaction
+
+**Business Impact:**
+- Affects inventory calculations (`inventory = production + received - dispatched`)
+- Invalidates dashboard metrics (total dispatched, inventory status)
+- Critical for revenue and customer order tracking
+
+### Received Materials Hooks
+
+```typescript
+// src/hooks/use-received.ts
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useApi } from './use-api';
+import { queryKeys } from '@/lib/query-keys';
+import type {
+  ReceivedMaterial,
+  ReceivedMaterialInput,
+} from '@deskops/database';
+
+interface ReceivedWithRelations extends ReceivedMaterial {
+  material: { code: string; name: string; uom: string };
+  site: { code: string; name: string };
+}
+
+interface ReceivedListResponse {
+  receivedMaterials: ReceivedWithRelations[];
+}
+
+interface ReceivedParams {
+  siteId: string;
+  dateFrom?: string;
+  dateTo?: string;
+  enabled?: boolean;
+}
+
+// Query hook for fetching received materials list
+export function useReceived(params: ReceivedParams) {
+  const api = useApi();
+
+  return useQuery({
+    queryKey: queryKeys.received.list(params),
+    queryFn: async (): Promise<ReceivedWithRelations[]> => {
+      const searchParams = new URLSearchParams({ siteId: params.siteId });
+      if (params.dateFrom) searchParams.append('dateFrom', params.dateFrom);
+      if (params.dateTo) searchParams.append('dateTo', params.dateTo);
+
+      const response = await api.get<ReceivedListResponse>(
+        `/api/received?${searchParams}`
+      );
+
+      if (!response.success) {
+        throw new Error(
+          response.error || 'Failed to fetch received materials data'
+        );
+      }
+
+      return response.data?.receivedMaterials || [];
+    },
+    enabled: params.enabled !== false && !!params.siteId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+// Query hook for fetching single received material by ID
+export function useReceivedById(id: string, enabled = true) {
+  const api = useApi();
+
+  return useQuery({
+    queryKey: queryKeys.received.detail(id),
+    queryFn: async (): Promise<ReceivedWithRelations> => {
+      const response = await api.get<{ received: ReceivedWithRelations }>(
+        `/api/received/${id}`
+      );
+
+      if (!response.success) {
+        throw new Error(
+          response.error || 'Failed to fetch received material record'
+        );
+      }
+
+      if (!response.data?.received) {
+        throw new Error('Received material record not found');
+      }
+
+      return response.data.received;
+    },
+    enabled: enabled && !!id,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+// Mutation hook for creating received material
+export function useCreateReceived() {
+  const queryClient = useQueryClient();
+  const api = useApi();
+
+  return useMutation({
+    mutationFn: async (data: ReceivedMaterialInput) => {
+      const response = await api.post<{ received: ReceivedMaterial }>(
+        '/api/received',
+        data
+      );
+
+      if (!response.success) {
+        throw new Error(
+          response.error || 'Failed to create received material record'
+        );
+      }
+
+      return response.data?.received;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.received.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+    },
+  });
+}
+
+// Mutation hook for updating received material
+export function useUpdateReceived() {
+  const queryClient = useQueryClient();
+  const api = useApi();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<ReceivedMaterialInput>;
+    }) => {
+      const response = await api.put<{ received: ReceivedMaterial }>(
+        `/api/received/${id}`,
+        data
+      );
+
+      if (!response.success) {
+        throw new Error(
+          response.error || 'Failed to update received material record'
+        );
+      }
+
+      return response.data?.received;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.received.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.received.detail(variables.id),
+      });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+    },
+  });
+}
+
+// Mutation hook for deleting received material
+export function useDeleteReceived() {
+  const queryClient = useQueryClient();
+  const api = useApi();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await api.delete<{ success: boolean }>(
+        `/api/received/${id}`
+      );
+
+      if (!response.success) {
+        throw new Error(
+          response.error || 'Failed to delete received material record'
+        );
+      }
+
+      return response.data;
+    },
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.received.all });
+      queryClient.removeQueries({ queryKey: queryKeys.received.detail(id) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all });
+    },
+  });
+}
+```
+
+**Purpose:** React Query hooks for managing received Construction & Demolition Waste (CDW) materials. Essential for inventory calculation and waste intake tracking.
+
+**Hook: `useReceived`**
+- **Parameters:**
+  - `siteId` (required): Site filter
+  - `dateFrom` (optional): Start date for range filter
+  - `dateTo` (optional): End date for range filter
+  - `enabled` (optional): Query enablement flag (default: true)
+- **Returns:** Query result with received materials array, loading state, error, and refetch function
+- **Cache Configuration:** 5-minute stale time, invalidated on mutations
+
+**Hook: `useReceivedById`**
+- **Parameters:**
+  - `id` (required): Received material record ID
+  - `enabled` (optional): Query enablement flag (default: true)
+- **Returns:** Query result with single received material record
+- **Use Case:** Detail views, edit forms
+
+**Hook: `useCreateReceived`**
+- **Parameters:** ReceivedMaterialInput data (siteId, date, materialId, qtyTon, source, vehicleRef, notes)
+- **Side Effects:** Invalidates received, dashboard, and inventory query caches
+- **Use Case:** Record new material intake
+
+**Hook: `useUpdateReceived`**
+- **Parameters:** Record ID and partial update data
+- **Side Effects:** Invalidates received (all + detail), dashboard, and inventory caches
+- **Use Case:** Correct received material records
+
+**Hook: `useDeleteReceived`**
+- **Parameters:** Record ID
+- **Side Effects:** Invalidates received cache, removes detail query, invalidates dashboard and inventory
+- **Use Case:** Remove erroneous received material entries
+
+**Business Impact:**
+- Critical for inventory formula (`inventory = production + received - dispatched`)
+- Tracks CDW intake volumes for compliance reporting
+- Affects dashboard metrics (total received, inventory trends)
+- Used for material sourcing analytics
+
+### Manpower Attendance Hooks
+
+```typescript
+// src/hooks/use-manpower.ts
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useApi } from './use-api';
+import { queryKeys } from '@/lib/query-keys';
+import type { ManpowerLog } from '@deskops/database';
+
+interface ManpowerLogInput {
+  siteId: string;
+  date: Date;
+  roleId: string;
+  headcount: number;
+  hours: number;
+  shift?: string;
+  notes?: string;
+}
+
+interface ManpowerLogWithRelations extends ManpowerLog {
+  role: { code: string; name: string };
+  site: { code: string; name: string };
+}
+
+interface ManpowerLogListResponse {
+  manpowerLogs: ManpowerLogWithRelations[];
+}
+
+interface ManpowerParams {
+  siteId: string;
+  dateFrom?: string;
+  dateTo?: string;
+  enabled?: boolean;
+}
+
+// Query hook for fetching manpower logs
+export function useManpower(params: ManpowerParams) {
+  const api = useApi();
+
+  return useQuery({
+    queryKey: queryKeys.manpower.list(params),
+    queryFn: async (): Promise<ManpowerLogWithRelations[]> => {
+      const searchParams = new URLSearchParams({ siteId: params.siteId });
+      if (params.dateFrom) searchParams.append('dateFrom', params.dateFrom);
+      if (params.dateTo) searchParams.append('dateTo', params.dateTo);
+
+      const response = await api.get<ManpowerLogListResponse>(
+        `/api/manpower?${searchParams}`
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch manpower logs');
+      }
+
+      return response.data?.manpowerLogs || [];
+    },
+    enabled: params.enabled !== false && !!params.siteId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+// Mutation hook for creating manpower log
+export function useCreateManpower() {
+  const queryClient = useQueryClient();
+  const api = useApi();
+
+  return useMutation({
+    mutationFn: async (data: ManpowerLogInput) => {
+      const response = await api.post<{ log: ManpowerLog }>(
+        '/api/manpower',
+        data
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to create manpower log');
+      }
+
+      return response.data?.log;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.manpower.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });
+    },
+  });
+}
+
+// Mutation hook for updating manpower log
+export function useUpdateManpower() {
+  const queryClient = useQueryClient();
+  const api = useApi();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<ManpowerLogInput>;
+    }) => {
+      const response = await api.put<{ log: ManpowerLog }>(
+        `/api/manpower/${id}`,
+        data
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to update manpower log');
+      }
+
+      return response.data?.log;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.manpower.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });
+    },
+  });
+}
+
+// Mutation hook for deleting manpower log
+export function useDeleteManpower() {
+  const queryClient = useQueryClient();
+  const api = useApi();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await api.delete<{ success: boolean }>(
+        `/api/manpower/${id}`
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to delete manpower log');
+      }
+
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.manpower.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });
+    },
+  });
+}
+```
+
+**Purpose:** React Query hooks for managing manpower attendance logs and labor hour tracking. Used for labor cost analysis and operational planning.
+
+**Hook: `useManpower`**
+- **Parameters:**
+  - `siteId` (required): Site filter
+  - `dateFrom` (optional): Start date for range filter
+  - `dateTo` (optional): End date for range filter
+  - `enabled` (optional): Query enablement flag (default: true)
+- **Returns:** Query result with manpower logs array, loading state, error, and refetch function
+- **Cache Configuration:** 5-minute stale time, invalidated on mutations
+
+**Hook: `useCreateManpower`**
+- **Parameters:** ManpowerLogInput data (siteId, date, roleId, headcount, hours, shift, notes)
+- **Side Effects:** Invalidates manpower and dashboard query caches
+- **Use Case:** Record daily attendance and labor hours
+- **Data Tracked:**
+  - `roleId`: References ManpowerRole (Equipment Driver, Crusher Operator, etc.)
+  - `headcount`: Number of workers
+  - `hours`: Total labor hours (can be greater than headcount × 8 for overtime)
+  - `shift`: Optional shift identifier (Morning, Evening, Night)
+
+**Hook: `useUpdateManpower`**
+- **Parameters:** Log ID and partial update data
+- **Side Effects:** Invalidates manpower and dashboard caches
+- **Use Case:** Correct attendance records
+
+**Hook: `useDeleteManpower`**
+- **Parameters:** Log ID
+- **Side Effects:** Invalidates manpower and dashboard caches
+- **Use Case:** Remove erroneous attendance entries
+
+**Business Impact:**
+- Tracks labor costs and efficiency metrics
+- Used for manpower analytics (by role, shift, site)
+- Affects dashboard metrics (equipment utilization correlates with manpower)
+- Critical for operational planning and scheduling
+- Supports compliance reporting for labor regulations
+
+**Relationship to Other Modules:**
+- **Equipment Logs:** Operator hours should correlate with equipment hours
+- **Production:** Production efficiency can be analyzed against labor hours
+- **Dashboard:** Contributes to overall operational KPIs
+
 ---
 
 ## Client State Management (Zustand)
