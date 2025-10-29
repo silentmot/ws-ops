@@ -4,7 +4,12 @@ import { UserRole } from '@deskops/constants';
 
 const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/api/(.*)']);
 
-const isPublicRoute = createRouteMatcher(['/api/auth/session', '/api/health']);
+const isPublicRoute = createRouteMatcher([
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/api/auth/session',
+  '/api/health',
+]);
 
 const isAdminRoute = createRouteMatcher(['/admin(.*)']);
 
