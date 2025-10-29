@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { Prisma } from '@prisma/client';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+  PrismaClientUnknownRequestError,
+} from '@prisma/client/runtime/library';
 
 interface ApiError {
   message: string;
@@ -24,7 +28,7 @@ export function handleApiError(error: unknown): NextResponse {
   }
 
   // Handle Prisma errors
-  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+  if (error instanceof PrismaClientKnownRequestError) {
     // Unique constraint violation
     if (error.code === 'P2002') {
       return NextResponse.json(
@@ -61,7 +65,7 @@ export function handleApiError(error: unknown): NextResponse {
   }
 
   // Handle Prisma validation errors
-  if (error instanceof Prisma.PrismaClientValidationError) {
+  if (error instanceof PrismaClientValidationError) {
     return NextResponse.json(
       {
         message: 'Database validation error',
@@ -73,7 +77,7 @@ export function handleApiError(error: unknown): NextResponse {
   }
 
   // Handle Prisma unknown request errors
-  if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+  if (error instanceof PrismaClientUnknownRequestError) {
     return NextResponse.json(
       {
         message: 'Database request error',

@@ -57,7 +57,7 @@ export function ProductionForm({
     defaultValues: {
       siteId,
       date: new Date(),
-      qtyTon: undefined,
+      qtyTon: 0,
       operation: 'CRU-PRO',
     },
   });
@@ -207,11 +207,13 @@ export function ProductionForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.entries(OPERATION_TYPES).map(([code, { label }]) => (
-                          <SelectItem key={code} value={code}>
-                            {label}
-                          </SelectItem>
-                        ))}
+                        {Object.entries(OPERATION_TYPES).map(
+                          ([code, { label }]) => (
+                            <SelectItem key={code} value={code}>
+                              {label}
+                            </SelectItem>
+                          )
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -227,7 +229,7 @@ export function ProductionForm({
                     <FormLabel>Shift (Optional)</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value || ''}
                     >
                       <FormControl>
                         <SelectTrigger>

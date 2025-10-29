@@ -75,3 +75,4 @@ bun-debug.log*
 package-lock.json
 bun.lockb
 /packages/database/src/generated
+**/generated

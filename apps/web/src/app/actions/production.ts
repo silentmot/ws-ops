@@ -3,23 +3,19 @@
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
-import { ProductionSchema, type ProductionInput } from '@deskops/database';
+import {
+  ProductionSchema,
+  type ProductionInput,
+  type Production,
+  type Material,
+} from '@deskops/database';
 import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
-import { Prisma } from '@prisma/client';
 
 interface ActionResult {
   success: boolean;
-  production?: Prisma.ProductionGetPayload<{
-    include: {
-      material: {
-        select: {
-          code: true;
-          name: true;
-          uom: true;
-        };
-      };
-    };
-  }>;
+  production?: Production & {
+    material: Pick<Material, 'code' | 'name' | 'uom'>;
+  };
   error?: string;
 }
 
@@ -103,7 +99,8 @@ export async function updateProduction(
     if (data.siteId !== undefined) updateData['siteId'] = data.siteId;
     if (data.date !== undefined) updateData['date'] = data.date;
     if (data.shift !== undefined) updateData['shift'] = data.shift ?? null;
-    if (data.materialId !== undefined) updateData['materialId'] = data.materialId;
+    if (data.materialId !== undefined)
+      updateData['materialId'] = data.materialId;
     if (data.qtyTon !== undefined) updateData['qtyTon'] = data.qtyTon;
     if (data.operation !== undefined) updateData['operation'] = data.operation;
     if (data.notes !== undefined) updateData['notes'] = data.notes ?? null;

@@ -3,27 +3,25 @@
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
-import { DispatchSchema, type DispatchInput } from '@deskops/database';
+import {
+  DispatchSchema,
+  type DispatchInput,
+  type Dispatch,
+  type Material,
+} from '@deskops/database';
 import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
-import { Prisma } from '@prisma/client';
 
 interface ActionResult {
   success: boolean;
-  dispatch?: Prisma.DispatchGetPayload<{
-    include: {
-      material: {
-        select: {
-          code: true;
-          name: true;
-          uom: true;
-        };
-      };
-    };
-  }>;
+  dispatch?: Dispatch & {
+    material: Pick<Material, 'code' | 'name' | 'uom'>;
+  };
   error?: string;
 }
 
-export async function createDispatch(data: DispatchInput): Promise<ActionResult> {
+export async function createDispatch(
+  data: DispatchInput
+): Promise<ActionResult> {
   try {
     const { userId } = await auth();
 
@@ -102,11 +100,13 @@ export async function updateDispatch(
 
     if (data.siteId !== undefined) updateData['siteId'] = data.siteId;
     if (data.date !== undefined) updateData['date'] = data.date;
-    if (data.materialId !== undefined) updateData['materialId'] = data.materialId;
+    if (data.materialId !== undefined)
+      updateData['materialId'] = data.materialId;
     if (data.qtyTon !== undefined) updateData['qtyTon'] = data.qtyTon;
     if (data.trips !== undefined) updateData['trips'] = data.trips ?? null;
     if (data.owner !== undefined) updateData['owner'] = data.owner ?? null;
-    if (data.reference !== undefined) updateData['reference'] = data.reference ?? null;
+    if (data.reference !== undefined)
+      updateData['reference'] = data.reference ?? null;
     if (data.operation !== undefined) updateData['operation'] = data.operation;
     if (data.notes !== undefined) updateData['notes'] = data.notes ?? null;
 

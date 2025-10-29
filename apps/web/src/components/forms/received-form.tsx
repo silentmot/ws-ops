@@ -57,7 +57,7 @@ export function ReceivedMaterialForm({
     defaultValues: {
       siteId,
       date: new Date(),
-      qtyTon: undefined,
+      qtyTon: 0,
     },
   });
 
