@@ -25,11 +25,19 @@ jobs:
       # Uncomment this line to enable task distribution
       # - run: npx nx start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e-ci"
 
-      # Cache node_modules
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+
+      - name: Cache node modules (only if a lockfile exists)
+        if: ${{ hashFiles('**/package-lock.json') != '' || hashFiles('**/yarn.lock') != '' || hashFiles('**/npm-shrinkwrap.json') != '' }}
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json','**/yarn.lock','**/npm-shrinkwrap.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - run: npm ci --legacy-peer-deps
       - run: npm install -g bun
