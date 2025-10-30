@@ -31,9 +31,11 @@ This document consolidates all remaining implementation tasks for the DeskOps Co
 
 ### Task 9.3: Build Inventory Snapshot Page with Data Table and Movement Chart
 
-**Ticket ID:** `6bc8cdf1-11b3-4ac9-920b-e358ba41220e`
-**Size:** Story
-**Priority:** High
+**Task ID:** `PH-9-TK-001-INV-SNAPSHOT`
+
+![Size-Medium](https://img.shields.io/badge/Size-Medium-yellow?style=flat-square)
+![Priority-Critical](https://img.shields.io/badge/Priority-Critical-red?style=flat-square)
+![Completed](https://img.shields.io/badge/Status-Completed-brightgreen?style=flat-square)
 
 #### Objective
 
@@ -84,9 +86,11 @@ interface InventorySnapshot {
 
 **Color Coding:**
 
-- 🔴 Red: Stock below threshold (< 100 TON)
-- 🟡 Yellow: Stock warning (100-500 TON)
-- 🟢 Green: Stock healthy (> 500 TON)
+```CSS
+- oklch(0.63, 0.2, 18.13) #Red: Stock below threshold (< 100 TON)
+- oklch(0.92, 0.15, 98.96) #Yellow: Stock warning (100-500 TON)
+- oklch(0.8, 0.15, 155.88) #Green: Stock healthy (> 500 TON)
+```
 
 **Filtering & Sorting:**
 
@@ -120,7 +124,6 @@ interface InventorySnapshot {
 
 #### Documentation References
 
-- `DeskOps-ImplementationPlan.md` (lines 317-497)
 - `DeskOps-Interface-Overview.md` (lines 11-28)
 - `DeskOps-DB-Prisma.md` (lines 193-245)
 
@@ -132,7 +135,7 @@ interface InventorySnapshot {
 
 ### Task 10.1: Setup React Query Client with Caching Strategy and Provider
 
-**Ticket ID:** `2e994d46-f4a5-49a5-8402-55a8877febf2`
+**Task ID:** `2e994d46-f4a5-49a5-8402-55a8877febf2`
 **Size:** Issue
 **Priority:** Critical (Dependency for other tasks)
 
@@ -214,7 +217,7 @@ export const queryKeys = {
 
 ### Task 10.2: Create Custom React Query Hooks for All Data Modules
 
-**Ticket ID:** `e6c077f2-53fc-4ba0-8531-2b092fb89874`
+**Task ID:** `e6c077f2-53fc-4ba0-8531-2b092fb89874`
 **Size:** Story
 **Priority:** High
 
@@ -390,7 +393,7 @@ export function useCreateProduction() {
 
 ### Task 10.3: Implement Zustand State Stores for App and Export Management
 
-**Ticket ID:** `08a11a83-4faa-4360-96bf-a90f3f856f38`
+**Task ID:** `08a11a83-4faa-4360-96bf-a90f3f856f38`
 **Size:** Story
 **Priority:** High
 
@@ -600,7 +603,7 @@ const { sidebarCollapsed, setSidebarCollapsed } = useAppStore();
 
 ### Task 11.1: Create Export API Routes with Job Management and Rate Limiting
 
-**Ticket ID:** `b689605b-0b44-4ed3-8ebb-c7076f0bf52f`
+**Task ID:** `b689605b-0b44-4ed3-8ebb-c7076f0bf52f`
 **Size:** Story
 **Priority:** High
 
@@ -869,7 +872,7 @@ await prisma.exportAudit.create({
 
 ### Task 11.2: Implement Export File Processors for Excel, PDF, and CSV Formats
 
-**Ticket ID:** `48e11ab4-ef93-42ea-a114-ffa52b69e373`
+**Task ID:** `48e11ab4-ef93-42ea-a114-ffa52b69e373`
 **Size:** Epic
 **Priority:** High
 
@@ -1375,7 +1378,7 @@ setInterval(cleanupExpiredExports, 24 * 60 * 60 * 1000);
 
 ### Task 11.3: Build Export Dialog and Progress Tracking UI Components
 
-**Ticket ID:** `7551e02b-04c0-4991-ab6a-895399e7e8ae`
+**Task ID:** `7551e02b-04c0-4991-ab6a-895399e7e8ae`
 **Size:** Story
 **Priority:** High
 

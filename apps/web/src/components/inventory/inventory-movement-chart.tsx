@@ -147,7 +147,7 @@ export function InventoryMovementChart({
           <CardTitle>Inventory Movement Trends</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-muted-foreground flex h-[320px] items-center justify-center">
+          <div className="text-muted-foreground flex h-80 items-center justify-center">
             No inventory data available for the selected period
           </div>
         </CardContent>

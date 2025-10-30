@@ -48,4 +48,6 @@ const nextConfig: NextConfig = {
   },
 };
 
+// withNx configuration - ESLint should be configured via eslint.config.mjs
+// not in next.config.ts (deprecated in Next.js 16)
 export default composePlugins(withNx)(nextConfig);

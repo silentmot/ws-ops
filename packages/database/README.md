@@ -40,6 +40,7 @@ bunx prisma studio
 ```
 
 The root `prisma.config.ts` configures:
+
 - Schema: `packages/database/prisma/schema.prisma`
 - Migrations: `packages/database/prisma/migrations`
 - Seed: `packages/database/prisma/seed.ts`

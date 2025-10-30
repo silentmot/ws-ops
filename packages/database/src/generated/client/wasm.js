@@ -304,7 +304,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "D:\\GitHub\\ws-ops\\packages\\database\\src\\generated\\client",
+      "value": "D:\\GItRepo\\ws-ops\\packages\\database\\src\\generated\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -318,11 +318,12 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "D:\\GitHub\\ws-ops\\packages\\database\\prisma\\schema.prisma",
+    "sourceFilePath": "D:\\GItRepo\\ws-ops\\packages\\database\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../../../.env"
   },
   "relativePath": "../../../prisma",
   "clientVersion": "6.18.0",
@@ -331,7 +332,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
