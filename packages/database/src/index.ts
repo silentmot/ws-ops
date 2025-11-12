@@ -1,5 +1,5 @@
 /**
- * @deskops/database
+ * @ws-ops/database
  *
  * Prisma-based database layer with:
  * - 12 production models (Site, Material, Equipment, Production, etc.)
@@ -7,7 +7,7 @@
  * - Singleton Prisma client with global caching
  *
  * Usage:
- *   import { prisma, ProductionSchema } from '@deskops/database';
+ *   import { prisma, ProductionSchema } from '@ws-ops/database';
  */
 
 export { prisma } from './client';

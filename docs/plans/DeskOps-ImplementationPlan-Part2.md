@@ -225,7 +225,7 @@ export default function SignUpPage(): React.JSX.Element {
 ```typescript
 // apps/web/src/hooks/use-auth.ts
 import { useUser, useAuth as useClerkAuth } from '@clerk/nextjs';
-import { UserRole } from '@deskops/constants';
+import { UserRole } from '@ws-ops/constants';
 
 interface AuthUser {
   id: string;
@@ -379,12 +379,12 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@deskops/ui': path.resolve(__dirname, '../../packages/ui/src'),
-      '@deskops/constants': path.resolve(
+      '@ws-ops/ui': path.resolve(__dirname, '../../packages/ui/src'),
+      '@ws-ops/constants': path.resolve(
         __dirname,
         '../../packages/constants/src'
       ),
-      '@deskops/database': path.resolve(
+      '@ws-ops/database': path.resolve(
         __dirname,
         '../../packages/database/src'
       ),
@@ -1334,7 +1334,7 @@ Comprehensive review of all implemented features to ensure quality, compliance, 
 
 **5. Constants & SSOT**
 
-- [ ] All constants imported from `@deskops/constants`
+- [ ] All constants imported from `@ws-ops/constants`
 - [ ] NO duplicate constant definitions
 - [ ] Material, equipment, role definitions centralized
 - [ ] Operation types referenced from SSOT

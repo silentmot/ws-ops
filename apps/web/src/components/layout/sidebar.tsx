@@ -3,7 +3,7 @@
 import type { JSX } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { cn } from '@deskops/ui';
+import { cn } from '@ws-ops/ui';
 import {
   BarChart3,
   Package,
@@ -22,7 +22,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { useAppStore } from '@/stores/app-store';
 
 interface NavigationItem {

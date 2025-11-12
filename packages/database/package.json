@@ -1,5 +1,5 @@
 {
-  "name": "@deskops/database",
+  "name": "@ws-ops/database",
   "version": "1.0.0",
   "private": true,
   "main": "./src/index.ts",
@@ -24,17 +24,17 @@
     "schema": "prisma/schema.prisma"
   },
   "dependencies": {
-    "@deskops/constants": "workspace:*",
+    "@ws-ops/constants": "workspace:*",
     "@prisma/client": "^6.18.0",
     "@prisma/extension-accelerate": "^2.0.2",
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@deskops/eslint-config": "workspace:*",
+    "@ws-ops/eslint-config": "workspace:*",
     "@types/node": "^24.9.2",
     "eslint": "^9.38.0",
     "prisma": "^6.18.0",
     "typescript": "^5.3.0",
-    "vitest": "^4.0.4"
+    "vitest": "^4.0.5"
   }
 }

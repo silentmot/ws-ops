@@ -77,5 +77,5 @@ bun-debug.log*
 # Package manager
 **/package-lock.json
 **/bun.lockb
-/packages/database/src/generated
+packages/database/src/generated/**/*
 **/generated

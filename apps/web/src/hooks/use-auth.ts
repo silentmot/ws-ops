@@ -1,5 +1,5 @@
 import { useUser, useAuth as useClerkAuth } from '@clerk/nextjs';
-import { UserRole } from '@deskops/constants';
+import { UserRole } from '@ws-ops/constants';
 
 interface AuthUser {
   id: string;

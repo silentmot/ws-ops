@@ -2,7 +2,7 @@ import type { NextRequest} from 'next/server';
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
-import { ManpowerLogSchema } from '@deskops/database';
+import { ManpowerLogSchema } from '@ws-ops/database';
 import { handleApiError } from '@/lib/error-handler';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {

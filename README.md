@@ -196,7 +196,7 @@ ws-ops/
 
 - ✓ **Zero Assumptions** — Every decision cites explicit source
 - ✓ **No `any` Types** — Strict TypeScript with concrete types only
-- ✓ **SSOT** — All constants imported from `@deskops/constants`
+- ✓ **SSOT** — All constants imported from `@ws-ops/constants`
 - ✓ **No API Versioning** — Use `/api/[module]/[resource]` format only
 - ✓ **Method-First** — Single method per operation using adapter pattern
 
@@ -372,8 +372,8 @@ bunx nx show projects         # List all projects
 // components/forms/production-form.tsx
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ProductionSchema } from '@deskops/database';
-import { MATERIALS, getMaterialById } from '@deskops/constants';
+import { ProductionSchema } from '@ws-ops/database';
+import { MATERIALS, getMaterialById } from '@ws-ops/constants';
 
 export function ProductionForm() {
   const form = useForm({
@@ -388,7 +388,7 @@ export function ProductionForm() {
 ```typescript
 // hooks/use-production.ts
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { ProductionSchema } from '@deskops/database';
+import { ProductionSchema } from '@ws-ops/database';
 
 export function useProduction(siteId: string) {
   return useQuery({
@@ -607,7 +607,7 @@ apps/web-e2e/src/
 ### Code Style Guidelines
 
 - **TypeScript**: NO `any` types — use explicit types always
-- **Imports**: Absolute paths with `@/` or `@deskops/` prefixes
+- **Imports**: Absolute paths with `@/` or `@ws-ops/` prefixes
 - **Components**: Functional components with TypeScript interfaces
 - **Naming**: PascalCase for components, camelCase for functions
 - **Formatting**: Prettier with 2-space indentation, single quotes

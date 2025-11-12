@@ -2,7 +2,7 @@ import { describe, test, expect } from 'vitest';
 import { ProductionSchema, DispatchSchema } from '../production';
 import { EquipmentLogSchema } from '../equipment';
 import { ManpowerLogSchema } from '../manpower';
-import { OPERATION_TYPES, SHIFT_TYPES, EQUIPMENT_STATUSES } from '@deskops/constants';
+import { OPERATION_TYPES, SHIFT_TYPES, EQUIPMENT_STATUSES } from '@ws-ops/constants';
 
 describe('Schema validation with centralized constants', () => {
   test('ProductionSchema parses with valid OperationType and ShiftType', () => {

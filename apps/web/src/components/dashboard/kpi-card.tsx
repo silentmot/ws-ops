@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
-import { cn } from '@deskops/ui';
-import { formatWithPrecision, type UOM } from '@deskops/constants';
+import { Card, CardContent, CardHeader, CardTitle } from '@ws-ops/ui';
+import { cn } from '@ws-ops/ui';
+import { formatWithPrecision, type UOM } from '@ws-ops/constants';
 import { DesignTokens } from '@/lib/design-tokens';
 
 interface KPICardProps {

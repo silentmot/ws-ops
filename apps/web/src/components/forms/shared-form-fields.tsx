@@ -22,8 +22,8 @@ import {
   SelectValue,
   Textarea,
   cn,
-} from '@deskops/ui';
-import { getMaterialsInOrder } from '@deskops/constants';
+} from '@ws-ops/ui';
+import { getMaterialsInOrder } from '@ws-ops/constants';
 
 interface DatePickerFieldProps<TFieldValues extends FieldValues> {
   control: Control<TFieldValues>;

@@ -3,7 +3,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
-import { ManpowerLogSchema } from '@deskops/database';
+import { ManpowerLogSchema } from '@ws-ops/database';
 
 export async function createManpowerLog(data: unknown) {
   try {

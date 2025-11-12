@@ -2,11 +2,11 @@
 
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Button, Badge } from '@deskops/ui';
+import { Button, Badge } from '@ws-ops/ui';
 import { ArrowUpDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { DataTable } from '@/components/data-table/data-table';
-import { cn } from '@deskops/ui';
+import { cn } from '@ws-ops/ui';
 
 interface InventorySnapshot {
   id: string;

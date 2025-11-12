@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { z } from 'zod';
 import { Loader2 } from 'lucide-react';
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@ws-ops/ui';
 import {
   Form,
   FormControl,
@@ -18,11 +18,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { toast } from 'sonner';
-import { OPERATION_TYPES } from '@deskops/constants';
+import { OPERATION_TYPES } from '@ws-ops/constants';
 import { createProduction } from '@/app/actions/production';
-import { ProductionSchema } from '@deskops/database/schemas';
+import { ProductionSchema } from '@ws-ops/database/schemas';
 import {
   DatePickerField,
   MaterialSelectField,

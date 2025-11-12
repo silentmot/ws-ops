@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-import { UserRole } from '@deskops/constants';
+import { UserRole } from '@ws-ops/constants';
 
 const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/api/(.*)']);
 

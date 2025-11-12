@@ -1,4 +1,4 @@
-import { SHIFT_TYPES, EQUIPMENT_STATUSES } from '@deskops/constants';
+import { SHIFT_TYPES, EQUIPMENT_STATUSES } from '@ws-ops/constants';
 import { z } from 'zod';
 
 export const EquipmentLogSchema = z.object({

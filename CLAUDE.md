@@ -84,11 +84,11 @@ ws-ops/
 
 - **Zero `any` Types**: NEVER use TypeScript `any`. Every value must have explicit typing.
 - **No Assumptions**: Every decision must cite explicit source from constants or schema.
-- **Single Source of Truth (SSOT)**: ALL constants MUST be imported from `@deskops/constants`.
+- **Single Source of Truth (SSOT)**: ALL constants MUST be imported from `@ws-ops/constants`.
 - **No API Versioning**: API routes use `/api/[module]/[resource]` format only.
 - **Method-First Pattern**: Single HTTP method per operation using adapter pattern.
 
-#### 2. Constants Package (`@deskops/constants`)
+#### 2. Constants Package (`@ws-ops/constants`)
 
 **CRITICAL**: This package is the SSOT for ALL business logic constants. NEVER hardcode values.
 
@@ -102,10 +102,10 @@ import {
   getMaterialById, // Helper functions
   getEquipmentByCode,
   isValidMaterialId,
-} from '@deskops/constants';
+} from '@ws-ops/constants';
 ```
 
-#### 3. Database Package (`@deskops/database`)
+#### 3. Database Package (`@ws-ops/database`)
 
 Centralized Prisma client and Zod schemas:
 
@@ -115,7 +115,7 @@ import {
   ProductionSchema, // Zod validation schemas
   DispatchSchema,
   EquipmentLogSchema,
-} from '@deskops/database';
+} from '@ws-ops/database';
 ```
 
 **Database Models** (12 total):
@@ -176,7 +176,7 @@ Server Actions are in `apps/web/src/app/actions/[module].ts`:
 'use server';
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
-import { prisma } from '@deskops/database';
+import { prisma } from '@ws-ops/database';
 
 export async function createProduction(data: ProductionInput) {
   const { userId } = await auth();
@@ -225,8 +225,8 @@ Forms use React Hook Form + Zod validation:
 ```typescript
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ProductionSchema } from '@deskops/database';
-import { MATERIALS } from '@deskops/constants';
+import { ProductionSchema } from '@ws-ops/database';
+import { MATERIALS } from '@ws-ops/constants';
 
 export function ProductionForm() {
   const form = useForm({
@@ -275,13 +275,13 @@ export function ProductionForm() {
 
 1. **ALWAYS run `bun run db:generate`** after modifying `packages/database/prisma/schema.prisma`
 2. Prisma client is located at `packages/database/src/generated/client` (not the default location)
-3. Use the centralized `prisma` export from `@deskops/database`, NOT direct Prisma imports
+3. Use the centralized `prisma` export from `@ws-ops/database`, NOT direct Prisma imports
 4. All Zod schemas for validation are in `packages/database/src/schemas/`
 
 ### When Creating Forms
 
-1. Import validation schema from `@deskops/database`
-2. Import constants (materials, equipment, roles) from `@deskops/constants`
+1. Import validation schema from `@ws-ops/database`
+2. Import constants (materials, equipment, roles) from `@ws-ops/constants`
 3. NEVER hardcode dropdown options - use the SSOT constants
 4. Use Server Actions for mutations (located in `apps/web/src/app/actions/`)
 
@@ -289,7 +289,7 @@ export function ProductionForm() {
 
 1. Follow pattern: `/api/[module]/route.ts` for collections
 2. Follow pattern: `/api/[module]/[id]/route.ts` for single resources
-3. Use Prisma client from `@deskops/database`
+3. Use Prisma client from `@ws-ops/database`
 4. Validate input with Zod schemas
 5. Check authentication with Clerk's `auth()` helper
 
@@ -298,7 +298,7 @@ export function ProductionForm() {
 - NO `any` types allowed anywhere
 - All functions must have explicit return types for exported functions
 - All props interfaces must be explicitly defined
-- Use type guards from `@deskops/constants` for runtime validation
+- Use type guards from `@ws-ops/constants` for runtime validation
 
 ### Material Categories
 

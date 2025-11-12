@@ -10,13 +10,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { Plus, ArrowUpDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { DataTable } from '@/components/data-table/data-table';
 import { EquipmentLogForm } from '@/components/forms/equipment-form';
-import { DEFAULT_SITE_ID, SHIFT_DURATION_HOURS } from '@deskops/constants';
-import type { EquipmentStatus } from '@deskops/constants';
+import { DEFAULT_SITE_ID, SHIFT_DURATION_HOURS } from '@ws-ops/constants';
+import type { EquipmentStatus } from '@ws-ops/constants';
 import { toast } from 'sonner';
 import { EquipmentUtilizationChart, type EquipmentUtilizationData } from '@/components/charts/equipment-utilization-chart';
 

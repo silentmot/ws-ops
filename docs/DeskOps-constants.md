@@ -110,7 +110,7 @@ export const SHIFT_TYPES = ['MORNING', 'AFTERNOON', 'NIGHT'] as const;
 **Usage Example**:
 
 ```typescript
-import { SHIFT_TYPES } from '@deskops/constants';
+import { SHIFT_TYPES } from '@ws-ops/constants';
 
 // In Zod schema
 const schema = z.object({
@@ -144,7 +144,7 @@ export const EQUIPMENT_STATUSES = [
 **Usage Example**:
 
 ```typescript
-import { EQUIPMENT_STATUSES } from '@deskops/constants';
+import { EQUIPMENT_STATUSES } from '@ws-ops/constants';
 
 // In Zod schema
 const schema = z.object({
@@ -180,8 +180,7 @@ const validateEquipmentStatus = (status: unknown): status is typeof EQUIPMENT_ST
 - ProductionSchema (DeskOps-DB-Prisma.md line 516): `shift: z.enum(SHIFT_TYPES).optional()`
 - EquipmentLogSchema (DeskOps-DB-Prisma.md line 538): `status: z.enum(EQUIPMENT_STATUSES).optional()`
 
-/\*\*
-
+```typescript
 - Scalar types for dataset fields
 - Source: Document index 9 - "export type ScalarType"
   \*/
@@ -647,3 +646,4 @@ const validateEquipmentStatus = (status: unknown): status is typeof EQUIPMENT_ST
   ): value is EquipmentType {
   return ["CRUSHING_SCREENING", "EARTH_MOVING", "HAULING", "AUXILIARY"].includes(value);
   }
+```

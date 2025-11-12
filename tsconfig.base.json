@@ -35,13 +35,13 @@
       "@ws-ops/source"
     ],
     "paths": {
-      "@deskops/ui": [
+      "@ws-ops/ui": [
         "./packages/ui/src"
       ],
-      "@deskops/constants": [
+      "@ws-ops/constants": [
         "./packages/constants/src"
       ],
-      "@deskops/database": [
+      "@ws-ops/database": [
         "./packages/database/src"
       ]
     }

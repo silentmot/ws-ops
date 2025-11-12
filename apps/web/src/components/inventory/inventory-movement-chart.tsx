@@ -13,8 +13,8 @@ import {
   Brush,
   type TooltipProps,
 } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
-import { formatWithPrecision } from '@deskops/constants';
+import { Card, CardContent, CardHeader, CardTitle } from '@ws-ops/ui';
+import { formatWithPrecision } from '@ws-ops/constants';
 import { ChartSkeleton } from '@/components/charts/chart-skeleton';
 import { AccessibleLegend } from '@/components/charts/accessible-legend';
 

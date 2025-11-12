@@ -1,4 +1,4 @@
-# @deskops/database
+# @ws-ops/database
 
 Prisma-based database layer for DeskOps production tracking system.
 
@@ -7,7 +7,7 @@ Prisma-based database layer for DeskOps production tracking system.
 - **12 Production Models**: Site, Material, Equipment, ManpowerRole, Production, Dispatch, ReceivedMaterial, EquipmentLog, ManpowerLog, InventorySnapshot, ExportJob, ExportAudit
 - **Zod Validation**: Runtime type-safe schemas for all input operations
 - **Multi-Site Support**: Site isolation with siteId on all models
-- **Idempotent Seeding**: Default site, materials, equipment, and roles from `@deskops/constants`
+- **Idempotent Seeding**: Default site, materials, equipment, and roles from `@ws-ops/constants`
 - **Singleton Client**: Global-cached Prisma client with query logging
 
 ## Installation
@@ -67,7 +67,7 @@ bun run db:studio
 ## Usage
 
 ```typescript
-import { prisma, ProductionSchema } from '@deskops/database';
+import { prisma, ProductionSchema } from '@ws-ops/database';
 
 // Validate input
 const input = ProductionSchema.parse({

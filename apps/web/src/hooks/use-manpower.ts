@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApi } from './use-api';
 import { queryKeys } from '@/lib/query-keys';
-import type { ManpowerLog } from '@deskops/database';
+import type { ManpowerLog } from '@ws-ops/database';
 
 interface ManpowerLogInput {
   siteId: string;

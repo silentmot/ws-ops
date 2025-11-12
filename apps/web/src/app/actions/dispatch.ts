@@ -8,8 +8,8 @@ import {
   type DispatchInput,
   type Dispatch,
   type Material,
-} from '@deskops/database';
-import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
+} from '@ws-ops/database';
+import { isValidMaterialId, isValidOperationType } from '@ws-ops/constants';
 
 interface ActionResult {
   success: boolean;

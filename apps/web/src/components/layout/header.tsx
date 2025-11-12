@@ -11,13 +11,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Badge,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { SiteSelector } from '@/components/site-selector';
 import { DateRangePicker } from '@/components/date-range-picker';
 import { ExportDialog } from '@/components/export/export-dialog';
 import { useAppStore } from '@/stores/app-store';
 import { useAuth } from '@/hooks/use-auth';
-import { UserRole } from '@deskops/constants';
+import { UserRole } from '@ws-ops/constants';
 
 export function Header(): React.JSX.Element {
   const { theme, setTheme } = useTheme();

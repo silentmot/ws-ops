@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApi } from './use-api';
 import { queryKeys } from '@/lib/query-keys';
-import type { EquipmentLog } from '@deskops/database';
+import type { EquipmentLog } from '@ws-ops/database';
 
 interface EquipmentLogInput {
   siteId: string;

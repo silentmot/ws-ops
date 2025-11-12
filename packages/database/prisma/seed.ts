@@ -4,7 +4,7 @@ import {
   EQUIPMENT,
   ROLES,
   DEFAULT_SITE_CODE,
-} from '@deskops/constants';
+} from '@ws-ops/constants';
 
 const prisma = new PrismaClient();
 

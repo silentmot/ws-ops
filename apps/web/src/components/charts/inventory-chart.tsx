@@ -15,8 +15,8 @@ import {
   ReferenceArea,
   Brush
 } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
-import { formatWithPrecision } from '@deskops/constants';
+import { Card, CardContent, CardHeader, CardTitle } from '@ws-ops/ui';
+import { formatWithPrecision } from '@ws-ops/constants';
 import { ChartSkeleton } from './chart-skeleton';
 import { AccessibleLegend } from './accessible-legend';
 

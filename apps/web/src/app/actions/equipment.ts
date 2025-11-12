@@ -3,8 +3,8 @@
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
-import { EquipmentLogSchema } from '@deskops/database';
-import { isValidEquipmentId } from '@deskops/constants';
+import { EquipmentLogSchema } from '@ws-ops/database';
+import { isValidEquipmentId } from '@ws-ops/constants';
 
 export async function createEquipmentLog(data: unknown) {
   try {

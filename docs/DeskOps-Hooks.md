@@ -425,7 +425,7 @@ export function useCreateEquipmentLog(): {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApi } from './use-api';
 import { queryKeys } from '@/lib/query-keys';
-import type { Dispatch, DispatchInput } from '@deskops/database';
+import type { Dispatch, DispatchInput } from '@ws-ops/database';
 
 interface DispatchWithRelations extends Dispatch {
   material: { code: string; name: string; uom: string };
@@ -586,6 +586,7 @@ export function useDeleteDispatch() {
 **Purpose:** React Query hooks for managing dispatch transactions (material shipments to customers). Critical for inventory calculation and revenue tracking.
 
 **Hook: `useDispatch`**
+
 - **Parameters:**
   - `siteId` (required): Site filter
   - `dateFrom` (optional): Start date for range filter
@@ -596,6 +597,7 @@ export function useDeleteDispatch() {
 - **Related Queries:** Invalidates dashboard and inventory caches on mutations
 
 **Hook: `useDispatchById`**
+
 - **Parameters:**
   - `id` (required): Dispatch record ID
   - `enabled` (optional): Query enablement flag (default: true)
@@ -603,21 +605,25 @@ export function useDeleteDispatch() {
 - **Use Case:** Detail views, edit forms
 
 **Hook: `useCreateDispatch`**
+
 - **Parameters:** Dispatch input data
 - **Side Effects:** Invalidates dispatch, dashboard, and inventory query caches
 - **Use Case:** Create new dispatch transaction
 
 **Hook: `useUpdateDispatch`**
+
 - **Parameters:** Dispatch ID and partial update data
 - **Side Effects:** Invalidates dispatch (all + detail), dashboard, and inventory caches
 - **Use Case:** Edit existing dispatch record
 
 **Hook: `useDeleteDispatch`**
+
 - **Parameters:** Dispatch ID
 - **Side Effects:** Invalidates dispatch cache, removes detail query, invalidates dashboard and inventory
 - **Use Case:** Delete dispatch transaction
 
 **Business Impact:**
+
 - Affects inventory calculations (`inventory = production + received - dispatched`)
 - Invalidates dashboard metrics (total dispatched, inventory status)
 - Critical for revenue and customer order tracking
@@ -632,7 +638,7 @@ import { queryKeys } from '@/lib/query-keys';
 import type {
   ReceivedMaterial,
   ReceivedMaterialInput,
-} from '@deskops/database';
+} from '@ws-ops/database';
 
 interface ReceivedWithRelations extends ReceivedMaterial {
   material: { code: string; name: string; uom: string };
@@ -803,6 +809,7 @@ export function useDeleteReceived() {
 **Purpose:** React Query hooks for managing received Construction & Demolition Waste (CDW) materials. Essential for inventory calculation and waste intake tracking.
 
 **Hook: `useReceived`**
+
 - **Parameters:**
   - `siteId` (required): Site filter
   - `dateFrom` (optional): Start date for range filter
@@ -812,6 +819,7 @@ export function useDeleteReceived() {
 - **Cache Configuration:** 5-minute stale time, invalidated on mutations
 
 **Hook: `useReceivedById`**
+
 - **Parameters:**
   - `id` (required): Received material record ID
   - `enabled` (optional): Query enablement flag (default: true)
@@ -819,21 +827,25 @@ export function useDeleteReceived() {
 - **Use Case:** Detail views, edit forms
 
 **Hook: `useCreateReceived`**
+
 - **Parameters:** ReceivedMaterialInput data (siteId, date, materialId, qtyTon, source, vehicleRef, notes)
 - **Side Effects:** Invalidates received, dashboard, and inventory query caches
 - **Use Case:** Record new material intake
 
 **Hook: `useUpdateReceived`**
+
 - **Parameters:** Record ID and partial update data
 - **Side Effects:** Invalidates received (all + detail), dashboard, and inventory caches
 - **Use Case:** Correct received material records
 
 **Hook: `useDeleteReceived`**
+
 - **Parameters:** Record ID
 - **Side Effects:** Invalidates received cache, removes detail query, invalidates dashboard and inventory
 - **Use Case:** Remove erroneous received material entries
 
 **Business Impact:**
+
 - Critical for inventory formula (`inventory = production + received - dispatched`)
 - Tracks CDW intake volumes for compliance reporting
 - Affects dashboard metrics (total received, inventory trends)
@@ -846,7 +858,7 @@ export function useDeleteReceived() {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApi } from './use-api';
 import { queryKeys } from '@/lib/query-keys';
-import type { ManpowerLog } from '@deskops/database';
+import type { ManpowerLog } from '@ws-ops/database';
 
 interface ManpowerLogInput {
   siteId: string;
@@ -984,6 +996,7 @@ export function useDeleteManpower() {
 **Purpose:** React Query hooks for managing manpower attendance logs and labor hour tracking. Used for labor cost analysis and operational planning.
 
 **Hook: `useManpower`**
+
 - **Parameters:**
   - `siteId` (required): Site filter
   - `dateFrom` (optional): Start date for range filter
@@ -993,6 +1006,7 @@ export function useDeleteManpower() {
 - **Cache Configuration:** 5-minute stale time, invalidated on mutations
 
 **Hook: `useCreateManpower`**
+
 - **Parameters:** ManpowerLogInput data (siteId, date, roleId, headcount, hours, shift, notes)
 - **Side Effects:** Invalidates manpower and dashboard query caches
 - **Use Case:** Record daily attendance and labor hours
@@ -1003,16 +1017,19 @@ export function useDeleteManpower() {
   - `shift`: Optional shift identifier (Morning, Evening, Night)
 
 **Hook: `useUpdateManpower`**
+
 - **Parameters:** Log ID and partial update data
 - **Side Effects:** Invalidates manpower and dashboard caches
 - **Use Case:** Correct attendance records
 
 **Hook: `useDeleteManpower`**
+
 - **Parameters:** Log ID
 - **Side Effects:** Invalidates manpower and dashboard caches
 - **Use Case:** Remove erroneous attendance entries
 
 **Business Impact:**
+
 - Tracks labor costs and efficiency metrics
 - Used for manpower analytics (by role, shift, site)
 - Affects dashboard metrics (equipment utilization correlates with manpower)
@@ -1020,6 +1037,7 @@ export function useDeleteManpower() {
 - Supports compliance reporting for labor regulations
 
 **Relationship to Other Modules:**
+
 - **Equipment Logs:** Operator hours should correlate with equipment hours
 - **Production:** Production efficiency can be analyzed against labor hours
 - **Dashboard:** Contributes to overall operational KPIs

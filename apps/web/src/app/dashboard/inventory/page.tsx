@@ -11,14 +11,14 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { InventoryTable } from '@/components/inventory/inventory-table';
 import { InventoryMovementChart } from '@/components/inventory/inventory-movement-chart';
 import {
   DateRangePicker,
   type DateRange,
 } from '@/components/date-range-picker';
-import { DEFAULT_SITE_ID, type MaterialCategory } from '@deskops/constants';
+import { DEFAULT_SITE_ID, type MaterialCategory } from '@ws-ops/constants';
 import { toast } from 'sonner';
 
 interface InventorySnapshot {

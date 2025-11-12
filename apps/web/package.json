@@ -15,9 +15,9 @@
     "seed": "bun run ../../packages/database/prisma/seed.ts"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.34.0",
-    "@deskops/constants": "workspace:*",
-    "@deskops/database": "workspace:*",
+    "@clerk/nextjs": "^6.34.1",
+    "@ws-ops/constants": "workspace:*",
+    "@ws-ops/database": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^6.18.0",
     "@radix-ui/react-accordion": "^1.1.2",
@@ -62,7 +62,7 @@
     "prisma": "^6.18.0",
     "typescript": "^5.3.0",
     "@vitejs/plugin-react": "^5.1.0",
-    "vitest": "^4.0.4",
+    "vitest": "^4.0.5",
     "jsdom": "^27.0.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/jest-dom": "^6.1.0",

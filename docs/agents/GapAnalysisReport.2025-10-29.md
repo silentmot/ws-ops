@@ -1,8 +1,8 @@
 # Gap Analysis Report
 
-**Date:** 2025-10-29  
-**Project:** DeskOps Construction & Demolition Recycling Management System  
-**Analysis Type:** Comprehensive Documentation vs Implementation Gap Analysis + Performance Review  
+**Date:** 2025-10-29
+**Project:** DeskOps Construction & Demolition Recycling Management System
+**Analysis Type:** Comprehensive Documentation vs Implementation Gap Analysis + Performance Review
 **Protocol:** GZANSP × AOC Compliance
 
 ---
@@ -19,6 +19,7 @@ This gap analysis examines the DeskOps documentation (`docs/*.md`) against the c
 **Overall Alignment:** EXCELLENT (98%+)
 
 **Key Findings:**
+
 - ✅ All critical API routes implemented and working
 - ✅ ExportProcessor class now implemented (was missing in January 2025 report)
 - ✅ Zero `any` types found throughout codebase (100% type safety compliance)
@@ -28,6 +29,7 @@ This gap analysis examines the DeskOps documentation (`docs/*.md`) against the c
 - ⚠️ 4 TODOs found in export-related code indicating planned improvements
 
 **Sources:**
+
 - Documentation: `docs/DeskOps-Backend.md`, `docs/DeskOps-Frontend.md`, `docs/DeskOps-Hooks.md`, `docs/DeskOps-*.md`
 - Implementation: Source code in `apps/web/src/`
 - Previous Report: `docs/agents/GapAnalysisReport.2025-01-26.md`
@@ -55,6 +57,7 @@ All routes documented in `docs/DeskOps-Backend.md` are fully implemented:
 | `/api/exports`           | `apps/web/src/app/api/exports/route.ts`           | ✅ Implemented |
 
 **Sources:**
+
 - Documentation: `docs/DeskOps-Backend.md` (lines 24-764)
 - Implementation: All routes verified via file system scan
 
@@ -63,10 +66,12 @@ All routes documented in `docs/DeskOps-Backend.md` are fully implemented:
 **Status:** ✅ NOW IMPLEMENTED (Gap Closed Since January 2025)
 
 **Previous Gap from 2025-01-26 Report:**
+
 - Documentation described `ExportJobProcessor` class but implementation was missing
 - Only individual exporter functions existed
 
 **Current Status:**
+
 - **Implementation:** `apps/web/src/lib/jobs/export-processor.ts`
 - **Class Name:** `ExportProcessor` (implements `IExportProcessor` interface)
 - **Methods Implemented:**
@@ -113,6 +118,7 @@ All routes documented in `docs/DeskOps-Backend.md` are fully implemented:
 #### Gap 4: Export Sub-Routes
 
 **Code References:**
+
 - `apps/web/src/app/api/exports/[jobId]/route.ts` - Get single job status
 - `apps/web/src/app/api/exports/[jobId]/download/route.ts` - Download exported file
 - `apps/web/src/app/api/exports/[jobId]/retry/route.ts` - Retry failed export job
@@ -131,6 +137,7 @@ All routes documented in `docs/DeskOps-Backend.md` are fully implemented:
 **Implementation:** 26 total components found in `apps/web/src/components/`
 
 **Documented in `docs/DeskOps-Frontend.md`:** 7 components
+
 - `Header` (line 395)
 - `Sidebar` (line 502)
 - `KPICard` (line 635)
@@ -144,6 +151,7 @@ All routes documented in `docs/DeskOps-Backend.md` are fully implemented:
 #### Gap 5: Chart Components (6 undocumented)
 
 **Code References:**
+
 - `apps/web/src/components/charts/equipment-utilization-chart.tsx`
 - `apps/web/src/components/charts/manpower-attendance-chart.tsx`
 - `apps/web/src/components/charts/material-levels-chart.tsx`
@@ -160,6 +168,7 @@ All routes documented in `docs/DeskOps-Backend.md` are fully implemented:
 #### Gap 6: Form Components (4 undocumented)
 
 **Code References:**
+
 - `apps/web/src/components/forms/dispatch-form.tsx`
 - `apps/web/src/components/forms/equipment-form.tsx`
 - `apps/web/src/components/forms/manpower-form.tsx`
@@ -174,6 +183,7 @@ All routes documented in `docs/DeskOps-Backend.md` are fully implemented:
 #### Gap 7: Utility Components (9 undocumented)
 
 **Code References:**
+
 - `apps/web/src/components/site-selector.tsx`
 - `apps/web/src/components/date-range-picker.tsx`
 - `apps/web/src/components/export/export-dialog.tsx`
@@ -197,6 +207,7 @@ All routes documented in `docs/DeskOps-Backend.md` are fully implemented:
 **Implementation:** 9 hooks found in `apps/web/src/hooks/`
 
 **Documented Hooks in `docs/DeskOps-Hooks.md`:**
+
 - `useApi` (line 27)
 - `useProduction` (line 110)
 - `useCreateProduction` (line 188)
@@ -211,6 +222,7 @@ All routes documented in `docs/DeskOps-Backend.md` are fully implemented:
 #### Gap 8: Core Data Fetching Hooks
 
 **Code References:**
+
 - `apps/web/src/hooks/use-dispatch.ts`
 - `apps/web/src/hooks/use-received.ts`
 - `apps/web/src/hooks/use-manpower.ts`
@@ -244,6 +256,7 @@ All routes documented in `docs/DeskOps-Backend.md` are fully implemented:
 **Pattern Required:** `/api/[module]/[resource]` (NO versioning)
 
 **Verification:** All 16 API routes follow the required pattern:
+
 - ✅ No `/api/v1/` or `/api/v2/` paths found
 - ✅ All routes use `/api/[module]` pattern
 - ✅ Sub-resources use `/api/[module]/[id]/[action]` pattern
@@ -257,6 +270,7 @@ All routes documented in `docs/DeskOps-Backend.md` are fully implemented:
 **Documentation Reference:** `docs/DeskOps-ImplementationPlan-Part2.md` (Task 12.1, lines 23-85)
 
 **Implementation References:**
+
 - `apps/web/src/middleware.ts` - Clerk middleware with RBAC
 - `apps/web/src/app/sign-in/[[...sign-in]]/page.tsx` - Sign-in page
 - `apps/web/src/app/sign-up/[[...sign-up]]/page.tsx` - Sign-up page
@@ -270,15 +284,16 @@ All routes documented in `docs/DeskOps-Backend.md` are fully implemented:
 
 **Constants Location:** `packages/constants/src/index.ts`
 
-**Verification:** All imports reference centralized constants package using `@deskops/constants`
+**Verification:** All imports reference centralized constants package using `@ws-ops/constants`
 
 **Sample Usage in Code:**
+
 ```typescript
 // apps/web/src/app/api/production/route.ts
-import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
+import { isValidMaterialId, isValidOperationType } from '@ws-ops/constants';
 
 // apps/web/src/components/charts/production-vs-target-chart.tsx
-import { formatWithPrecision } from '@deskops/constants';
+import { formatWithPrecision } from '@ws-ops/constants';
 ```
 
 **GZANSP Validation:** ✅ Single Source of Truth - PASS
@@ -294,6 +309,7 @@ import { formatWithPrecision } from '@deskops/constants';
 **Location:** `apps/web/src/app/api/dashboard/metrics/route.ts` (lines 103-185)
 
 **Current Implementation:**
+
 ```typescript
 const [
   currentProductionSum,
@@ -320,13 +336,15 @@ const [
 ]);
 ```
 
-**Problem:** 
+**Problem:**
+
 - 10 separate database queries executed in parallel
 - While `Promise.all` parallelizes execution, this creates 10 concurrent database connections
 - Each query repeats similar WHERE clauses with only date ranges differing
 - Significant overhead from multiple query planning and execution cycles
 
 **Impact:**
+
 - Higher database connection pool usage
 - Increased latency due to query overhead (10x connection setup/teardown)
 - Potential connection pool exhaustion under load
@@ -376,6 +394,7 @@ const previousProduction = allProduction
 **Location:** `apps/web/src/lib/exporters/excel.ts` (lines 94-97)
 
 **Current Implementation:**
+
 ```typescript
 const buffer = await workbook.xlsx.writeBuffer();
 await writeFile(filePath, Buffer.from(buffer));
@@ -386,11 +405,13 @@ const fileHash = createHash('sha256')
 ```
 
 **Problem:**
+
 - Buffer is created twice: once for file writing, once for hashing
 - For large exports, this doubles memory usage temporarily
 - Hash calculation happens after file write, creating artificial sequential delay
 
 **Recommended Solution:**
+
 ```typescript
 const buffer = await workbook.xlsx.writeBuffer();
 
@@ -412,6 +433,7 @@ await writeFile(filePath, buffer);
 **Location:** `apps/web/src/components/charts/production-vs-target-chart.tsx`
 
 **Current Implementation:**
+
 ```typescript
 export function ProductionVsTargetChart({
   data,
@@ -423,11 +445,13 @@ export function ProductionVsTargetChart({
 ```
 
 **Observation:**
+
 - Chart components receive data prop directly
 - No memoization of chart data or expensive computations
 - Could benefit from `useMemo` for data transformations if any exist
 
 **Recommendation:**
+
 ```typescript
 import { useMemo } from 'react';
 
@@ -436,12 +460,12 @@ export function ProductionVsTargetChart({
   isLoading = false,
 }: ProductionVsTargetChartProps): React.JSX.Element {
   const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
-  
+
   // Memoize chart configuration to prevent unnecessary re-renders
   const chartConfig = useMemo(() => ({
     margin: { top: 20, right: 30, left: 20, bottom: 60 }
   }), []);
-  
+
   // ...
 }
 ```
@@ -453,16 +477,19 @@ export function ProductionVsTargetChart({
 **Location:** `apps/web/src/hooks/use-production.ts` (line 43)
 
 **Current Implementation:**
+
 ```typescript
 staleTime: 5 * 60 * 1000, // 5 minutes
 ```
 
 **Observation:**
+
 - 5-minute stale time is reasonable for most data
 - However, no `cacheTime` specified (defaults to 5 minutes in React Query)
 - For dashboard metrics that update frequently, consider shorter stale time with longer cache time
 
 **Recommendation:**
+
 ```typescript
 staleTime: 1 * 60 * 1000,  // 1 minute for dashboard data freshness
 cacheTime: 10 * 60 * 1000, // 10 minutes to keep in cache for quick navigation
@@ -476,6 +503,7 @@ refetchOnWindowFocus: true, // Refetch when user returns to tab
 **Location:** `apps/web/src/app/api/exports/progress/route.ts`
 
 **TODO Found:**
+
 ```typescript
 // TODO: In production, replace polling with Redis pub/sub for real-time updates
 ```
@@ -491,36 +519,42 @@ refetchOnWindowFocus: true, // Refetch when user returns to tab
 ## GZANSP × AOC Compliance Summary
 
 ### ✅ Zero-Assumption Policy - PASS
+
 - All API routes source-backed from documentation
 - Implementation follows exact specifications
 - No creative deviations from documented patterns
 - **Validation:** All decisions cite explicit sources
 
 ### ✅ Absolute Type Strictness - PASS
+
 - **Verified:** Zero `any` types found in codebase
 - All functions have explicit return types
 - All parameters have concrete types
 - **Validation:** `grep -r ": any\|<any>\|(any)"` returned 0 results
 
 ### ✅ Single Source of Truth (SSOT) - PASS
+
 - Constants centralized in `packages/constants/src/index.ts`
-- All code imports from `@deskops/constants`
+- All code imports from `@ws-ops/constants`
 - No duplicate constant definitions found
 - **Validation:** All imports verified
 
 ### ✅ Method-First Architecture - PASS
+
 - Single method per operation
 - Adapter pattern used in exporters
 - No legacy naming or patterns detected
 - **Validation:** Code structure review confirms compliance
 
 ### ✅ Endpoint Standardization - PASS
+
 - All routes follow `/api/[module]/[resource]` pattern
 - Zero versioned paths (`/api/v1/`, `/api/v2/`)
 - Pattern compliance: 100% (16/16 routes)
 - **Validation:** File system scan confirms compliance
 
 ### ✅ Forbidden Terminology - PASS
+
 - No banned terms found in code
 - Code uses descriptive, specific naming
 - **Validation:** No terms like "Comprehensive", "Enhanced", "Advanced" found
@@ -530,6 +564,7 @@ refetchOnWindowFocus: true, // Refetch when user returns to tab
 ## Coverage Statistics
 
 ### API Routes
+
 - **Documented:** 9 routes
 - **Implemented:** 16 routes
 - **Documentation Coverage:** 56% (9/16)
@@ -537,6 +572,7 @@ refetchOnWindowFocus: true, // Refetch when user returns to tab
 - **Gap:** 7 routes undocumented
 
 ### Components
+
 - **Documented:** 7 components
 - **Implemented:** 26 components
 - **Documentation Coverage:** 27% (7/26)
@@ -544,6 +580,7 @@ refetchOnWindowFocus: true, // Refetch when user returns to tab
 - **Gap:** 19 components undocumented
 
 ### Hooks
+
 - **Documented:** 8 unique hooks (11 including variations)
 - **Implemented:** 9 hooks
 - **Documentation Coverage:** 67% (6/9 core hooks)
@@ -551,6 +588,7 @@ refetchOnWindowFocus: true, // Refetch when user returns to tab
 - **Gap:** 3 hooks undocumented
 
 ### Server Actions
+
 - **Documented:** 13 actions
 - **Implemented:** 13 actions
 - **Documentation Coverage:** 100%
@@ -564,9 +602,11 @@ refetchOnWindowFocus: true, // Refetch when user returns to tab
 ### Priority 1: High (Documentation Gaps)
 
 #### 1. Document Critical API Routes
+
 **Location:** `docs/DeskOps-Backend.md`
 
 Add complete documentation for:
+
 - `/api/received` - Received materials route with GET/POST methods
 - `/api/manpower` - Manpower attendance route with GET/POST methods
 - `/api/inventory` - Inventory snapshot route with GET/POST methods
@@ -576,9 +616,11 @@ Add complete documentation for:
 **Severity:** High - Core business logic routes
 
 #### 2. Document Export Sub-Routes
+
 **Location:** `docs/DeskOps-Backend.md`
 
 Add documentation for:
+
 - `/api/exports/[jobId]` - Get job status
 - `/api/exports/[jobId]/download` - Download exported file
 - `/api/exports/[jobId]/retry` - Retry failed job
@@ -589,6 +631,7 @@ Add documentation for:
 ### Priority 2: Medium (Performance Improvements)
 
 #### 3. Optimize Dashboard Metrics Query
+
 **Location:** `apps/web/src/app/api/dashboard/metrics/route.ts`
 
 **Action:** Refactor to use conditional aggregation or strategic data fetching to reduce from 10 queries to 1-3 queries.
@@ -598,6 +641,7 @@ Add documentation for:
 **Severity:** Medium-High - Affects user experience and scalability
 
 #### 4. Optimize Export File Hash Calculation
+
 **Location:** `apps/web/src/lib/exporters/excel.ts`, `csv.ts`, `pdf.ts`
 
 **Action:** Calculate hash before file write to avoid duplicate buffer creation.
@@ -609,9 +653,11 @@ Add documentation for:
 ### Priority 3: Medium (Documentation Completeness)
 
 #### 5. Document Chart Components
+
 **Location:** `docs/DeskOps-Frontend.md`
 
 Add documentation for:
+
 - `EquipmentUtilizationChart`
 - `ManpowerAttendanceChart`
 - `MaterialLevelsChart`
@@ -622,9 +668,11 @@ Add documentation for:
 **Severity:** Medium - Core visualization components
 
 #### 6. Document Form Components
+
 **Location:** `docs/DeskOps-Frontend.md`
 
 Add documentation for:
+
 - `DispatchForm`
 - `EquipmentForm`
 - `ManpowerForm`
@@ -633,9 +681,11 @@ Add documentation for:
 **Severity:** Medium - Core CRUD interface components
 
 #### 7. Document Data Hooks
+
 **Location:** `docs/DeskOps-Hooks.md`
 
 Add documentation for:
+
 - `useDispatch`
 - `useReceived`
 - `useManpower`
@@ -643,9 +693,11 @@ Add documentation for:
 **Severity:** Medium - Core data fetching hooks
 
 #### 8. Document Utility Components
+
 **Location:** `docs/DeskOps-Frontend.md`
 
 Add documentation for:
+
 - `SiteSelector`
 - `DateRangePicker`
 - `ExportDialog`, `ExportProgress`, `ExportHistory`
@@ -656,6 +708,7 @@ Add documentation for:
 ### Priority 4: Low (Enhancements)
 
 #### 9. Implement Redis Pub/Sub for Export Progress
+
 **Location:** `apps/web/src/app/api/exports/progress/route.ts`
 
 **Action:** Replace polling with Redis pub/sub as indicated by TODO
@@ -663,6 +716,7 @@ Add documentation for:
 **Severity:** Low - Planned production enhancement
 
 #### 10. Add React Query Cache Configuration
+
 **Location:** Hook files in `apps/web/src/hooks/`
 
 **Action:** Add explicit `cacheTime` and review `staleTime` for all hooks
@@ -678,6 +732,7 @@ Add documentation for:
 The DeskOps project demonstrates **excellent implementation quality** with strong adherence to GZANSP × AOC protocols:
 
 **Strengths:**
+
 1. ✅ **100% Type Safety** - Zero `any` types found
 2. ✅ **100% Endpoint Compliance** - All routes follow standard pattern
 3. ✅ **ExportProcessor Gap Closed** - Previously missing feature now implemented
@@ -685,6 +740,7 @@ The DeskOps project demonstrates **excellent implementation quality** with stron
 5. ✅ **100% Server Actions** - All documented actions implemented
 
 **Areas for Improvement:**
+
 1. ⚠️ **Documentation Gap** - 60% of components lack documentation
 2. ⚠️ **API Route Documentation** - 3 critical routes undocumented
 3. ⚠️ **Performance** - Dashboard metrics can be optimized
@@ -693,6 +749,7 @@ The DeskOps project demonstrates **excellent implementation quality** with stron
 ### Critical Path Forward
 
 **Immediate Actions (This PR):**
+
 1. Create documentation for 3 undocumented API routes (`/api/received`, `/api/manpower`, `/api/inventory`)
 2. Document 3 core data hooks (`useDispatch`, `useReceived`, `useManpower`)
 3. Add export sub-routes documentation
@@ -710,6 +767,7 @@ The DeskOps project demonstrates **excellent implementation quality** with stron
 ### GZANSP Compliance Grade: A+ (98%)
 
 **Deductions:**
+
 - -1% for documentation gaps (non-critical)
 - -1% for performance optimization opportunities
 
@@ -719,8 +777,8 @@ The DeskOps project demonstrates **excellent implementation quality** with stron
 
 ## End of Gap Analysis Report
 
-**Generated by:** GitHub Copilot AI Agent  
-**Date:** 2025-10-29  
-**Protocol:** GZANSP × AOC  
-**Previous Report:** docs/agents/GapAnalysisReport.2025-01-26.md  
+**Generated by:** GitHub Copilot AI Agent
+**Date:** 2025-10-29
+**Protocol:** GZANSP × AOC
+**Previous Report:** docs/agents/GapAnalysisReport.2025-01-26.md
 **Next Review:** Recommended after documentation updates are merged

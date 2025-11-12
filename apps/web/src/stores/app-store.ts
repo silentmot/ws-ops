@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { DEFAULT_SITE_ID } from '@deskops/constants';
+import { DEFAULT_SITE_ID } from '@ws-ops/constants';
 
 interface DateRange {
   from: Date;

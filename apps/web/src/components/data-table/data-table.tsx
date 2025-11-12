@@ -20,14 +20,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@deskops/ui';
-import { Button, Input } from '@deskops/ui';
+} from '@ws-ops/ui';
+import { Button, Input } from '@ws-ops/ui';
 import { Settings2 } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {

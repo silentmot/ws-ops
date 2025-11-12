@@ -4,7 +4,7 @@ import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
 import { handleApiError } from '@/lib/error-handler';
 import { ExportProcessor } from '@/lib/jobs/export-processor';
-import { ExportJobCreateSchema } from '@deskops/database';
+import { ExportJobCreateSchema } from '@ws-ops/database';
 
 export async function POST(request: NextRequest) {
   try {

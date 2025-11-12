@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApi } from './use-api';
 import { queryKeys } from '@/lib/query-keys';
-import type { Production, ProductionInput } from '@deskops/database';
+import type { Production, ProductionInput } from '@ws-ops/database';
 
 interface ProductionWithRelations extends Production {
   material: { code: string; name: string; uom: string };

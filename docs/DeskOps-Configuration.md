@@ -259,9 +259,9 @@ bunx lint-staged
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@deskops/ui": ["./packages/ui/src"],
-      "@deskops/constants": ["./packages/constants/src"],
-      "@deskops/database": ["./packages/database/src"]
+      "@ws-ops/ui": ["./packages/ui/src"],
+      "@ws-ops/constants": ["./packages/constants/src"],
+      "@ws-ops/database": ["./packages/database/src"]
     },
 
     // Strict type checking
@@ -429,7 +429,7 @@ export default nextConfig;
 ```json
 // apps/web/package.json
 {
-  "name": "@deskops/web",
+  "name": "@ws-ops/web",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -488,10 +488,10 @@ export default nextConfig;
     "zustand": "^4.4.0"
   },
   "devDependencies": {
-    "@deskops/constants": "workspace:*",
-    "@deskops/database": "workspace:*",
-    "@deskops/eslint-config": "workspace:*",
-    "@deskops/ui": "workspace:*",
+    "@ws-ops/constants": "workspace:*",
+    "@ws-ops/database": "workspace:*",
+    "@ws-ops/eslint-config": "workspace:*",
+    "@ws-ops/ui": "workspace:*",
     "@next/bundle-analyzer": "^16.0.0",
     "@playwright/test": "^1.40.0",
     "@tanstack/react-query-devtools": "^5.12.0",
@@ -542,9 +542,9 @@ export default nextConfig;
       "@/hooks/*": ["./src/hooks/*"],
       "@/stores/*": ["./src/stores/*"],
       "@/types/*": ["./src/types/*"],
-      "@deskops/ui": ["../../packages/ui/src"],
-      "@deskops/constants": ["../../packages/constants/src"],
-      "@deskops/database": ["../../packages/database/src"]
+      "@ws-ops/ui": ["../../packages/ui/src"],
+      "@ws-ops/constants": ["../../packages/constants/src"],
+      "@ws-ops/database": ["../../packages/database/src"]
     }
   },
   "include": [
@@ -631,7 +631,7 @@ const config: Config = {
     './src/app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
     // Include UI package components
-    path.join(path.dirname(require.resolve('@deskops/ui/package.json')), 'src/**/*.{ts,tsx}'),
+    path.join(path.dirname(require.resolve('@ws-ops/ui/package.json')), 'src/**/*.{ts,tsx}'),
     // Alternatively, use relative path
     '../../packages/ui/src/**/*.{ts,tsx}',
   ],
@@ -918,9 +918,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@deskops/ui': path.resolve(__dirname, '../../packages/ui/src'),
-      '@deskops/constants': path.resolve(__dirname, '../../packages/constants/src'),
-      '@deskops/database': path.resolve(__dirname, '../../packages/database/src'),
+      '@ws-ops/ui': path.resolve(__dirname, '../../packages/ui/src'),
+      '@ws-ops/constants': path.resolve(__dirname, '../../packages/constants/src'),
+      '@ws-ops/database': path.resolve(__dirname, '../../packages/database/src'),
     },
   },
 });
@@ -1047,7 +1047,7 @@ export default defineConfig({
 ```json
 // packages/ui/package.json
 {
-  "name": "@deskops/ui",
+  "name": "@ws-ops/ui",
   "version": "1.0.0",
   "private": true,
   "exports": {
@@ -1092,7 +1092,7 @@ export default defineConfig({
     "tailwind-merge": "^2.1.0"
   },
   "devDependencies": {
-    "@deskops/eslint-config": "workspace:*",
+    "@ws-ops/eslint-config": "workspace:*",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "react": "^19.0.0",
@@ -1112,7 +1112,7 @@ export default defineConfig({
 ```json
 // packages/eslint-config/package.json
 {
-  "name": "@deskops/eslint-config",
+  "name": "@ws-ops/eslint-config",
   "version": "1.0.0",
   "private": true,
   "main": "./index.js",
@@ -1146,7 +1146,7 @@ export default defineConfig({
 ```json
 // packages/constants/package.json
 {
-  "name": "@deskops/constants",
+  "name": "@ws-ops/constants",
   "version": "1.0.0",
   "private": true,
   "main": "./src/index.ts",
@@ -1166,7 +1166,7 @@ export default defineConfig({
     "zod": "^3.22.0"
   },
   "devDependencies": {
-    "@deskops/eslint-config": "workspace:*",
+    "@ws-ops/eslint-config": "workspace:*",
     "@types/node": "^20.10.0",
     "eslint": "^8.54.0",
     "typescript": "^5.3.0"

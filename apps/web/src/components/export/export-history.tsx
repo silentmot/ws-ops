@@ -8,7 +8,7 @@ import {
   CardTitle,
   Button,
   Badge,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { Download, RotateCw, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';

@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@ws-ops/ui';
 
 interface ChartSkeletonProps {
   title: string;

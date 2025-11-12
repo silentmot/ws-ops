@@ -239,13 +239,13 @@ export default function ProductionPage() {
 - **next-themes** - Theme management
 - **sonner** - Toast notifications
 - **react-day-picker** - Date range selection
-- **@deskops/ui** - Shared UI component library
-- **@deskops/constants** - Centralized constants and types
-- **@deskops/database** - Prisma client and validation schemas
+- **@ws-ops/ui** - Shared UI component library
+- **@ws-ops/constants** - Centralized constants and types
+- **@ws-ops/database** - Prisma client and validation schemas
 
 ## Validation
 
-All input data is validated using Zod schemas from `@deskops/database`:
+All input data is validated using Zod schemas from `@ws-ops/database`:
 
 - `ProductionSchema` - Production record validation
 - `DispatchSchema` - Dispatch record validation
@@ -254,7 +254,7 @@ All input data is validated using Zod schemas from `@deskops/database`:
 - `ManpowerLogSchema` - Manpower log validation
 - `CreateSiteSchema` - Site creation validation
 
-Additional business logic validation uses helper functions from `@deskops/constants`:
+Additional business logic validation uses helper functions from `@ws-ops/constants`:
 
 - `isValidMaterialId()` - Validates material exists
 - `isValidOperationType()` - Validates operation type

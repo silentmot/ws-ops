@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { useQuery } from '@tanstack/react-query';
 
 interface SiteSelectorProps {

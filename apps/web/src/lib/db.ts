@@ -1,4 +1,4 @@
 /**
  * Database re-export for consistent import paths
  */
-export { prisma } from '@deskops/database';
+export { prisma } from '@ws-ops/database';

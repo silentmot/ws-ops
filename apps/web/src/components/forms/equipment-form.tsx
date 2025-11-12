@@ -30,11 +30,11 @@ import {
   Calendar,
   Textarea,
   cn,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { toast } from 'sonner';
-import { EQUIPMENT, SHIFT_TYPES, EQUIPMENT_STATUSES } from '@deskops/constants';
+import { EQUIPMENT, SHIFT_TYPES, EQUIPMENT_STATUSES } from '@ws-ops/constants';
 import { createEquipmentLog } from '@/app/actions/equipment';
-import { EquipmentLogSchema } from '@deskops/database/schemas';
+import { EquipmentLogSchema } from '@ws-ops/database/schemas';
 
 type EquipmentLogFormData = z.infer<typeof EquipmentLogSchema>;
 

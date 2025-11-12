@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/db';
-import { InventorySnapshotCreateSchema } from '@deskops/database';
-import { isValidMaterialId } from '@deskops/constants';
+import { InventorySnapshotCreateSchema } from '@ws-ops/database';
+import { isValidMaterialId } from '@ws-ops/constants';
 import { handleApiError } from '@/lib/error-handler';
 
 const InventoryQuerySchema = z.object({

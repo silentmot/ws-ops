@@ -26,11 +26,11 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { Download, CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { cn } from '@deskops/ui';
+import { cn } from '@ws-ops/ui';
 import { useExportStore } from '@/stores/export-store';
 import { useAppStore } from '@/stores/app-store';
 

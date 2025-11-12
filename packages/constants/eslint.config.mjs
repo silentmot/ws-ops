@@ -1,4 +1,4 @@
-import baseConfig from '@deskops/eslint-config';
+import baseConfig from '@ws-ops/eslint-config';
 
 export default [
   ...baseConfig,

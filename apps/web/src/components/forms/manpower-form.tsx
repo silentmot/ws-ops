@@ -30,11 +30,11 @@ import {
   Calendar,
   Textarea,
   cn,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { toast } from 'sonner';
-import { ROLES, SHIFT_TYPES } from '@deskops/constants';
+import { ROLES, SHIFT_TYPES } from '@ws-ops/constants';
 import { createManpowerLog } from '@/app/actions/manpower';
-import { ManpowerLogSchema } from '@deskops/database/schemas';
+import { ManpowerLogSchema } from '@ws-ops/database/schemas';
 
 type ManpowerLogFormData = z.infer<typeof ManpowerLogSchema>;
 

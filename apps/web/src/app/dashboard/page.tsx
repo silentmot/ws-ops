@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card } from '@deskops/ui';
+import { Card } from '@ws-ops/ui';
 import { toast } from 'sonner';
-import { DEFAULT_SITE_ID } from '@deskops/constants';
+import { DEFAULT_SITE_ID } from '@ws-ops/constants';
 import { KPICard } from '@/components/dashboard/kpi-card';
 
 interface DashboardMetrics {

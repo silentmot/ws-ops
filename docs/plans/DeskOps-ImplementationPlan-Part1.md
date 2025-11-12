@@ -298,7 +298,7 @@ export function useApi() {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApi } from './use-api';
 import { queryKeys } from '@/lib/query-keys';
-import type { ProductionInput } from '@deskops/database';
+import type { ProductionInput } from '@ws-ops/database';
 
 interface Production {
   id: string;
@@ -419,7 +419,7 @@ Create client-side state management stores with localStorage persistence for app
 // apps/web/src/stores/app-store.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { DEFAULT_SITE_ID } from '@deskops/constants';
+import { DEFAULT_SITE_ID } from '@ws-ops/constants';
 
 interface DateRange {
   from: Date;
@@ -931,7 +931,7 @@ export interface ExporterOptions {
 import ExcelJS from 'exceljs';
 import { createHash } from 'crypto';
 import { prisma } from '@/lib/db';
-import { MATERIALS, EXPORT_HEADERS } from '@deskops/constants';
+import { MATERIALS, EXPORT_HEADERS } from '@ws-ops/constants';
 import type { ExportJobData, ExportResult, ProgressCallback } from './types';
 
 export async function generateExcelReport(
@@ -1427,7 +1427,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { useExportStore } from '@/stores/export-store';
@@ -1601,7 +1601,7 @@ export function ExportDialog(): React.JSX.Element {
 'use client';
 
 import { useExportStore } from '@/stores/export-store';
-import { Progress, Card, CardContent, CardHeader, CardTitle } from '@deskops/ui';
+import { Progress, Card, CardContent, CardHeader, CardTitle } from '@ws-ops/ui';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
 export function ExportProgress(): React.JSX.Element {
@@ -1659,7 +1659,7 @@ import {
   CardTitle,
   Button,
   Badge,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { Download, RotateCw, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';

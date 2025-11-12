@@ -3,8 +3,8 @@
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
-import { ReceivedMaterialSchema } from '@deskops/database';
-import { isValidMaterialId } from '@deskops/constants';
+import { ReceivedMaterialSchema } from '@ws-ops/database';
+import { isValidMaterialId } from '@ws-ops/constants';
 
 export async function createReceivedMaterial(data: unknown) {
   try {

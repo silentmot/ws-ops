@@ -4,7 +4,7 @@ import { queryKeys } from '@/lib/query-keys';
 import type {
   ReceivedMaterial,
   ReceivedMaterialInput,
-} from '@deskops/database';
+} from '@ws-ops/database';
 
 interface ReceivedWithRelations extends ReceivedMaterial {
   material: { code: string; name: string; uom: string };

@@ -7,7 +7,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
 export function ExportProgress(): React.JSX.Element {

@@ -311,7 +311,7 @@ import {
   EQUIPMENT,
   ROLES,
   DEFAULT_SITE_CODE,
-} from '@deskops/constants';
+} from '@ws-ops/constants';
 
 const prisma = new PrismaClient();
 
@@ -503,7 +503,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 ```typescript
 // packages/database/src/schemas/production.ts
 import { z } from 'zod';
-import { OperationType, ShiftType } from '@deskops/constants';
+import { OperationType, ShiftType } from '@ws-ops/constants';
 
 export const ProductionSchema = z.object({
   siteId: z.string().cuid(),
@@ -542,7 +542,7 @@ export type ReceivedMaterialInput = z.infer<typeof ReceivedMaterialSchema>;
 /**
  * Usage Example:
  *
- * import { ReceivedMaterialSchema, ReceivedMaterialInput } from '@deskops/database';
+ * import { ReceivedMaterialSchema, ReceivedMaterialInput } from '@ws-ops/database';
  * import { prisma } from '@/lib/db';
  *
  * const data: unknown = req.body;

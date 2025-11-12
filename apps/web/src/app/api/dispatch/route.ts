@@ -2,8 +2,8 @@ import type { NextRequest} from 'next/server';
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
-import { DispatchSchema } from '@deskops/database';
-import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
+import { DispatchSchema } from '@ws-ops/database';
+import { isValidMaterialId, isValidOperationType } from '@ws-ops/constants';
 import { handleApiError } from '@/lib/error-handler';
 import { z } from 'zod';
 

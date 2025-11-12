@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApi } from './use-api';
 import { queryKeys } from '@/lib/query-keys';
-import type { Dispatch, DispatchInput } from '@deskops/database';
+import type { Dispatch, DispatchInput } from '@ws-ops/database';
 
 interface DispatchWithRelations extends Dispatch {
   material: { code: string; name: string; uom: string };

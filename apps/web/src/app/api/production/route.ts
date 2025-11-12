@@ -1,7 +1,7 @@
 import type { NextRequest} from 'next/server';
 import { NextResponse } from 'next/server';
-import { ProductionSchema } from '@deskops/database';
-import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
+import { ProductionSchema } from '@ws-ops/database';
+import { isValidMaterialId, isValidOperationType } from '@ws-ops/constants';
 import { handleApiError } from '@/lib/error-handler';
 import {
   checkAuth,

@@ -2,8 +2,8 @@ import type { NextRequest} from 'next/server';
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
-import { EquipmentLogSchema } from '@deskops/database';
-import { isValidEquipmentId } from '@deskops/constants';
+import { EquipmentLogSchema } from '@ws-ops/database';
+import { isValidEquipmentId } from '@ws-ops/constants';
 import { handleApiError } from '@/lib/error-handler';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {

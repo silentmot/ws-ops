@@ -23,11 +23,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { toast } from 'sonner';
-import { OPERATION_TYPES } from '@deskops/constants';
+import { OPERATION_TYPES } from '@ws-ops/constants';
 import { createDispatch } from '@/app/actions/dispatch';
-import { DispatchSchema } from '@deskops/database/schemas';
+import { DispatchSchema } from '@ws-ops/database/schemas';
 import {
   DatePickerField,
   MaterialSelectField,

@@ -10,7 +10,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import 'react-day-picker/dist/style.css';
 
 interface DateRange {

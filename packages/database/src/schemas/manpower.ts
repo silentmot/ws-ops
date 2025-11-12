@@ -1,4 +1,4 @@
-import { SHIFT_TYPES } from '@deskops/constants';
+import { SHIFT_TYPES } from '@ws-ops/constants';
 import { z } from 'zod';
 
 export const ManpowerLogSchema = z.object({

@@ -9,12 +9,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@deskops/ui';
+} from '@ws-ops/ui';
 import { Plus, ArrowUpDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { DataTable } from '@/components/data-table/data-table';
 import { DispatchForm } from '@/components/forms/dispatch-form';
-import { DEFAULT_SITE_ID } from '@deskops/constants';
+import { DEFAULT_SITE_ID } from '@ws-ops/constants';
 import { toast } from 'sonner';
 
 interface Dispatch {

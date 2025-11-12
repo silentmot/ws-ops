@@ -1,5 +1,5 @@
 # API Routes & Backend Architecture
-
+<!--markdownlint-disable MD041 MD029 MD040-->
 ## DeskOps Backend Implementation Guide
 
 ### Overview
@@ -215,8 +215,8 @@ export async function GET(
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
-import { ProductionSchema } from '@deskops/database';
-import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
+import { ProductionSchema } from '@ws-ops/database';
+import { isValidMaterialId, isValidOperationType } from '@ws-ops/constants';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -346,8 +346,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
-import { DispatchSchema } from '@deskops/database';
-import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
+import { DispatchSchema } from '@ws-ops/database';
+import { isValidMaterialId, isValidOperationType } from '@ws-ops/constants';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -477,8 +477,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
-import { EquipmentLogSchema } from '@deskops/database';
-import { isValidEquipmentId } from '@deskops/constants';
+import { EquipmentLogSchema } from '@ws-ops/database';
+import { isValidEquipmentId } from '@ws-ops/constants';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -599,8 +599,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
-import { ReceivedMaterialSchema } from '@deskops/database';
-import { isValidMaterialId } from '@deskops/constants';
+import { ReceivedMaterialSchema } from '@ws-ops/database';
+import { isValidMaterialId } from '@ws-ops/constants';
 import { handleApiError } from '@/lib/error-handler';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -717,11 +717,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 **Purpose:** Tracks incoming Construction & Demolition Waste (CDW) materials received at the facility. Critical for inventory calculation formula: `inventory = production + received - dispatched`.
 
 **Query Parameters (GET):**
+
 - `siteId` (required): Site identifier
 - `dateFrom` (optional): ISO 8601 datetime string for start date filter
 - `dateTo` (optional): ISO 8601 datetime string for end date filter
 
 **Request Body (POST):**
+
 ```typescript
 {
   siteId: string;
@@ -735,6 +737,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 ```
 
 **Response (GET):**
+
 ```typescript
 {
   receivedMaterials: Array<{
@@ -767,12 +770,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 Returns created received material record with same structure as GET response items.
 
 **Validation:**
-- Zod schema: `ReceivedMaterialSchema` from `@deskops/database`
+
+- Zod schema: `ReceivedMaterialSchema` from `@ws-ops/database`
 - Material ID validated against constants catalog
 - Date range validation for queries
 - Clerk authentication required
 
 **Error Handling:**
+
 - 401: Unauthorized (no valid session)
 - 400: Missing siteId parameter or invalid material ID
 - 500: Database or server error (handled by `handleApiError`)
@@ -784,7 +789,7 @@ Returns created received material record with same structure as GET response ite
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
-import { ManpowerLogSchema } from '@deskops/database';
+import { ManpowerLogSchema } from '@ws-ops/database';
 import { handleApiError } from '@/lib/error-handler';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -891,11 +896,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 **Purpose:** Tracks daily manpower attendance and labor hours by role and shift. Used for labor analytics, cost tracking, and operational planning.
 
 **Query Parameters (GET):**
+
 - `siteId` (required): Site identifier
 - `dateFrom` (optional): ISO 8601 datetime string for start date filter
 - `dateTo` (optional): ISO 8601 datetime string for end date filter
 
 **Request Body (POST):**
+
 ```typescript
 {
   siteId: string;
@@ -909,6 +916,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 ```
 
 **Response (GET):**
+
 ```typescript
 {
   manpowerLogs: Array<{
@@ -939,12 +947,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 Returns created manpower log record with same structure as GET response items.
 
 **Validation:**
-- Zod schema: `ManpowerLogSchema` from `@deskops/database`
+
+- Zod schema: `ManpowerLogSchema` from `@ws-ops/database`
 - Role ID validated against ManpowerRole master table
 - Date range validation for queries
 - Clerk authentication required
 
 **Error Handling:**
+
 - 401: Unauthorized (no valid session)
 - 400: Missing siteId parameter or validation error
 - 500: Database or server error (handled by `handleApiError`)
@@ -958,8 +968,8 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/db';
-import { InventorySnapshotCreateSchema } from '@deskops/database';
-import { isValidMaterialId } from '@deskops/constants';
+import { InventorySnapshotCreateSchema } from '@ws-ops/database';
+import { isValidMaterialId } from '@ws-ops/constants';
 import { handleApiError } from '@/lib/error-handler';
 
 const InventoryQuerySchema = z.object({
@@ -1120,16 +1130,19 @@ export async function POST(request: NextRequest) {
 **Purpose:** Manages daily inventory snapshots for materials at each site. Implements the core inventory calculation formula and provides historical tracking of stock levels.
 
 **Inventory Calculation Formula:**
+
 ```typescript
 closingTon = openingTon + producedTon + receivedTon - dispatchedTon + adjustmentTon
 ```
 
 **Query Parameters (GET):**
+
 - `siteId` (required): Site identifier
 - `dateFrom` (optional): ISO 8601 datetime string for start date filter
 - `dateTo` (optional): ISO 8601 datetime string for end date filter
 
 **Request Body (POST):**
+
 ```typescript
 {
   siteId: string;
@@ -1146,6 +1159,7 @@ closingTon = openingTon + producedTon + receivedTon - dispatchedTon + adjustment
 ```
 
 **Response (GET):**
+
 ```typescript
 {
   inventorySnapshots: Array<{
@@ -1181,18 +1195,21 @@ closingTon = openingTon + producedTon + receivedTon - dispatchedTon + adjustment
 Returns created inventory snapshot record with same structure as GET response items.
 
 **Validation:**
-- Zod schema: `InventorySnapshotCreateSchema` from `@deskops/database`
+
+- Zod schema: `InventorySnapshotCreateSchema` from `@ws-ops/database`
 - Material ID validated against constants catalog
 - Date range order validation (dateFrom <= dateTo)
 - Auto-calculation of closingTon if not provided
 - Clerk authentication required
 
 **Error Handling:**
+
 - 401: Unauthorized (no valid session)
 - 400: Missing siteId parameter, invalid material ID, or invalid date range
 - 500: Database or server error (handled by `handleApiError`)
 
 **Business Logic Notes:**
+
 - Snapshots represent end-of-day inventory levels
 - Used for trend analysis and reconciliation
 - Critical for material flow tracking and audit compliance
@@ -1481,7 +1498,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { prisma } from '@deskops/database';
+import { prisma } from '@ws-ops/database';
 import { handleApiError } from '@/lib/error-handler';
 
 export async function GET(
@@ -1514,9 +1531,11 @@ export async function GET(
 **Purpose:** Retrieve detailed status information for a specific export job.
 
 **Path Parameters:**
+
 - `jobId` (required): Unique export job identifier (CUID)
 
 **Response:**
+
 ```typescript
 {
   job: {
@@ -1543,6 +1562,7 @@ export async function GET(
 ```
 
 **Error Handling:**
+
 - 401: Unauthorized (no valid session)
 - 404: Job not found or user does not own the job
 - 500: Server error
@@ -1678,10 +1698,12 @@ export async function GET(
 **Purpose:** Download the generated export file for a completed export job. Automatically creates audit records and tracks download count.
 
 **Path Parameters:**
+
 - `jobId` (required): Unique export job identifier (CUID)
 
 **Response:**
 Binary file download with appropriate content type headers:
+
 - Excel: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
 - CSV: `text/csv`
 - PDF: `application/pdf`
@@ -1692,11 +1714,13 @@ Binary file download with appropriate content type headers:
 Example: `production_2025-01-01_to_2025-01-31.xlsx`
 
 **Audit Tracking:**
+
 - Automatically creates/updates `ExportAudit` record
 - Increments download count on each download
 - Records last download timestamp
 
 **Error Handling:**
+
 - 401: Unauthorized (no valid session)
 - 403: Forbidden (user does not own the job)
 - 404: Job not found or file not found on server
@@ -1705,6 +1729,7 @@ Example: `production_2025-01-01_to_2025-01-31.xlsx`
 - 500: Server error
 
 **Security Features:**
+
 - User ownership validation
 - 24-hour file expiry
 - SHA-256 hash verification via audit records
@@ -1783,9 +1808,11 @@ export async function POST(
 **Purpose:** Retry a failed export job by resetting its status to pending and triggering reprocessing.
 
 **Path Parameters:**
+
 - `jobId` (required): Unique export job identifier (CUID)
 
 **Response:**
+
 ```typescript
 {
   id: string;
@@ -1797,6 +1824,7 @@ export async function POST(
 ```
 
 **Business Logic:**
+
 1. Validates user ownership of the job
 2. Ensures job status is 'failed' (cannot retry pending/processing/completed jobs)
 3. Resets job status to 'pending'
@@ -1804,6 +1832,7 @@ export async function POST(
 5. Triggers background processing via `ExportProcessor`
 
 **Error Handling:**
+
 - 401: Unauthorized (no valid session)
 - 403: Forbidden (user does not own the job)
 - 404: Job not found
@@ -1811,6 +1840,7 @@ export async function POST(
 - 500: Server error
 
 **Use Cases:**
+
 - Transient errors (network issues, temporary database connection problems)
 - Manual intervention after fixing data issues
 - Resource availability issues (disk space, etc.)
@@ -1843,9 +1873,11 @@ export async function GET(request: NextRequest) {
 **Purpose:** Stream real-time progress updates for one or more export jobs using Server-Sent Events (SSE). Provides live status, progress percentage, and completion notifications.
 
 **Query Parameters:**
+
 - `jobIds` (required): Comma-separated list of job IDs to monitor
 
 **Example Request:**
+
 ```
 GET /api/exports/progress?jobIds=job1,job2,job3
 ```
@@ -1855,6 +1887,7 @@ GET /api/exports/progress?jobIds=job1,job2,job3
 **Event Types:**
 
 1. **Keepalive Event** (every 15 seconds):
+
 ```typescript
 data: {
   "type": "keepalive",
@@ -1863,6 +1896,7 @@ data: {
 ```
 
 2. **Update Event** (every 2 seconds):
+
 ```typescript
 data: {
   "type": "update",
@@ -1881,6 +1915,7 @@ data: {
 ```
 
 3. **Complete Event** (when all jobs terminal):
+
 ```typescript
 data: {
   "type": "complete",
@@ -1889,41 +1924,46 @@ data: {
 ```
 
 **Configuration:**
+
 - Poll interval: 2 seconds
 - Keepalive interval: 15 seconds
 - Maximum polls: 150 (5 minutes total)
 - Auto-closes stream when all jobs reach terminal state or timeout
 
 **Terminal States:**
+
 - `completed`: Job finished successfully
 - `failed`: Job encountered error
 - `cancelled`: Job was cancelled
 
 **Error Handling:**
+
 - 401: Unauthorized (no valid session)
 - 400: Invalid jobIds parameter
 - 500: Server error
 
 **Performance Notes:**
+
 - TODO: In production, replace polling with Redis pub/sub for true real-time updates
 - Current implementation uses database polling every 2 seconds
 - Supports monitoring multiple jobs simultaneously
 - Automatically cleans up resources when stream closes
 
 **Usage Example:**
+
 ```typescript
 // Client-side SSE connection
 const eventSource = new EventSource('/api/exports/progress?jobIds=job1,job2');
 
 eventSource.addEventListener('message', (event) => {
   const data = JSON.parse(event.data);
-  
+
   if (data.type === 'update') {
     data.jobs.forEach(job => {
       console.log(`Job ${job.id}: ${job.status} - ${job.progress}%`);
     });
   }
-  
+
   if (data.type === 'complete') {
     eventSource.close();
   }
@@ -1941,8 +1981,8 @@ eventSource.addEventListener('message', (event) => {
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
-import { ProductionSchema, type ProductionInput } from '@deskops/database';
-import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
+import { ProductionSchema, type ProductionInput } from '@ws-ops/database';
+import { isValidMaterialId, isValidOperationType } from '@ws-ops/constants';
 
 export async function createProduction(data: ProductionInput): Promise<{
   success: boolean;
@@ -2066,8 +2106,8 @@ export async function deleteProduction(id: string): Promise<{
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
-import { DispatchSchema, type DispatchInput } from '@deskops/database';
-import { isValidMaterialId, isValidOperationType } from '@deskops/constants';
+import { DispatchSchema, type DispatchInput } from '@ws-ops/database';
+import { isValidMaterialId, isValidOperationType } from '@ws-ops/constants';
 
 export async function createDispatch(data: DispatchInput): Promise<{
   success: boolean;
@@ -2191,8 +2231,8 @@ export async function deleteDispatch(id: string): Promise<{
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
-import { ReceivedMaterialSchema } from '@deskops/database';
-import { isValidMaterialId } from '@deskops/constants';
+import { ReceivedMaterialSchema } from '@ws-ops/database';
+import { isValidMaterialId } from '@ws-ops/constants';
 
 interface ReceivedMaterial {
   id: string;
@@ -2358,8 +2398,8 @@ export async function deleteReceivedMaterial(id: string): Promise<{
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
-import { EquipmentLogSchema, type EquipmentLogInput } from '@deskops/database';
-import { isValidEquipmentId } from '@deskops/constants';
+import { EquipmentLogSchema, type EquipmentLogInput } from '@ws-ops/database';
+import { isValidEquipmentId } from '@ws-ops/constants';
 
 export async function createEquipmentLog(data: unknown): Promise<{
   success: boolean;
@@ -2506,7 +2546,7 @@ export async function deleteEquipmentLog(id: string): Promise<{
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
-import { ManpowerLogSchema, type ManpowerLogInput } from '@deskops/database';
+import { ManpowerLogSchema, type ManpowerLogInput } from '@ws-ops/database';
 
 export async function createManpowerLog(data: unknown): Promise<{
   success: boolean;
